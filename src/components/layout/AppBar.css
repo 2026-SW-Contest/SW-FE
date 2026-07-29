@@ -1,0 +1,29 @@
+.app-bar {
+  width: 402px;
+  height: 60px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 8px 16px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e8ebed;
+
+  box-sizing: border-box;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+
+  object-fit: contain;
+}
+
+.bell {
+  width: 24px;
+  height: 24px;
+
+  object-fit: contain;
+}
