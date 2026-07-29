@@ -1,0 +1,26 @@
+.layout {
+  width: 402px;
+  height: 874px;
+
+  margin: 0 auto;
+  background: #ffffff;
+
+  overflow-y: auto;
+  position: relative;
+}
+.app{
+
+    width:402px;
+    min-height:874px;
+
+    margin:0 auto;
+
+    background:#fff;
+
+    position:relative;
+}
+
+.content{
+
+    padding-bottom:82px;
+}
