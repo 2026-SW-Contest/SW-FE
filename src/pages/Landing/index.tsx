@@ -1,13 +1,3 @@
-import Layout from "../../components/layout/Layout";
-
-const Landing = () => {
-  return (
-    <Layout>
-      <div style={{ padding: "20px" }}>
-        Landing
-      </div>
-    </Layout>
-  );
-};
+import Landing from "./Landing";
 
 export default Landing;
