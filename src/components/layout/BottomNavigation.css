@@ -7,8 +7,8 @@
 
   display: flex;
 
-  background: #fff;
-  border-top: 1px solid #E8EBED;
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
 }
 
 .nav-item {
@@ -21,7 +21,13 @@
 
   gap: 2px;
 
+  color: var(--gray-200);
+
   cursor: pointer;
+}
+
+.nav-item.active {
+  color: var(--blue-400);
 }
 
 .nav-item img {
@@ -30,8 +36,5 @@
 }
 
 .nav-item span {
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: 400; /* Caption 02 */
   white-space: nowrap;
 }

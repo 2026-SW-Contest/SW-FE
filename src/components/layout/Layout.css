@@ -1,26 +1,24 @@
-.layout {
+.app {
   width: 402px;
   height: 874px;
 
   margin: 0 auto;
-  background: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: var(--white);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
 
   overflow-y: auto;
-  position: relative;
-}
-.app{
-
-    width:402px;
-    min-height:874px;
-
-    margin:0 auto;
-
-    background:#fff;
-
-    position:relative;
 }
 
 .content{
-
     padding-bottom:82px;
 }

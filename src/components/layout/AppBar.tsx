@@ -1,19 +1,119 @@
 import "./AppBar.css";
 
-import logo from "../../assets/icons/logo.svg";
-import bell from "../../assets/icons/bell.svg";
-import more from "../../assets/icons/more.svg";
+import backIcon from "../../assets/icons/appbar/back.svg";
+import bellActiveIcon from "../../assets/icons/appbar/bell(active).svg";
+import bellDefaultIcon from "../../assets/icons/appbar/bell(default).svg";
+import deleteIcon from "../../assets/icons/appbar/delete.svg";
+import logoIcon from "../../assets/icons/appbar/logo.svg";
+import searchIcon from "../../assets/icons/appbar/search.svg";
 
-const AppBar = () => {
-  return (
-    <header className="app-bar">
-      <img src={logo} alt="logo" className="logo" />
+type AppBarVariant = "main" | "search" | "detail";
 
-      <div className="right-icons">
-        <img src={bell} alt="bell" className="icon" />
-      </div>
+interface AppBarProps {
+  variant?: AppBarVariant;
+
+  title?: string;
+  searchValue?: string;
+  notificationCount?: number;
+
+  onBack?: () => void;
+  onSearchChange?: (value: string) => void;
+  onClearSearch?: () => void;
+  onNotificationClick?: () => void;
+}
+
+const AppBar = ({
+  variant = "main",
+  title = "",
+  searchValue = "",
+  notificationCount = 0,
+  onBack,
+  onSearchChange,
+  onClearSearch,
+  onNotificationClick,
+}: AppBarProps) => {
+  const hasNotification = notificationCount > 0;
+
+  if (variant === "search") {
+    return (
+      <header className="app-bar app-bar-search">
+        <button
+          type="button"
+          className="app-bar-icon-button"
+          onClick={onBack}
+          aria-label="뒤로 가기"
+        >
+          <img src={backIcon} alt="" />
+        </button>
+
+        <div className="app-bar-search-box">
+          <img
+            src={searchIcon}
+            alt=""
+            className="app-bar-search-icon"
+          />
+
+          <input
+            type="text"
+            value={searchValue}
+            placeholder="검색어 입력"
+            onChange={(event) => onSearchChange?.(event.target.value)}
+          />
+
+          {searchValue && (
+            <button
+              type="button"
+              className="app-bar-clear-button"
+              onClick={onClearSearch}
+              aria-label="검색어 지우기"
+            >
+              <img src={deleteIcon} alt="" />
+            </button>
+          )}
+        </div>
+      </header>
+    );
+  }
+
+  if (variant === "detail") {
+    return (
+      <header className="app-bar app-bar-detail">
+        <button
+          type="button"
+          className="app-bar-icon-button"
+          onClick={onBack}
+          aria-label="뒤로 가기"
+        >
+          <img src={backIcon} alt="" />
+        </button>
+
+        <h1 className="app-bar-title title02">{title}</h1>
+
+        <div className="app-bar-side-placeholder" />
+      </header>
+    );
+  }
+
+    return (
+    <header className="app-bar app-bar-main">
+        <div className="app-bar-logo">
+        <img src={logoIcon} alt="ConnecThing" />
+        </div>
+
+        <button
+        type="button"
+        className="app-bar-notification-button"
+        onClick={onNotificationClick}
+        aria-label="알림"
+        >
+        <img
+            src={hasNotification ? bellActiveIcon : bellDefaultIcon}
+            alt=""
+            className="app-bar-notification-icon"
+        />
+        </button>
     </header>
-  );
+    );
 };
 
 export default AppBar;
