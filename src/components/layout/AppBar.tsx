@@ -4,7 +4,7 @@ import backIcon from "../../assets/icons/appbar/back.svg";
 import bellActiveIcon from "../../assets/icons/appbar/bell(active).svg";
 import bellDefaultIcon from "../../assets/icons/appbar/bell(default).svg";
 import deleteIcon from "../../assets/icons/appbar/delete.svg";
-import logoIcon from "../../assets/icons/appbar/logo.svg";
+import logoIcon from "../../assets/icons/appbar/logo_Horizontal Lockup.svg";
 import searchIcon from "../../assets/icons/appbar/search.svg";
 
 type AppBarVariant = "main" | "search" | "detail";
@@ -57,7 +57,9 @@ const AppBar = ({
             type="text"
             value={searchValue}
             placeholder="검색어 입력"
-            onChange={(event) => onSearchChange?.(event.target.value)}
+            onChange={(event) =>
+              onSearchChange?.(event.target.value)
+            }
           />
 
           {searchValue && (
@@ -87,33 +89,39 @@ const AppBar = ({
           <img src={backIcon} alt="" />
         </button>
 
-        <h1 className="app-bar-title title02">{title}</h1>
+        <h1 className="app-bar-title title02">
+          {title}
+        </h1>
 
         <div className="app-bar-side-placeholder" />
       </header>
     );
   }
 
-    return (
+  return (
     <header className="app-bar app-bar-main">
-        <div className="app-bar-logo">
-        <img src={logoIcon} alt="ConnecThing" />
-        </div>
+      <div className="app-bar-logo">
+        <img src={logoIcon} alt="Connecthing" />
+      </div>
 
-        <button
+      <button
         type="button"
         className="app-bar-notification-button"
         onClick={onNotificationClick}
         aria-label="알림"
-        >
+      >
         <img
-            src={hasNotification ? bellActiveIcon : bellDefaultIcon}
-            alt=""
-            className="app-bar-notification-icon"
+          src={
+            hasNotification
+              ? bellActiveIcon
+              : bellDefaultIcon
+          }
+          alt=""
+          className="app-bar-notification-icon"
         />
-        </button>
+      </button>
     </header>
-    );
+  );
 };
 
 export default AppBar;

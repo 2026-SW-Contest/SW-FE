@@ -1,7 +1,8 @@
 import Layout from "../../components/layout/Layout";
 
-import PreviewCard from "../../components/ui/PreviewCard/PreviewCard";
+import LostPreviewCard from "../../components/ui/LostPreviewCard/LostPreviewCard";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
+import ServicePreviewCard from "../../components/ui/ServicePreviewCard/ServicePreviewCard";
 
 import {
   facilityPreviewData,
@@ -16,37 +17,65 @@ const Landing = () => {
 
       <div className="landing">
 
-        <section className="landing-section">
+        {/* 최근 등록된 분실물 */}
+        <section className="landing-section landing-lost-section">
 
           <div className="landing-header">
 
-            <h2>최근 등록된 분실물</h2>
+            <h2 className="body01">
+              최근 등록된 분실물
+            </h2>
 
-            <button type="button">
-              소유자 확인 요청
+            <button
+              type="button"
+              className="landing-more caption02"
+            >
+              전체보기
             </button>
 
           </div>
 
-          <PreviewCard
+          <LostPreviewCard
             items={lostPreviewData}
-            actionLabel="확인하기"
           />
 
         </section>
 
-        <section className="landing-section">
+        {/* 종합 서비스 */}
+        <section className="landing-service-section">
 
-          <h2>종합 서비스</h2>
+          <div className="landing-header">
 
-          <PrimaryButton>
-            수리 · 개선 문의하기
-          </PrimaryButton>
+            <h2 className="body01">
+              종합 서비스
+            </h2>
 
-          <PreviewCard
-            items={facilityPreviewData}
-            actionLabel="보기"
-          />
+            <button
+              type="button"
+              className="landing-more caption02"
+            >
+              전체보기
+            </button>
+
+          </div>
+
+          {/* 카드만 스크롤 */}
+          <div className="landing-service-list">
+
+            <ServicePreviewCard
+              items={facilityPreviewData.slice(0, 5)}
+            />
+
+          </div>
+
+          {/* 버튼은 항상 하단 */}
+          <div className="landing-service-button">
+
+            <PrimaryButton>
+              수리 · 개선 문의하기
+            </PrimaryButton>
+
+          </div>
 
         </section>
 
