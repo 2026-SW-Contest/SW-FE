@@ -1,4 +1,6 @@
 .app {
+  position: relative;
+
   width: 402px;
   height: 874px;
 
@@ -16,9 +18,14 @@
   flex: 1;
   min-height: 0;
 
+  overflow-x: hidden;
+  padding-bottom: 82px;
+}
+
+.content-scrollable {
   overflow-y: auto;
 }
 
-.content{
-    padding-bottom:82px;
+.content-fixed {
+  overflow-y: hidden;
 }

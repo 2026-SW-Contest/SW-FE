@@ -1,38 +1,100 @@
-.landing{
+.landing {
 
-    display:flex;
-    flex-direction:column;
+    height: 100%;
 
-    gap:28px;
+    display: flex;
+    flex-direction: column;
 
-    padding:16px;
+    padding: 16px;
+
+    overflow: hidden;
 }
 
-.landing-section {
-  display: flex;
-  flex-direction: column;
-
-  gap: 12px;
-}
+/* ---------- 공통 ---------- */
 
 .landing-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .landing-header h2 {
-  margin: 0;
+
+    margin: 0;
+
+    color: var(--gray-700);
 }
 
-.landing-header button {
-  padding: 8px 14px;
+.landing-more {
 
-  border: none;
-  border-radius: 999px;
+    padding: 0;
 
-  background: var(--gray-200);
-  color: var(--gray-900);
+    border: none;
 
-  cursor: pointer;
+    background: transparent;
+
+    color: var(--gray-300);
+
+    cursor: pointer;
+}
+
+/* ---------- 최근 등록 ---------- */
+
+.landing-lost-section {
+
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+/* ---------- 종합서비스 ---------- */
+
+.landing-service-section {
+
+    margin-top: 15px;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 0;
+}
+
+/* 카드영역 */
+
+.landing-service-list {
+
+    flex: 1;
+
+    min-height: 0;
+
+    margin-top: 8px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
+}
+
+.landing-service-list::-webkit-scrollbar {
+
+    display: none;
+}
+
+/* 버튼 */
+
+.landing-service-button {
+
+    flex-shrink: 0;
+
+    margin-top: 8px;
+
+    padding-top: 8px;
+
+    background: var(--white);
 }

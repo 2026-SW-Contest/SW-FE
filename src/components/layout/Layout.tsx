@@ -29,6 +29,7 @@ interface LayoutProps {
 
   showAppBar?: boolean;
   showBottomNavigation?: boolean;
+  scrollable?: boolean;
 
   onBack?: () => void;
   onSearchChange?: (value: string) => void;

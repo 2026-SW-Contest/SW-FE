@@ -16,7 +16,7 @@ const PrimaryButton = ({
   return (
     <button
       type={type}
-      className={`primary-button ${className}`}
+      className={`primary-button body02 ${className}`}
       {...props}
     >
       {children}
