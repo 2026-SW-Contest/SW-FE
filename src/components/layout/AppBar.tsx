@@ -21,6 +21,7 @@ interface AppBarProps {
 
   onBack?: () => void;
   onSearchChange?: (value: string) => void;
+  onSearchSubmit?: () => void;
   onClearSearch?: () => void;
   onNotificationClick?: () => void;
 }
@@ -32,6 +33,7 @@ const AppBar = ({
   notificationCount = 0,
   onBack,
   onSearchChange,
+  onSearchSubmit,
   onClearSearch,
   onNotificationClick,
 }: AppBarProps) => {
@@ -67,6 +69,11 @@ const AppBar = ({
             onChange={(event) =>
               onSearchChange?.(event.target.value)
             }
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                onSearchSubmit?.();
+              }
+            }}
           />
 
           {searchValue && (

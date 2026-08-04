@@ -40,13 +40,20 @@ const SearchPage = () => {
   }, [keyword]);
 
   return (
-    <Layout
-      current="search"
-      appBarVariant="search"
-      searchValue={searchValue}
-      onSearchChange={setSearchValue}
-      onClearSearch={() => setSearchValue("")}
-    >
+      <Layout
+        current="search"
+        appBarVariant="search"
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        onSearchSubmit={() => {
+          if (searchValue.trim()) {
+            navigate(
+              `/search/result?q=${encodeURIComponent(searchValue)}`
+            );
+          }
+        }}
+        onClearSearch={() => setSearchValue("")}
+      >
       <div className="search-page">
 
         {!keyword ? (
