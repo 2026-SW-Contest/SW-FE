@@ -10,12 +10,13 @@
 /* ---------- Main ---------- */
 
 .app-bar-main {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  height:60px;
-  padding:8px 16px 4px;
+  height: 60px;
+
+  padding: 8px 16px 4px;
 }
 
 .app-bar-logo {
@@ -27,6 +28,7 @@
 
 .app-bar-logo img {
   display: block;
+
   height: 48px;
   width: auto;
 }
@@ -59,3 +61,18 @@
 
   display: block;
 }
+
+/* ---------- Detail ---------- */
+
+.app-bar-detail {
+  display: flex;
+  align-items: center;
+
+  height: 54px;
+
+  padding: 0 16px;
+}
+
+/* ---------- Search ---------- */
+
+/* 기존 search css 그대로 */

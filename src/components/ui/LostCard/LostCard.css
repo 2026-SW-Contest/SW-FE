@@ -1,0 +1,210 @@
+.lost-card{
+
+    position:relative;
+
+    width:100%;
+    height:129px;
+
+    display:flex;
+
+    gap:8px;
+
+    margin-bottom:10px;
+}
+
+/* ---------- Divider ---------- */
+
+.lost-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    bottom:-10px;
+
+    height:1px;
+
+    background:var(--gray-50);
+}
+
+/* ---------- 이미지 ---------- */
+
+.lost-card-image-wrapper{
+
+    width:120px;
+    height:129px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:var(--gray-50);
+
+    border-radius:8px;
+
+    flex-shrink:0;
+
+    overflow:hidden;
+}
+
+.lost-card-image{
+
+    width:59px;
+    height:59px;
+
+    display:block;
+
+    object-fit:contain;
+}
+
+/* ---------- 오른쪽 ---------- */
+
+.lost-card-content{
+
+    flex:1;
+
+    height:129px;
+
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+}
+
+/* ---------- 상단 ---------- */
+
+.lost-card-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:10px;
+}
+
+.lost-card-category{
+
+    min-width:0;
+    max-width:calc(100% - 55px);
+
+    display:block;
+
+    padding:0 4px;
+
+    border-radius:4px;
+
+    background:var(--gray-50);
+
+    color:var(--gray-600);
+
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+.lost-card-time{
+
+    flex-shrink:0;
+
+    color:var(--gray-200);
+
+    white-space:nowrap;
+}
+
+/* ---------- 제목 ---------- */
+
+.lost-card-title{
+
+    width:242px;
+    min-height:21px;
+
+    margin:0;
+
+    color:var(--gray-700);
+
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+/* ---------- Body ---------- */
+
+.lost-card-body{
+    display:flex;
+    flex-direction:column;
+
+    gap:4px;
+    min-width:0;
+}
+
+/* ---------- 설명 ---------- */
+
+.lost-card-description{
+
+    width:242px;
+
+    margin:0;
+
+    color:var(--gray-700);
+
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+
+    overflow:hidden;
+
+    line-height:150%;
+
+    word-break:break-word;
+    flex-shrink:0;
+}
+
+/* ---------- 정보 ---------- */
+
+.lost-card-info{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:2px;
+
+    color:var(--gray-500);
+}
+
+.lost-card-info-text{
+
+    display:block;
+
+    color:inherit;
+
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+/* ---------- 상태 ---------- */
+
+.lost-card-status{
+
+    display:flex;
+    align-items:center;
+
+    gap:4px;
+}
+
+.lost-card-status-icon{
+
+    display:block;
+
+    flex-shrink:0;
+}
+
+/* 마지막 카드 아래 선 제거 */
+
+.lost-card:last-child::after{
+
+    display:none;
+}

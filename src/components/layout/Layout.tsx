@@ -61,7 +61,6 @@ const Layout = ({
       {showAppBar && (
         <AppBar
           variant={appBarVariant}
-          title={appBarTitle}
           searchValue={searchValue}
           notificationCount={notificationCount}
           onBack={onBack}

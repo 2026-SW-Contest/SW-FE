@@ -1,5 +1,7 @@
 import "./BottomNavigation.css";
 
+import { useNavigate } from "react-router-dom";
+
 import homeDefault from "../../assets/icons/GNB/GNB-home(default).svg";
 import homeSelected from "../../assets/icons/GNB/GNB-home(selected).svg";
 
@@ -20,39 +22,72 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ current }: BottomNavigationProps) => {
+
+  const navigate = useNavigate();
+
   return (
     <nav className="bottom-nav">
 
-      <div className={`nav-item ${current === "home" ? "active" : ""}`}>
-        <img src={current === "home" ? homeSelected : homeDefault} alt="홈" />
+      <div
+        className={`nav-item ${current === "home" ? "active" : ""}`}
+        onClick={() => navigate("/")}
+      >
+        <img
+          src={current === "home" ? homeSelected : homeDefault}
+          alt="홈"
+        />
         <span className={current === "home" ? "caption01" : "caption02"}>
           홈
         </span>
       </div>
 
-      <div className={`nav-item ${current === "search" ? "active" : ""}`}>
-        <img src={current === "search" ? searchSelected : searchDefault} alt="검색" />
+      <div
+        className={`nav-item ${current === "search" ? "active" : ""}`}
+        onClick={() => navigate("/search")}
+      >
+        <img
+          src={current === "search" ? searchSelected : searchDefault}
+          alt="검색"
+        />
         <span className={current === "search" ? "caption01" : "caption02"}>
           검색
         </span>
       </div>
 
-      <div className={`nav-item ${current === "lost" ? "active" : ""}`}>
-        <img src={current === "lost" ? lostSelected : lostDefault} alt="분실물" />
+      <div
+        className={`nav-item ${current === "lost" ? "active" : ""}`}
+        onClick={() => navigate("/lost")}
+      >
+        <img
+          src={current === "lost" ? lostSelected : lostDefault}
+          alt="분실물"
+        />
         <span className={current === "lost" ? "caption01" : "caption02"}>
           분실물
         </span>
       </div>
 
-      <div className={`nav-item ${current === "repair" ? "active" : ""}`}>
-        <img src={current === "repair" ? repairSelected : repairDefault} alt="시설·기자재" />
+      <div
+        className={`nav-item ${current === "repair" ? "active" : ""}`}
+        onClick={() => navigate("/facility")}
+      >
+        <img
+          src={current === "repair" ? repairSelected : repairDefault}
+          alt="시설·기자재"
+        />
         <span className={current === "repair" ? "caption01" : "caption02"}>
           시설·기자재
         </span>
       </div>
 
-      <div className={`nav-item ${current === "mypage" ? "active" : ""}`}>
-        <img src={current === "mypage" ? mypageSelected : mypageDefault} alt="마이" />
+      <div
+        className={`nav-item ${current === "mypage" ? "active" : ""}`}
+        onClick={() => navigate("/mypage")}
+      >
+        <img
+          src={current === "mypage" ? mypageSelected : mypageDefault}
+          alt="마이"
+        />
         <span className={current === "mypage" ? "caption01" : "caption02"}>
           마이
         </span>

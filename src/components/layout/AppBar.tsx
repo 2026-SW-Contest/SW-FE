@@ -7,12 +7,13 @@ import deleteIcon from "../../assets/icons/appbar/delete.svg";
 import logoIcon from "../../assets/icons/appbar/logo_Horizontal Lockup.svg";
 import searchIcon from "../../assets/icons/appbar/search.svg";
 
+import { useNavigate } from "react-router-dom";
+
 type AppBarVariant = "main" | "search" | "detail";
 
 interface AppBarProps {
   variant?: AppBarVariant;
 
-  title?: string;
   searchValue?: string;
   notificationCount?: number;
 
@@ -24,7 +25,6 @@ interface AppBarProps {
 
 const AppBar = ({
   variant = "main",
-  title = "",
   searchValue = "",
   notificationCount = 0,
   onBack,
@@ -32,7 +32,11 @@ const AppBar = ({
   onClearSearch,
   onNotificationClick,
 }: AppBarProps) => {
+  const navigate = useNavigate();
+
   const hasNotification = notificationCount > 0;
+
+  /* ---------- Search ---------- */
 
   if (variant === "search") {
     return (
@@ -41,7 +45,7 @@ const AppBar = ({
           type="button"
           className="app-bar-icon-button"
           onClick={onBack}
-          aria-label="뒤로 가기"
+          aria-label="뒤로가기"
         >
           <img src={backIcon} alt="" />
         </button>
@@ -77,6 +81,8 @@ const AppBar = ({
     );
   }
 
+  /* ---------- Detail ---------- */
+
   if (variant === "detail") {
     return (
       <header className="app-bar app-bar-detail">
@@ -84,23 +90,29 @@ const AppBar = ({
           type="button"
           className="app-bar-icon-button"
           onClick={onBack}
-          aria-label="뒤로 가기"
+          aria-label="뒤로가기"
         >
           <img src={backIcon} alt="" />
         </button>
-
-        <h1 className="app-bar-title title02">
-          {title}
-        </h1>
-
-        <div className="app-bar-side-placeholder" />
       </header>
     );
   }
 
+  /* ---------- Main ---------- */
+
   return (
     <header className="app-bar app-bar-main">
-      <div className="app-bar-logo">
+      <div
+        className="app-bar-logo"
+        onClick={() => navigate("/")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            navigate("/");
+          }
+        }}
+      >
         <img src={logoIcon} alt="Connecthing" />
       </div>
 
