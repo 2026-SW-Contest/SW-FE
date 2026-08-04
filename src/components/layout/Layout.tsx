@@ -31,10 +31,11 @@ interface LayoutProps {
 
   showAppBar?: boolean;
   showBottomNavigation?: boolean;
- scrollable?: boolean;
+  scrollable?: boolean;
 
   onBack?: () => void;
   onSearchChange?: (value: string) => void;
+  onSearchSubmit?: () => void;
   onClearSearch?: () => void;
   onNotificationClick?: () => void;
 }
@@ -55,6 +56,7 @@ const Layout = ({
 
   onBack,
   onSearchChange,
+  onSearchSubmit,
   onClearSearch,
   onNotificationClick,
 }: LayoutProps) => {
@@ -75,6 +77,7 @@ const Layout = ({
             (() => navigate(-1))
           }
           onSearchChange={onSearchChange}
+          onSearchSubmit={onSearchSubmit}
           onClearSearch={onClearSearch}
           onNotificationClick={onNotificationClick}
         />
