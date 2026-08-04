@@ -1,4 +1,209 @@
-.lost-detail{
+.lost-detail {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 이미지 ---------- */
+
+.lost-detail-image-wrapper{
+
+    position:relative;
+
+    width:100%;
+
+    height:402px;
+
+    background:var(--gray-100);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    flex-shrink:0;
+
+}
+
+.lost-detail-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.lost-detail-image-count {
+  position: absolute;
+
+  top: 16px;
+  right: 16px;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  background: var(--black-65);
+
+  color: var(--white);
+
+  font-size: 12px;
+}
+
+/* ---------- 이미지 없음 ---------- */
+
+.lost-detail-empty-image{
+
+    width:100%;
+    height:100%;
+
+
+    background: black;
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    gap:20px;
+
+    background:var(--gray-200);
+}
+
+.lost-detail-empty-image-icon{
+
+    width:65px;
+    height:65px;
+
+    display:block;
+}
+
+.lost-detail-empty-image-text{
+
+    color:var(--white);
+}
+
+/* ---------- 본문 ---------- */
+
+.lost-detail-content{
+
+    height:338px;
 
     padding:16px;
+
+    display:flex;
+    flex-direction:column;
+
+    box-sizing:border-box;
+
+    flex-shrink:0;
+}
+
+.lost-detail-category-row{
+
+    display:flex;
+    align-items:center;
+
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.lost-detail-category-label{
+    color:var(--gray-300);
+}
+
+.lost-detail-category-value{
+
+    color:var(--gray-400);
+}
+
+.lost-detail-title {
+  margin: 0 0 20px;
+
+  color: var(--gray-700);
+}
+
+/* ---------- 정보 ---------- */
+
+.lost-detail-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.lost-detail-row {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.lost-detail-label {
+  width: 64px;
+
+  color: var(--gray-300);
+
+  flex-shrink: 0;
+}
+
+.lost-detail-value {
+  color: var(--gray-700);
+}
+
+.lost-detail-status {
+  height: 20px;
+}
+
+/* ---------- Divider ---------- */
+
+.lost-detail-divider {
+  width: calc(100% + 32px);
+  height: 5px;
+  margin: 20px -16px 16px;
+  background: var(--gray-50);
+}
+
+/* ---------- Thin Divider ---------- */
+.lost-detail-divider-thin{
+    width:calc(100% + 32px);
+    height:1px;
+    margin:0 -16px 16px;
+    background:var(--gray-50);
+    flex-shrink:0;
+}
+
+/* ---------- 설명 ---------- */
+
+.lost-detail-description {
+  margin: 0;
+
+  color: var(--gray-700);
+
+  white-space: pre-wrap;
+
+  line-height: 160%;
+}
+
+/* ---------- 버튼 ---------- */
+
+.lost-detail-button {
+  margin-top: auto;
+
+  padding: 16px;
+
+  background: var(--white);
+}
+
+/* ---------- Empty ---------- */
+
+.lost-detail-empty {
+  padding: 24px;
+
+  text-align: center;
 }

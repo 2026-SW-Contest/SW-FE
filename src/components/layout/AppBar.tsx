@@ -14,6 +14,8 @@ type AppBarVariant = "main" | "search" | "detail";
 interface AppBarProps {
   variant?: AppBarVariant;
 
+  title?: string;
+
   searchValue?: string;
   notificationCount?: number;
 
@@ -25,6 +27,7 @@ interface AppBarProps {
 
 const AppBar = ({
   variant = "main",
+  title = "",
   searchValue = "",
   notificationCount = 0,
   onBack,
@@ -94,6 +97,12 @@ const AppBar = ({
         >
           <img src={backIcon} alt="" />
         </button>
+
+        <h1 className="body04 app-bar-detail-title">
+          {title}
+        </h1>
+
+        <div className="app-bar-detail-placeholder" />
       </header>
     );
   }

@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+
 import "./Layout.css";
 
 import AppBar from "./AppBar";
@@ -29,7 +31,7 @@ interface LayoutProps {
 
   showAppBar?: boolean;
   showBottomNavigation?: boolean;
-  scrollable?: boolean;
+ scrollable?: boolean;
 
   onBack?: () => void;
   onSearchChange?: (value: string) => void;
@@ -56,14 +58,22 @@ const Layout = ({
   onClearSearch,
   onNotificationClick,
 }: LayoutProps) => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="app">
+
       {showAppBar && (
         <AppBar
           variant={appBarVariant}
+          title={appBarTitle}
           searchValue={searchValue}
           notificationCount={notificationCount}
-          onBack={onBack}
+          onBack={
+            onBack ??
+            (() => navigate(-1))
+          }
           onSearchChange={onSearchChange}
           onClearSearch={onClearSearch}
           onNotificationClick={onNotificationClick}
@@ -72,7 +82,9 @@ const Layout = ({
 
       <main
         className={`content ${
-          showBottomNavigation ? "content-with-bottom-nav" : ""
+          showBottomNavigation
+            ? "content-with-bottom-nav"
+            : ""
         }`}
       >
         {children}
@@ -81,6 +93,7 @@ const Layout = ({
       {showBottomNavigation && (
         <BottomNavigation current={current} />
       )}
+
     </div>
   );
 };

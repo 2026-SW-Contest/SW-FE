@@ -8,7 +8,7 @@ export const lostListData: LostItem[] = [
     id: 1,
 
     image: emptyImage,
-    images: [emptyImage],
+    images: undefined,
 
     category: "전자기기 > 이어폰",
     time: "1시간 전",

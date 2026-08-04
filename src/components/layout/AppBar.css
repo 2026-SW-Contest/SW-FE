@@ -1,15 +1,47 @@
 .app-bar {
   width: 100%;
 
-  background: var(--white);
-  border-bottom: 1px solid var(--gray-100);
-
   box-sizing: border-box;
+
+  background: var(--white);
+}
+
+.app-bar-main,
+.app-bar-detail {
+  border-bottom: 1px solid var(--gray-100);
+}
+
+/* ---------- 공통 버튼 ---------- */
+
+.app-bar-notification-button,
+.app-bar-icon-button,
+.app-bar-clear-button {
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.app-bar-icon-button {
+
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
 }
 
 /* ---------- Main ---------- */
 
 .app-bar-main {
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -20,6 +52,7 @@
 }
 
 .app-bar-logo {
+
   display: inline-flex;
   align-items: center;
 
@@ -27,28 +60,15 @@
 }
 
 .app-bar-logo img {
+
   display: block;
 
   height: 48px;
   width: auto;
 }
 
-.app-bar-notification-button,
-.app-bar-icon-button,
-.app-bar-clear-button {
-  padding: 0;
-  border: 0;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: transparent;
-
-  cursor: pointer;
-}
-
 .app-bar-notification-button {
+
   width: 32px;
   height: 32px;
 
@@ -56,6 +76,7 @@
 }
 
 .app-bar-notification-icon {
+
   width: 24px;
   height: 24px;
 
@@ -65,14 +86,130 @@
 /* ---------- Detail ---------- */
 
 .app-bar-detail {
+
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   height: 54px;
 
   padding: 0 16px;
+
+  background: var(--white);
+
+  border-bottom: 1px solid var(--gray-50);
+}
+
+.app-bar-detail-title {
+
+  flex: 1;
+
+  margin: 0;
+
+  text-align: center;
+
+  color: var(--gray-700);
+}
+
+.app-bar-detail-placeholder {
+
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
 }
 
 /* ---------- Search ---------- */
 
-/* 기존 search css 그대로 */
+.app-bar-search{
+
+    height:78px;
+
+    padding:20px 16px;
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    background:var(--white);
+}
+
+.app-bar-icon-button{
+
+    width:24px;
+    height:24px;
+
+    padding:0;
+
+    flex-shrink:0;
+}
+
+.app-bar-icon-button img{
+
+    width:24px;
+    height:24px;
+
+    display:block;
+}
+
+.app-bar-search-box{
+
+    flex:1;
+
+    height:38px;
+
+    display:flex;
+    align-items:center;
+
+    gap:4px;
+
+    padding:9px 12px;
+
+    background:var(--gray-50);
+
+    border-radius:20px;
+}
+
+.app-bar-search-icon{
+
+    width:20px;
+    height:20px;
+
+    flex-shrink:0;
+}
+
+.app-bar-search-box input{
+
+    flex:1;
+
+    border:none;
+    outline:none;
+
+    background:transparent;
+
+    color:var(--gray-700);
+}
+
+.app-bar-search-box input::placeholder{
+
+    color:var(--gray-300);
+}
+
+.app-bar-clear-button{
+
+    width:24px;
+    height:24px;
+
+    padding:0;
+
+    flex-shrink:0;
+}
+
+.app-bar-clear-button img{
+
+    width:24px;
+    height:24px;
+
+    display:block;
+}
