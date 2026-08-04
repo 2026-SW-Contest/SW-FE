@@ -1,100 +1,100 @@
-.landing {
+.landing{
 
-    height: 100%;
+    height:100%;
 
-    display: flex;
-    flex-direction: column;
+    display:flex;
+    flex-direction:column;
 
-    padding: 16px;
+    padding:16px;
 
-    overflow: hidden;
+    overflow:hidden;
 }
 
 /* ---------- 공통 ---------- */
 
-.landing-header {
+.landing-header{
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.landing-header h2 {
+.landing-header h2{
 
-    margin: 0;
+    margin:0;
 
-    color: var(--gray-700);
+    color:var(--gray-700);
 }
 
-.landing-more {
+.landing-more{
 
-    padding: 0;
+    padding:0;
 
-    border: none;
+    border:none;
 
-    background: transparent;
+    background:transparent;
 
-    color: var(--gray-300);
+    color:var(--gray-300);
 
-    cursor: pointer;
+    cursor:pointer;
 }
 
 /* ---------- 최근 등록 ---------- */
 
-.landing-lost-section {
+.landing-lost-section{
 
-    flex-shrink: 0;
+    flex-shrink:0;
 
-    display: flex;
-    flex-direction: column;
+    display:flex;
+    flex-direction:column;
 
-    gap: 8px;
+    gap:8px;
 }
 
-/* ---------- 종합서비스 ---------- */
+/* ---------- 종합 서비스 ---------- */
 
-.landing-service-section {
+.landing-facility-section{
 
-    margin-top: 15px;
+    margin-top:15px;
 
-    flex: 1;
+    flex:1;
 
-    display: flex;
-    flex-direction: column;
+    display:flex;
+    flex-direction:column;
 
-    min-height: 0;
+    min-height:0;
 }
 
-/* 카드영역 */
+/* ---------- 시설 리스트 ---------- */
 
-.landing-service-list {
+.landing-facility-list{
 
-    flex: 1;
+    flex:1;
 
-    min-height: 0;
+    min-height:0;
 
-    margin-top: 8px;
+    margin-top:8px;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-y:auto;
+    overflow-x:hidden;
 
-    scrollbar-width: none;
+    scrollbar-width:none;
 }
 
-.landing-service-list::-webkit-scrollbar {
+.landing-facility-list::-webkit-scrollbar{
 
-    display: none;
+    display:none;
 }
 
-/* 버튼 */
+/* ---------- 시설 버튼 ---------- */
 
-.landing-service-button {
+.landing-facility-button{
 
-    flex-shrink: 0;
+    flex-shrink:0;
 
-    margin-top: 8px;
+    margin-top:8px;
 
-    padding-top: 8px;
+    padding-top:8px;
 
-    background: var(--white);
+    background:var(--white);
 }

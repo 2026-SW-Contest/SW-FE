@@ -2,15 +2,20 @@ import "./LostPreviewCard.css";
 
 import emptyPicture from "../../../assets/icons/common/empty-picture.svg";
 
-import { PreviewItem } from "../../../types/preview";
+import { useNavigate } from "react-router-dom";
+
+import { LostItem } from "../../../types/lost";
 
 interface LostPreviewCardProps {
-  items: PreviewItem[];
+  items: LostItem[];
 }
 
 const LostPreviewCard = ({
   items,
 }: LostPreviewCardProps) => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="lost-preview">
 
@@ -18,6 +23,7 @@ const LostPreviewCard = ({
         <div
           key={item.id}
           className="lost-preview-item"
+          onClick={() => navigate(`/lost/${item.id}`)}
         >
 
           <div className="lost-preview-image">
