@@ -52,7 +52,7 @@ const Landing = () => {
           <div className="landing-header">
 
             <h2 className="body01">
-              종합 서비스
+              수리·개선 서비스
             </h2>
 
             <button
@@ -75,7 +75,9 @@ const Landing = () => {
 
           <div className="landing-facility-button">
 
-            <PrimaryButton>
+            <PrimaryButton
+              onClick={() => navigate("/facility/write")}
+              >
               수리 · 개선 문의하기
             </PrimaryButton>
 

@@ -19,13 +19,31 @@
   min-height: 0;
 
   overflow-x: hidden;
+
+  /* GNB 높이 */
   padding-bottom: 82px;
+
+  box-sizing: border-box;
 }
 
 .content-scrollable {
   overflow-y: auto;
+
+  /* iOS 스크롤 부드럽게 */
+  -webkit-overflow-scrolling: touch;
+
+  /* 스크롤바 숨김(Firefox) */
+  scrollbar-width: none;
+}
+
+.content-scrollable::-webkit-scrollbar {
+  display: none;
 }
 
 .content-fixed {
-  overflow-y: hidden;
+  overflow: hidden;
+}
+
+.content-no-bottom-nav{
+    padding-bottom:0;
 }

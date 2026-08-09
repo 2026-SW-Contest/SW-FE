@@ -9,9 +9,11 @@ export interface FacilityItem {
 
   date: string;
 
-  status?: string;
+  type: string;
 
-  location?: string;
+  statusIcon: string;
+
+  location: string;
 
   detailDescription?: string;
 }

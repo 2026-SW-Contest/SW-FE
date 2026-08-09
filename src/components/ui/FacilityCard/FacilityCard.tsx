@@ -11,7 +11,6 @@ interface FacilityCardProps {
 const FacilityCard = ({
   item,
 }: FacilityCardProps) => {
-
   const navigate = useNavigate();
 
   return (
@@ -19,7 +18,6 @@ const FacilityCard = ({
       className="facility-card"
       onClick={() => navigate(`/facility/${item.id}`)}
     >
-
       <div className="facility-card-image-wrapper">
         <img
           className="facility-card-image"
@@ -29,14 +27,6 @@ const FacilityCard = ({
       </div>
 
       <div className="facility-card-content">
-
-        <div className="facility-card-top">
-
-          <span className="caption05 facility-card-date">
-            {item.date}
-          </span>
-
-        </div>
 
         <h2 className="body04 facility-card-title">
           {item.title}
@@ -51,11 +41,25 @@ const FacilityCard = ({
           <div className="facility-card-info">
 
             <span className="caption05 facility-card-info-text">
-             현재 위치 : {item.location}
+              문의 위치 : {item.location}
             </span>
 
-            <span className="caption05 facility-card-info-text">
-             현재 상태 : {item.status}
+            <div className="facility-card-status">
+
+              <span className="caption05 facility-card-info-text">
+                현재 상태 :
+              </span>
+
+              <img
+                className="facility-card-status-icon"
+                src={item.statusIcon}
+                alt="상태"
+              />
+
+            </div>
+
+            <span className="caption05 facility-card-date">
+              {item.date}
             </span>
 
           </div>
@@ -63,7 +67,6 @@ const FacilityCard = ({
         </div>
 
       </div>
-
     </div>
   );
 };

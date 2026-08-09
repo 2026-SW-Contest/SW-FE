@@ -53,6 +53,7 @@ const Layout = ({
 
   showAppBar = true,
   showBottomNavigation = true,
+  scrollable = true,
 
   onBack,
   onSearchChange,
@@ -60,22 +61,17 @@ const Layout = ({
   onClearSearch,
   onNotificationClick,
 }: LayoutProps) => {
-
   const navigate = useNavigate();
 
   return (
     <div className="app">
-
       {showAppBar && (
         <AppBar
           variant={appBarVariant}
           title={appBarTitle}
           searchValue={searchValue}
           notificationCount={notificationCount}
-          onBack={
-            onBack ??
-            (() => navigate(-1))
-          }
+          onBack={onBack ?? (() => navigate(-1))}
           onSearchChange={onSearchChange}
           onSearchSubmit={onSearchSubmit}
           onClearSearch={onClearSearch}
@@ -84,11 +80,11 @@ const Layout = ({
       )}
 
       <main
-        className={`content ${
-          showBottomNavigation
-            ? "content-with-bottom-nav"
-            : ""
-        }`}
+        className={`
+          content
+          ${scrollable ? "content-scrollable" : "content-fixed"}
+          ${showBottomNavigation ? "" : "content-no-bottom-nav"}
+        `}
       >
         {children}
       </main>
@@ -96,7 +92,6 @@ const Layout = ({
       {showBottomNavigation && (
         <BottomNavigation current={current} />
       )}
-
     </div>
   );
 };
