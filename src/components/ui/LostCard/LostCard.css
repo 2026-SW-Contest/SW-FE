@@ -8,8 +8,9 @@
     display:flex;
 
     gap:8px;
-
     margin-bottom:10px;
+
+    cursor: pointer;
 }
 
 /* ---------- Divider ---------- */
@@ -155,6 +156,7 @@
     -webkit-line-clamp:2;
 
     overflow:hidden;
+    text-overflow: ellipsis;
 
     line-height:150%;
 
