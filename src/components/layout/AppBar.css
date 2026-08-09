@@ -57,6 +57,7 @@
   align-items: center;
 
   margin-left: -11px;
+      cursor: pointer;
 }
 
 .app-bar-logo img {

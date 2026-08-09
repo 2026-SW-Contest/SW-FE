@@ -4,6 +4,8 @@ import emptyPicture from "../../../assets/icons/common/empty-picture.svg";
 
 import { FacilityItem } from "../../../types/facility";
 
+import { useNavigate } from "react-router-dom";
+
 interface FacilityPreviewCardProps {
   items: FacilityItem[];
 }
@@ -11,6 +13,9 @@ interface FacilityPreviewCardProps {
 const FacilityPreviewCard = ({
   items,
 }: FacilityPreviewCardProps) => {
+  
+  const navigate = useNavigate();
+  
   return (
     <div className="facility-preview">
 
@@ -19,6 +24,7 @@ const FacilityPreviewCard = ({
         <div
           key={item.id}
           className="facility-preview-item"
+          onClick={() => navigate(`/facility/${item.id}`)}
         >
 
           <div className="facility-preview-image">
