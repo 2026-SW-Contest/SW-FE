@@ -6,6 +6,7 @@ import bellDefaultIcon from "../../assets/icons/appbar/bell(default).svg";
 import deleteIcon from "../../assets/icons/appbar/delete.svg";
 import logoIcon from "../../assets/icons/appbar/logo_Horizontal Lockup.svg";
 import searchIcon from "../../assets/icons/appbar/search.svg";
+import closeIcon from "../../assets/icons/appbar/function=Delete.svg";
 
 import { useNavigate } from "react-router-dom";
 

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import Landing from "../pages/Landing";
-import Login from "../pages/Login";
+import Login from "../pages/Login/Login";
 
 import LostPage from "../pages/Lost/LostPage";
 import LostDetail from "../pages/Lost/LostDetail";
