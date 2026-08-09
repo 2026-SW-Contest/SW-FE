@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
+import Toast from "../../components/common/Toast/Toast";
+import { TOAST_MESSAGE } from "../../constants/toastMessage";
 
 import logo from "../../assets/icons/common/Logo_Stacked Lockup.svg";
 import eyeOffIcon from "../../assets/icons/common/function=eye-off.svg";
@@ -16,14 +18,15 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [errorMessage, setErrorMessage] =
-    useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [showToast, setShowToast] = useState(false);
+
+  const [toastMessage, setToastMessage] = useState("");
 
   const isFormValid =
     email.trim() !== "" &&
@@ -34,81 +37,12 @@ const Login = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    setErrorMessage("");
+    // ===== Toast 테스트 =====
+    setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
+    setShowToast(true);
 
-    try {
-      const response = await fetch(
-        `${apiBaseUrl}/api/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
-
-      const data = await response
-        .json()
-        .catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ??
-            "로그인에 실패했습니다."
-        );
-      }
-
-      const accessToken =
-        data?.accessToken ??
-        data?.data?.accessToken ??
-        data?.tokens?.accessToken;
-
-      const refreshToken =
-        data?.refreshToken ??
-        data?.data?.refreshToken ??
-        data?.tokens?.refreshToken;
-
-      const user =
-        data?.user ??
-        data?.data?.user;
-
-      if (accessToken) {
-        localStorage.setItem(
-          "accessToken",
-          accessToken
-        );
-      }
-
-      if (refreshToken) {
-        localStorage.setItem(
-          "refreshToken",
-          refreshToken
-        );
-      }
-
-      if (user) {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(user)
-        );
-      }
-
-      navigate("/");
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "로그인 중 오류가 발생했습니다."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    // 실제 API 연결 전까지는 여기서 종료
+    return;
   };
 
   return (
@@ -272,6 +206,12 @@ const Login = () => {
           </button>
 
         </div>
+        
+        <Toast
+          visible={showToast}
+          message={toastMessage}
+          onClose={() => setShowToast(false)}
+        />
 
       </div>
     </Layout>
