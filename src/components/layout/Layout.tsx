@@ -26,6 +26,8 @@ interface LayoutProps {
   appBarVariant?: AppBarVariant;
   appBarTitle?: string;
 
+  rightIcon?: "none" | "close";
+
   searchValue?: string;
   notificationCount?: number;
 
@@ -34,6 +36,8 @@ interface LayoutProps {
   scrollable?: boolean;
 
   onBack?: () => void;
+  onClose?: () => void;
+
   onSearchChange?: (value: string) => void;
   onSearchSubmit?: () => void;
   onClearSearch?: () => void;
@@ -48,6 +52,8 @@ const Layout = ({
   appBarVariant = "main",
   appBarTitle = "",
 
+  rightIcon = "none",
+
   searchValue = "",
   notificationCount = 0,
 
@@ -56,6 +62,7 @@ const Layout = ({
   scrollable = true,
 
   onBack,
+  onClose,
   onSearchChange,
   onSearchSubmit,
   onClearSearch,
@@ -69,9 +76,11 @@ const Layout = ({
         <AppBar
           variant={appBarVariant}
           title={appBarTitle}
+          rightIcon={rightIcon}
           searchValue={searchValue}
           notificationCount={notificationCount}
           onBack={onBack ?? (() => navigate(-1))}
+          onClose={onClose ?? (() => navigate("/"))}
           onSearchChange={onSearchChange}
           onSearchSubmit={onSearchSubmit}
           onClearSearch={onClearSearch}

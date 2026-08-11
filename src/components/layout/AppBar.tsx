@@ -1,11 +1,12 @@
 import "./AppBar.css";
 
-import backIcon from "../../assets/icons/appbar/back.svg";
-import bellActiveIcon from "../../assets/icons/appbar/bell(active).svg";
-import bellDefaultIcon from "../../assets/icons/appbar/bell(default).svg";
-import deleteIcon from "../../assets/icons/appbar/delete.svg";
-import logoIcon from "../../assets/icons/appbar/logo_Horizontal Lockup.svg";
-import searchIcon from "../../assets/icons/appbar/search.svg";
+import backIcon from "../../assets/icons/actions/arrow-left.svg";
+import closeIcon from "../../assets/icons/actions/close.svg";
+import clearInputIcon from "../../assets/icons/actions/clear-input.svg";
+import searchIcon from "../../assets/icons/actions/search.svg";
+import logoIcon from "../../assets/icons/brand/logo-horizontal.svg";
+import bellActiveIcon from "../../assets/icons/notifications/bell-active.svg";
+import bellDefaultIcon from "../../assets/icons/notifications/bell.svg";
 
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +20,11 @@ interface AppBarProps {
   searchValue?: string;
   notificationCount?: number;
 
+  rightIcon?: "none" | "close";
+
   onBack?: () => void;
+  onClose?: () => void;
+
   onSearchChange?: (value: string) => void;
   onSearchSubmit?: () => void;
   onClearSearch?: () => void;
@@ -31,7 +36,11 @@ const AppBar = ({
   title = "",
   searchValue = "",
   notificationCount = 0,
+  rightIcon = "none",
+
   onBack,
+  onClose,
+
   onSearchChange,
   onSearchSubmit,
   onClearSearch,
@@ -83,7 +92,7 @@ const AppBar = ({
               onClick={onClearSearch}
               aria-label="검색어 지우기"
             >
-              <img src={deleteIcon} alt="" />
+              <img src={clearInputIcon} alt="" />
             </button>
           )}
         </div>
@@ -96,20 +105,35 @@ const AppBar = ({
   if (variant === "detail") {
     return (
       <header className="app-bar app-bar-detail">
-        <button
-          type="button"
-          className="app-bar-icon-button"
-          onClick={onBack}
-          aria-label="뒤로가기"
-        >
-          <img src={backIcon} alt="" />
-        </button>
+        {rightIcon === "close" ? (
+          <div className="app-bar-detail-placeholder" />
+        ) : (
+          <button
+            type="button"
+            className="app-bar-icon-button"
+            onClick={onBack}
+            aria-label="뒤로가기"
+          >
+            <img src={backIcon} alt="" />
+          </button>
+        )}
 
         <h1 className="body04 app-bar-detail-title">
           {title}
         </h1>
 
-        <div className="app-bar-detail-placeholder" />
+        {rightIcon === "close" ? (
+          <button
+            type="button"
+            className="app-bar-icon-button"
+            onClick={onClose ?? (() => navigate("/"))}
+            aria-label="닫기"
+          >
+            <img src={closeIcon} alt="닫기" />
+          </button>
+        ) : (
+          <div className="app-bar-detail-placeholder" />
+        )}
       </header>
     );
   }

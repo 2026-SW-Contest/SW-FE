@@ -3,7 +3,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 
-import plusIcon from "../../assets/icons/common/plus.svg";
+import plusIcon from "../../assets/icons/actions/plus.svg";
 
 import "./FacilityWrite.css";
 

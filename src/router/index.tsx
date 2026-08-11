@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import Landing from "../pages/Landing";
-import Login from "../pages/Login";
+import Login from "../pages/Login/Login";
 
 import LostPage from "../pages/Lost/LostPage";
 import LostDetail from "../pages/Lost/LostDetail";
@@ -13,12 +13,35 @@ import FacilityComplete from "../pages/Facility/FacilityComplete";
 
 import SearchPage from "../pages/Search/SearchPage";
 import SearchResultPage from "../pages/Search/SearchResultPage";
+import Signup from "../pages/Signup/Signup";
+import MyPage from "../pages/MyPage/MyPage";
+import RecoveryHistoryPage from "../pages/MyPage/RecoveryHistoryPage";
+import RepairHistoryPage from "../pages/MyPage/RepairHistoryPage";
+import EditProfilePage from "../pages/MyPage/EditProfilePage";
+import ChangePasswordPage from "../pages/MyPage/ChangePasswordPage";
 
 const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+
+      {/* 회원 */}
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/mypage" element={<MyPage />} />
+      <Route
+        path="/mypage/recovery-history"
+        element={<RecoveryHistoryPage />}
+      />
+      <Route
+        path="/mypage/repair-history"
+        element={<RepairHistoryPage />}
+      />
+      <Route path="/mypage/edit" element={<EditProfilePage />} />
+      <Route
+        path="/mypage/edit/password"
+        element={<ChangePasswordPage />}
+      />
 
       {/* 분실물 */}
       <Route path="/lost" element={<LostPage />} />

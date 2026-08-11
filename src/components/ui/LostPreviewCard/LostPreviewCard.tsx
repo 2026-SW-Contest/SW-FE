@@ -1,6 +1,6 @@
 import "./LostPreviewCard.css";
 
-import emptyPicture from "../../../assets/icons/common/empty-picture.svg";
+import emptyPicture from "../../../assets/icons/placeholders/image-placeholder.svg";
 
 import { useNavigate } from "react-router-dom";
 

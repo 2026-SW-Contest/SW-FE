@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 
-import searchIcon from "../../assets/icons/appbar/search.svg";
+import searchIcon from "../../assets/icons/actions/search.svg";
 
 import {
   lostListData,

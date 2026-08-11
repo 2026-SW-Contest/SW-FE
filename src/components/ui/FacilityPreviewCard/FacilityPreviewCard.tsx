@@ -1,6 +1,6 @@
 import "./FacilityPreviewCard.css";
 
-import emptyPicture from "../../../assets/icons/common/empty-picture.svg";
+import emptyPicture from "../../../assets/icons/placeholders/image-placeholder.svg";
 
 import { FacilityItem } from "../../../types/facility";
 
