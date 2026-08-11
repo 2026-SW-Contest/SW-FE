@@ -19,6 +19,7 @@ export const TOAST_MESSAGE = {
 
   PASSWORD_CHANGED: "비밀번호가 변경되었습니다.",
   PASSWORD_CHANGE_FAILED: "비밀번호 변경에 실패했습니다.",
+  PASSWORD_MISMATCH: "새 비밀번호 입력이 일치하지 않습니다.",
 
   /* ---------- 분실물 ---------- */
 

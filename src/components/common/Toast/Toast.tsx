@@ -4,15 +4,17 @@ import "./Toast.css";
 
 interface ToastProps {
   message: string;
- visible: boolean;
+  visible: boolean;
   duration?: number;
+  placement?: "page-bottom" | "above-navigation";
   onClose?: () => void;
 }
 
 const Toast = ({
   message,
   visible,
-  duration = 4000,
+  duration = 3000,
+  placement = "page-bottom",
   onClose,
 }: ToastProps) => {
   const [isClosing, setIsClosing] =
@@ -44,7 +46,11 @@ const Toast = ({
   }
 
   return (
-    <div className="toast-container">
+    <div
+      className={`toast-container toast-container-${placement}`}
+      role="status"
+      aria-live="polite"
+    >
       <div
         className={`toast body02 ${
           isClosing ? "toast-hide" : ""

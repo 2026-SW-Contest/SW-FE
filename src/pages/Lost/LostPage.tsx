@@ -2,7 +2,7 @@ import Layout from "../../components/layout/Layout";
 
 import LostCard from "../../components/ui/LostCard";
 
-import filterIcon from "../../assets/icons/common/filter(default).svg";
+import filterIcon from "../../assets/icons/actions/filter.svg";
 
 import { lostListData } from "../../mock";
 

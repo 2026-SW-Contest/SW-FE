@@ -4,8 +4,8 @@ import Layout from "../../components/layout/Layout";
 
 import FacilityCard from "../../components/ui/FacilityCard";
 
-import filterIcon from "../../assets/icons/common/filter(default).svg";
-import fabIcon from "../../assets/icons/common/fab.svg";
+import filterIcon from "../../assets/icons/actions/filter.svg";
+import createInquiryFab from "../../assets/icons/actions/create-inquiry-fab.svg";
 
 import { facilityListData } from "../../mock";
 
@@ -65,7 +65,7 @@ const FacilityPage = () => {
           onClick={() => navigate("/facility/write")}
         >
           <img
-            src={fabIcon}
+            src={createInquiryFab}
             alt="문의하기"
           />
         </button>

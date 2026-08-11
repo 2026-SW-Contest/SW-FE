@@ -6,9 +6,9 @@ import Layout from "../../components/layout/Layout";
 import LostCard from "../../components/ui/LostCard";
 import FacilityCard from "../../components/ui/FacilityCard";
 
-import filterIcon from "../../assets/icons/common/filter(default).svg";
-import alerticon from "../../assets/icons/common/alert.svg";
-import checkIcon from "../../assets/icons/common/check.svg";
+import checkIcon from "../../assets/icons/actions/check.svg";
+import filterIcon from "../../assets/icons/actions/filter.svg";
+import smallBellIcon from "../../assets/icons/notifications/bell-small.svg";
 
 import {
   lostListData,
@@ -130,7 +130,7 @@ const SearchResultPage = () => {
         >
 
         <img
-            src={isAlertOn ? checkIcon : alerticon}
+            src={isAlertOn ? checkIcon : smallBellIcon}
             alt=""
             className="search-alert-icon"
         />

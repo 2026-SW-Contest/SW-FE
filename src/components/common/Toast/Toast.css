@@ -3,8 +3,6 @@
     position: absolute;
 
     left: 50%;
-    bottom: 68px;
-
     transform: translateX(-50%);
 
     width: 370px;
@@ -15,6 +13,14 @@
     z-index: 9999;
 
     pointer-events: none;
+}
+
+.toast-container-page-bottom {
+    bottom: 68px;
+}
+
+.toast-container-above-navigation {
+    bottom: 98px;
 }
 
 .toast {

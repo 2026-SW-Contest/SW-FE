@@ -29,16 +29,22 @@
 
 .content-scrollable {
   overflow-y: auto;
-
-  /* iOS 스크롤 부드럽게 */
   -webkit-overflow-scrolling: touch;
 
-  /* 스크롤바 숨김(Firefox) */
-  scrollbar-width: none;
+  scrollbar-width: thin; /* Firefox */
 }
 
 .content-scrollable::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+}
+
+.content-scrollable::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 999px;
+}
+
+.content-scrollable::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .content-fixed {

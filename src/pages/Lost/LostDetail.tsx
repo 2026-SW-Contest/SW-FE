@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
 
 import { lostListData } from "../../mock";
-import cameraIcon from "../../assets/icons/common/camera.svg";
+import cameraIcon from "../../assets/icons/placeholders/no-photo.svg";
 
 import "./LostDetail.css";
 

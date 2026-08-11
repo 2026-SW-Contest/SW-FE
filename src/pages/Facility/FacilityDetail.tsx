@@ -4,7 +4,7 @@ import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 
 import { facilityListData } from "../../mock";
-import cameraIcon from "../../assets/icons/common/camera.svg";
+import cameraIcon from "../../assets/icons/placeholders/no-photo.svg";
 
 import "./FacilityDetail.css";
 

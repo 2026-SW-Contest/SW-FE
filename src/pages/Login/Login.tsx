@@ -6,9 +6,9 @@ import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import Toast from "../../components/common/Toast/Toast";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
 
-import logo from "../../assets/icons/common/Logo_Stacked Lockup.svg";
-import eyeOffIcon from "../../assets/icons/common/function=eye-off.svg";
-import eyeOnIcon from "../../assets/icons/common/function=eye-on.svg";
+import logo from "../../assets/icons/brand/logo-stacked.svg";
+import eyeOffIcon from "../../assets/icons/actions/visibility-off.svg";
+import eyeOnIcon from "../../assets/icons/actions/visibility-on.svg";
 
 import "./Login.css";
 
@@ -49,6 +49,7 @@ const Login = () => {
     <Layout
       appBarVariant="detail"
       appBarTitle="로그인"
+      rightIcon="close"
       showBottomNavigation={false}
       scrollable={false}
     >

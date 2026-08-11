@@ -2,20 +2,20 @@ import "./BottomNavigation.css";
 
 import { useNavigate } from "react-router-dom";
 
-import homeDefault from "../../assets/icons/GNB/GNB-home(default).svg";
-import homeSelected from "../../assets/icons/GNB/GNB-home(selected).svg";
+import homeIcon from "../../assets/icons/navigation/home.svg";
+import homeActiveIcon from "../../assets/icons/navigation/home-active.svg";
 
-import searchDefault from "../../assets/icons/GNB/GNB-search(default).svg";
-import searchSelected from "../../assets/icons/GNB/GNB-search(selected).svg";
+import searchIcon from "../../assets/icons/navigation/search.svg";
+import searchActiveIcon from "../../assets/icons/navigation/search-active.svg";
 
-import lostDefault from "../../assets/icons/GNB/GNB-lost(default).svg";
-import lostSelected from "../../assets/icons/GNB/GNB-lost(selected).svg";
+import lostItemsIcon from "../../assets/icons/navigation/lost-items.svg";
+import lostItemsActiveIcon from "../../assets/icons/navigation/lost-items-active.svg";
 
-import repairDefault from "../../assets/icons/GNB/GNB-repair(default).svg";
-import repairSelected from "../../assets/icons/GNB/GNB-repair(selected).svg";
+import facilitiesIcon from "../../assets/icons/navigation/facilities.svg";
+import facilitiesActiveIcon from "../../assets/icons/navigation/facilities-active.svg";
 
-import mypageDefault from "../../assets/icons/GNB/GNB-mypage(default).svg";
-import mypageSelected from "../../assets/icons/GNB/GNB-mypage(selected).svg";
+import myPageIcon from "../../assets/icons/navigation/my-page.svg";
+import myPageActiveIcon from "../../assets/icons/navigation/my-page-active.svg";
 
 interface BottomNavigationProps {
   current: "home" | "search" | "lost" | "repair" | "mypage";
@@ -38,7 +38,7 @@ const BottomNavigation = ({
         onClick={() => navigate("/")}
       >
         <img
-          src={current === "home" ? homeSelected : homeDefault}
+          src={current === "home" ? homeActiveIcon : homeIcon}
           alt="홈"
         />
         <span
@@ -58,7 +58,7 @@ const BottomNavigation = ({
         onClick={() => navigate("/search")}
       >
         <img
-          src={current === "search" ? searchSelected : searchDefault}
+          src={current === "search" ? searchActiveIcon : searchIcon}
           alt="검색"
         />
         <span
@@ -78,7 +78,7 @@ const BottomNavigation = ({
         onClick={() => navigate("/lost")}
       >
         <img
-          src={current === "lost" ? lostSelected : lostDefault}
+          src={current === "lost" ? lostItemsActiveIcon : lostItemsIcon}
           alt="분실물"
         />
         <span
@@ -100,8 +100,8 @@ const BottomNavigation = ({
         <img
           src={
             current === "repair"
-              ? repairSelected
-              : repairDefault
+              ? facilitiesActiveIcon
+              : facilitiesIcon
           }
           alt="시설·기자재"
         />
@@ -130,8 +130,8 @@ const BottomNavigation = ({
         <img
           src={
             current === "mypage"
-              ? mypageSelected
-              : mypageDefault
+              ? myPageActiveIcon
+              : myPageIcon
           }
           alt="마이"
         />
