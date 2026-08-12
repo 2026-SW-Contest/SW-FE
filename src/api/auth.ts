@@ -1,3 +1,17 @@
+import { apiGet, apiRequest, clearCsrfToken } from "./client";
+
+export interface AuthUser {
+  userId: number;
+  email: string;
+  name?: string;
+  studentNumber?: string;
+  department?: {
+    departmentId: number;
+    departmentName: string;
+  } | null;
+  roles: string[];
+}
+
 export interface SignupRequest {
   name: string;
   studentNumber: string;
@@ -7,51 +21,102 @@ export interface SignupRequest {
   emailVerificationToken: string;
 }
 
-export interface SignupResponse {
-  userId: number;
+export type SignupResponse = AuthUser;
+
+export interface LoginRequest {
   email: string;
-  name: string;
-  studentNumber: string;
-  roles: string[];
+  password: string;
 }
 
-interface ApiErrorResponse {
-  message?: string;
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
 }
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(
-  /\/$/,
-  "",
-);
+export interface EmailVerificationConfirmResponse {
+  emailVerificationToken: string;
+}
 
-const CSRF_TOKEN =
-  import.meta.env.VITE_CSRF_TOKEN ?? "csrf-token-value";
+export const sendEmailVerification = (email: string) =>
+  apiRequest<void>("/api/auth/email-verifications", {
+    method: "POST",
+    body: { email },
+  });
 
-export const signup = async (
-  request: SignupRequest,
-): Promise<SignupResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+export const confirmEmailVerification = async (email: string, code: string) => {
+  const response = await apiRequest<
+    EmailVerificationConfirmResponse & { verificationToken?: string; token?: string }
+  >("/api/auth/email-verifications/confirm", {
+    method: "POST",
+    body: { email, code },
+  });
+
+  return {
+    emailVerificationToken:
+      response.emailVerificationToken ??
+      response.verificationToken ??
+      response.token ??
+      "",
+  };
+};
+
+export const signup = (request: SignupRequest) =>
+  apiRequest<SignupResponse>("/api/auth/signup", {
+    method: "POST",
+    body: request,
+  });
+
+export const login = (request: LoginRequest) =>
+  apiRequest<AuthUser>("/api/auth/login", {
+    method: "POST",
+    body: request,
+  });
+
+export const createAdminSession = async (request: LoginRequest) => {
+  const csrfResponse = await fetch("/admin-api/auth/csrf", {
+    credentials: "include",
+    headers: { Accept: "application/json" },
+  });
+  const csrf = (await csrfResponse.json().catch(() => null)) as {
+    headerName?: string;
+    token?: string;
+  } | null;
+
+  if (!csrfResponse.ok || !csrf?.token) {
+    throw new Error("관리자 로그인 세션을 준비하지 못했습니다.");
+  }
+
+  const loginResponse = await fetch("/admin-api/auth/login", {
     method: "POST",
     credentials: "include",
     headers: {
+      Accept: "application/json",
       "Content-Type": "application/json",
-      "X-CSRF-TOKEN": CSRF_TOKEN,
+      [csrf.headerName || "X-CSRF-TOKEN"]: csrf.token,
     },
     body: JSON.stringify(request),
   });
 
-  const responseBody = (await response
-    .json()
-    .catch(() => null)) as SignupResponse | ApiErrorResponse | null;
-
-  if (!response.ok) {
-    const message =
-      responseBody && "message" in responseBody
-        ? responseBody.message
-        : undefined;
-
-    throw new Error(message || "회원가입에 실패했습니다.");
+  if (!loginResponse.ok) {
+    throw new Error("관리자 로그인 세션을 생성하지 못했습니다.");
   }
+};
 
-  return responseBody as SignupResponse;
+export const getCurrentUser = () => apiGet<AuthUser>("/api/users/me");
+
+export const changePassword = (request: ChangePasswordRequest) =>
+  apiRequest<void>("/api/users/me/password", {
+    method: "PATCH",
+    body: request,
+  });
+
+export const logout = async () => {
+  await apiRequest<void>("/api/auth/logout", { method: "POST" });
+  clearCsrfToken();
+};
+
+export const withdraw = async () => {
+  await apiRequest<void>("/api/auth/me", { method: "DELETE" });
+  clearCsrfToken();
 };

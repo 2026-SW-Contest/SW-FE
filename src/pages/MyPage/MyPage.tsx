@@ -7,6 +7,7 @@ import NotificationBellButton from "../../components/common/NotificationBellButt
 
 import { mockUser } from "../../mock/user";
 import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
+import { useAuth } from "../../context/AuthContext";
 
 import "./MyPage.css";
 
@@ -16,12 +17,40 @@ import chevronRightIcon from "../../assets/icons/actions/chevron-right.svg";
 const MyPage = () => {
   const navigate = useNavigate();
   const { recoveryItems } = useRecoveryRequests();
+  const { user, logout, withdraw } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [withdrawError, setWithdrawError] = useState("");
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLogin");
-    setIsLogoutModalOpen(false);
-    navigate("/", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      setIsLogoutModalOpen(false);
+      navigate("/", { replace: true });
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (isWithdrawing) return;
+
+    setIsWithdrawing(true);
+    setWithdrawError("");
+
+    try {
+      await withdraw();
+      setIsWithdrawModalOpen(false);
+      navigate("/", { replace: true });
+    } catch (error) {
+      setWithdrawError(
+        error instanceof Error
+          ? error.message
+          : "회원 탈퇴 처리에 실패했습니다.",
+      );
+    } finally {
+      setIsWithdrawing(false);
+    }
   };
 
   return (
@@ -41,7 +70,7 @@ const MyPage = () => {
             />
 
             <span className="body03 mypage-profile-name">
-              {mockUser.name}님
+              {user?.name ?? mockUser.name}님
             </span>
           </div>
 
@@ -160,7 +189,8 @@ const MyPage = () => {
             type="button"
             className="mypage-setting"
             onClick={() => {
-              console.log("회원탈퇴");
+              setWithdrawError("");
+              setIsWithdrawModalOpen(true);
             }}
           >
             <span className="body05">
@@ -180,7 +210,23 @@ const MyPage = () => {
           cancelLabel="취소"
           confirmLabel="확인"
           onCancel={() => setIsLogoutModalOpen(false)}
-          onConfirm={handleLogout}
+          onConfirm={() => void handleLogout()}
+        />
+
+        <AlertModal
+          open={isWithdrawModalOpen}
+          message={
+            withdrawError ||
+            "회원 탈퇴 시 계정과 모든 로그인 세션이 종료됩니다.\n정말 탈퇴하시겠습니까?"
+          }
+          cancelLabel="취소"
+          confirmLabel={isWithdrawing ? "처리 중" : "확인"}
+          onCancel={() => {
+            if (isWithdrawing) return;
+            setIsWithdrawModalOpen(false);
+            setWithdrawError("");
+          }}
+          onConfirm={() => void handleWithdraw()}
         />
       </div>
     </Layout>

@@ -20,6 +20,7 @@ import RepairHistoryPage from "../pages/MyPage/RepairHistoryPage";
 import EditProfilePage from "../pages/MyPage/EditProfilePage";
 import ChangePasswordPage from "../pages/MyPage/ChangePasswordPage";
 import NotificationPage from "../pages/Notification/NotificationPage";
+import StudentRoute from "./StudentRoute";
 
 const AppRouter = () => {
   return (
@@ -29,20 +30,26 @@ const AppRouter = () => {
       {/* 회원 */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/notifications" element={<NotificationPage />} />
-      <Route path="/mypage" element={<MyPage />} />
+      <Route
+        path="/notifications"
+        element={<StudentRoute><NotificationPage /></StudentRoute>}
+      />
+      <Route path="/mypage" element={<StudentRoute><MyPage /></StudentRoute>} />
       <Route
         path="/mypage/recovery-history"
-        element={<RecoveryHistoryPage />}
+        element={<StudentRoute><RecoveryHistoryPage /></StudentRoute>}
       />
       <Route
         path="/mypage/repair-history"
-        element={<RepairHistoryPage />}
+        element={<StudentRoute><RepairHistoryPage /></StudentRoute>}
       />
-      <Route path="/mypage/edit" element={<EditProfilePage />} />
+      <Route
+        path="/mypage/edit"
+        element={<StudentRoute><EditProfilePage /></StudentRoute>}
+      />
       <Route
         path="/mypage/edit/password"
-        element={<ChangePasswordPage />}
+        element={<StudentRoute><ChangePasswordPage /></StudentRoute>}
       />
 
       {/* 분실물 */}
@@ -52,7 +59,14 @@ const AppRouter = () => {
       {/* 시설·기자재 */}
       <Route path="/facility" element={<FacilityPage />} />
       <Route path="/facility/:id" element={<FacilityDetail />} />
-      <Route path="/facility/write" element={<FacilityWrite />} />
+      <Route
+        path="/facility/:id/edit"
+        element={<StudentRoute><FacilityWrite /></StudentRoute>}
+      />
+      <Route
+        path="/facility/write"
+        element={<StudentRoute><FacilityWrite /></StudentRoute>}
+      />
       <Route path="/facility/complete" element={<FacilityComplete />} />
 
       {/* 검색 */}

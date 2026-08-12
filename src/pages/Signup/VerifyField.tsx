@@ -29,6 +29,8 @@ interface VerifyFieldProps {
 
   error?: string;
 
+  disabled?: boolean;
+
   onChange: (
     event: ChangeEvent<HTMLInputElement>
   ) => void;
@@ -56,6 +58,7 @@ const VerifyField = ({
   maxLength,
 
   error,
+  disabled = false,
 
   onChange,
   onBlur,
@@ -87,6 +90,7 @@ const VerifyField = ({
           type="button"
           className="body02 signup-inline-button"
           onClick={onButtonClick}
+          disabled={disabled}
         >
           {buttonText}
         </button>

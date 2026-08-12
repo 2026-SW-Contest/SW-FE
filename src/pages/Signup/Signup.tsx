@@ -4,7 +4,11 @@ import { useNavigate } from "react-router-dom";
 import Toast from "../../components/common/Toast/Toast";
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
-import { signup } from "../../api/auth";
+import {
+  confirmEmailVerification,
+  sendEmailVerification,
+  signup,
+} from "../../api/auth";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
 import {
   isSignupFormValid,
@@ -33,6 +37,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [emailVerificationToken, setEmailVerificationToken] =
     useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
@@ -48,6 +53,9 @@ const Signup = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [signupSucceeded, setSignupSucceeded] = useState(false);
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [isConfirmingCode, setIsConfirmingCode] = useState(false);
+  const [verifiedEmail, setVerifiedEmail] = useState("");
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -103,6 +111,59 @@ const Signup = () => {
     setEmailVerificationTokenError(
       validateEmailVerificationToken(emailVerificationToken),
     );
+  };
+
+  const handleSendVerification = async () => {
+    const validationMessage = validateSchoolEmail(email);
+    setEmailError(validationMessage);
+    if (validationMessage || isSendingCode) return;
+
+    setIsSendingCode(true);
+    try {
+      await sendEmailVerification(email.trim());
+      setEmailVerificationToken("");
+      setVerifiedEmail("");
+      setVerificationCode("");
+      setToastMessage("인증번호를 발송했습니다.");
+      setShowToast(true);
+    } catch (error) {
+      setEmailError(
+        error instanceof Error ? error.message : "인증번호 발송에 실패했습니다.",
+      );
+    } finally {
+      setIsSendingCode(false);
+    }
+  };
+
+  const handleConfirmVerification = async () => {
+    if (!verificationCode.trim() || isConfirmingCode) {
+      setEmailVerificationTokenError("인증번호가 일치하지 않습니다");
+      return;
+    }
+
+    setIsConfirmingCode(true);
+    try {
+      const result = await confirmEmailVerification(
+        email.trim(),
+        verificationCode.trim(),
+      );
+
+      if (!result.emailVerificationToken) {
+        throw new Error("이메일 인증 토큰이 응답에 없습니다.");
+      }
+
+      setEmailVerificationToken(result.emailVerificationToken);
+      setVerifiedEmail(email.trim());
+      setEmailVerificationTokenError("");
+      setToastMessage("이메일 인증이 완료되었습니다.");
+      setShowToast(true);
+    } catch {
+      setEmailVerificationToken("");
+      setVerifiedEmail("");
+      setEmailVerificationTokenError("인증번호가 일치하지 않습니다");
+    } finally {
+      setIsConfirmingCode(false);
+    }
   };
 
   const validatePassword = () => {
@@ -225,30 +286,44 @@ const Signup = () => {
               placeholder="학교 이메일 입력"
               type="email"
               maxLength={255}
-              buttonText="인증하기"
               onChange={(e) => {
                 setEmail(e.target.value);
                 setEmailError("");
+                setEmailVerificationToken("");
+                setVerifiedEmail("");
               }}
               onBlur={validateEmail}
-              onButtonClick={() => {
-                validateEmail();
-              }}
+              onButtonClick={() => void handleSendVerification()}
+              buttonText={isSendingCode ? "발송 중" : "인증하기"}
+              disabled={isSendingCode}
             />
 
             <VerifyField
               label="인증번호"
-              value={emailVerificationToken}
+              value={verificationCode}
               error={emailVerificationTokenError}
               placeholder="인증번호 입력"
-              buttonText="확인"
-              maxLength={43}
+              maxLength={10}
               onChange={(e) => {
-                setEmailVerificationToken(e.target.value);
+                setVerificationCode(e.target.value);
+                setEmailVerificationToken("");
+                setVerifiedEmail("");
                 setEmailVerificationTokenError("");
               }}
-              onBlur={validateVerificationToken}
-              onButtonClick={validateVerificationToken}
+              onBlur={() => {
+                if (verificationCode && !emailVerificationToken) {
+                  setEmailVerificationTokenError("인증번호가 일치하지 않습니다");
+                }
+              }}
+              onButtonClick={() => void handleConfirmVerification()}
+              buttonText={
+                isConfirmingCode
+                  ? "확인 중"
+                  : verifiedEmail === email.trim()
+                    ? "인증완료"
+                    : "확인"
+              }
+              disabled={isConfirmingCode || verifiedEmail === email.trim()}
             />
 
             <PasswordField
