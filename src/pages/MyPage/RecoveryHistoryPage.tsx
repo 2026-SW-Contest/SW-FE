@@ -17,7 +17,7 @@ import { matchesLostFilters } from "../../utils/listFilters";
 import "./HistoryPage.css";
 
 const RecoveryHistoryPage = () => {
-  const { recoveryItems } = useRecoveryRequests();
+  const { recoveryItems, isLoading, error } = useRecoveryRequests();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
     createEmptyFilterSelection,
@@ -59,15 +59,21 @@ const RecoveryHistoryPage = () => {
           </button>
         </div>
 
-        {filteredHistory.length > 0 ? (
+        {isLoading ? (
+          <div className="mypage-history-empty">
+            <p className="body05">분실물 회수 내역을 불러오는 중입니다.</p>
+          </div>
+        ) : filteredHistory.length > 0 ? (
           <div className="mypage-history-card-list">
             {filteredHistory.map((item) => (
-              <LostCard key={item.id} item={item} />
+              <LostCard key={item.itemClaimId ?? item.id} item={item} />
             ))}
           </div>
         ) : (
           <div className="mypage-history-empty">
-            <p className="body05">분실물 회수 내역이 없습니다.</p>
+            <p className="body05">
+              {error || "분실물 회수 내역이 없습니다."}
+            </p>
           </div>
         )}
       </div>

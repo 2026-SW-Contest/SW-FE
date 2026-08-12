@@ -1,12 +1,16 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import AlertModal from "../../components/common/AlertModal/AlertModal";
 import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
 import Layout from "../../components/layout/Layout";
 import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
+import { useAuth } from "../../context/AuthContext";
+import { isAdminUser, redirectToAdminApp } from "../../utils/authRole";
+import { createItemClaim, getStoredItem } from "../../api/lost";
+import { LostItem } from "../../types/lost";
+import { useLostItems } from "../../context/LostItemContext";
 
-import { lostListData } from "../../mock";
 import OwnerRequestModal from "./OwnerRequestModal";
 
 import "./LostDetail.css";
@@ -15,14 +19,43 @@ const LostDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { requestedIds, requestRecovery } = useRecoveryRequests();
+  const { recoveryItems, requestedIds, requestRecovery } = useRecoveryRequests();
+  const { lostItems } = useLostItems();
+  const { isAuthenticated, user } = useAuth();
   const [isOwnerRequestOpen, setIsOwnerRequestOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const listItem = lostItems.find((current) => current.id === Number(id));
+  const [item, setItem] = useState<LostItem | undefined>(listItem);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const item = lostListData.find(
-    (item) => item.id === Number(id)
-  );
-  const isRequested = item ? requestedIds.includes(item.id) : false;
+  const claim = item
+    ? recoveryItems.find((requestItem) => requestItem.id === item.id)
+    : undefined;
+  const isRequested = item
+    ? requestedIds.includes(item.id) && claim?.claimStatus !== "REJECTED"
+    : false;
+
+  useEffect(() => {
+    const storedItemId = Number(id);
+    if (!Number.isFinite(storedItemId)) {
+      setIsLoading(false);
+      return;
+    }
+
+    let active = true;
+    void getStoredItem(storedItemId)
+      .then((response) => {
+        if (active) setItem(response);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
   const closeOwnerRequest = useCallback(
     () => setIsOwnerRequestOpen(false),
@@ -30,13 +63,26 @@ const LostDetail = () => {
   );
 
   const handleOwnerRequestOpen = () => {
-    if (localStorage.getItem("isLogin") !== "true") {
+    if (isAdminUser(user)) {
+      redirectToAdminApp();
+      return;
+    }
+
+    if (!isAuthenticated) {
       setIsLoginModalOpen(true);
       return;
     }
 
     setIsOwnerRequestOpen(true);
   };
+
+  if (isLoading && !item) {
+    return (
+      <Layout appBarVariant="detail" showBottomNavigation={false}>
+        <div className="lost-detail-empty">불러오는 중...</div>
+      </Layout>
+    );
+  }
 
   if (!item) {
     return (
@@ -144,6 +190,33 @@ const LostDetail = () => {
             {item.detailDescription}
           </p>
 
+          {claim?.decisionMessage ? (
+            <div
+              className={`lost-detail-claim-result ${
+                claim.claimStatus === "REJECTED" ? "rejected" : "approved"
+              }`}
+            >
+              <span className="lost-detail-claim-result-arrow" aria-hidden="true">
+                ↳
+              </span>
+              <div className="lost-detail-claim-result-content">
+                <p className="body07">{claim.decisionMessage}</p>
+                {claim.decidedAt ? (
+                  <time className="caption04" dateTime={claim.decidedAt}>
+                    {new Intl.DateTimeFormat("ko-KR", {
+                      year: "2-digit",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })
+                      .format(new Date(claim.decidedAt))
+                      .replace(/\.\s?/g, ".")
+                      .replace(/\.$/, "")}
+                  </time>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
         </div>
 
         <div className="lost-detail-button">
@@ -151,10 +224,16 @@ const LostDetail = () => {
           <button
             type="button"
             className="primary-button"
-            disabled={isRequested}
+            disabled={isRequested || item.status === "resolved"}
             onClick={handleOwnerRequestOpen}
           >
-            {isRequested ? "소유자 확인 요청 완료" : "소유자 확인 요청"}
+            {item.status === "resolved"
+              ? "해결 완료"
+              : claim?.claimStatus === "REJECTED"
+                ? "소유자 확인 재요청"
+              : isRequested
+                ? "소유자 확인 요청 완료"
+                : "소유자 확인 요청"}
           </button>
 
         </div>
@@ -163,9 +242,12 @@ const LostDetail = () => {
 
       <OwnerRequestModal
         open={isOwnerRequestOpen}
+        userName={user?.name ?? ""}
+        studentNumber={user?.studentNumber ?? ""}
         onCancel={closeOwnerRequest}
-        onSubmit={() => {
-          requestRecovery(item.id);
+        onSubmit={async (inquiry, images) => {
+          await createItemClaim(item.id, inquiry, images);
+          requestRecovery(item);
           closeOwnerRequest();
         }}
       />

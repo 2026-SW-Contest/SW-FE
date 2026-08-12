@@ -1,19 +1,30 @@
-import { ChangeEvent, useEffect, useId, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
+import closeIcon from "../../assets/icons/actions/close.svg";
 import plusIcon from "../../assets/icons/actions/plus.svg";
-import { mockUser } from "../../mock/user";
 
 import "./OwnerRequestModal.css";
 
 interface OwnerRequestModalProps {
   open: boolean;
+  userName: string;
+  studentNumber: string;
   onCancel: () => void;
-  onSubmit: () => void;
+  onSubmit: (inquiry: string, images: File[]) => Promise<void>;
 }
 
 const OwnerRequestModal = ({
   open,
+  userName,
+  studentNumber,
   onCancel,
   onSubmit,
 }: OwnerRequestModalProps) => {
@@ -22,6 +33,19 @@ const OwnerRequestModal = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [inquiry, setInquiry] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const imagePreviewUrls = useMemo(
+    () => images.map((image) => URL.createObjectURL(image)),
+    [images],
+  );
+
+  useEffect(
+    () => () => {
+      imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    },
+    [imagePreviewUrls],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -57,6 +81,12 @@ const OwnerRequestModal = ({
     event.target.value = "";
   };
 
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImages((current) =>
+      current.filter((_, index) => index !== indexToRemove),
+    );
+  };
+
   return createPortal(
     <div className="owner-request-backdrop">
       <div
@@ -76,7 +106,7 @@ const OwnerRequestModal = ({
             <label className="body04">이름</label>
             <input
               className="body06 owner-request-input"
-              value={mockUser.name}
+              value={userName}
               disabled
             />
           </div>
@@ -85,7 +115,7 @@ const OwnerRequestModal = ({
             <label className="body04">학번</label>
             <input
               className="body06 owner-request-input"
-              value={mockUser.studentId}
+              value={studentNumber}
               disabled
             />
           </div>
@@ -137,21 +167,35 @@ const OwnerRequestModal = ({
               />
 
               {images.map((image, index) => (
-                <img
+                <div
                   key={`${image.name}-${index}`}
-                  src={URL.createObjectURL(image)}
-                  alt={`첨부 이미지 ${index + 1}`}
                   className="owner-request-preview"
-                />
+                >
+                  <img
+                    src={imagePreviewUrls[index]}
+                    alt={`첨부 이미지 ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    className="owner-request-preview-remove"
+                    aria-label={`첨부 이미지 ${index + 1} 삭제`}
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <img src={closeIcon} alt="" />
+                  </button>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
+        {error && <p className="caption02 owner-request-error">{error}</p>}
+
         <div className="owner-request-actions">
           <button
             type="button"
             className="body02 owner-request-cancel"
+            disabled={isSubmitting}
             onClick={onCancel}
           >
             취소
@@ -159,14 +203,26 @@ const OwnerRequestModal = ({
           <button
             type="button"
             className="body02 owner-request-submit"
-            disabled={inquiry.trim().length === 0}
+            disabled={inquiry.trim().length === 0 || isSubmitting}
             onClick={() => {
-              onSubmit();
-              setInquiry("");
-              setImages([]);
+              setIsSubmitting(true);
+              setError("");
+              void onSubmit(inquiry.trim(), images)
+                .then(() => {
+                  setInquiry("");
+                  setImages([]);
+                })
+                .catch((submitError) => {
+                  setError(
+                    submitError instanceof Error
+                      ? submitError.message
+                      : "소유자 확인 요청에 실패했습니다.",
+                  );
+                })
+                .finally(() => setIsSubmitting(false));
             }}
           >
-            요청하기
+            {isSubmitting ? "요청 중..." : "요청하기"}
           </button>
         </div>
       </div>

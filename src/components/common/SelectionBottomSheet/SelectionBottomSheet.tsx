@@ -11,6 +11,7 @@ interface SelectionBottomSheetProps {
   title: string;
   options: FilterOption[];
   value: string[];
+  allowMultiple?: boolean;
   onApply: (value: string[]) => void;
   onClose: () => void;
 }
@@ -21,6 +22,7 @@ const OpenSelectionBottomSheet = ({
   value,
   onApply,
   onClose,
+  allowMultiple = true,
 }: Omit<SelectionBottomSheetProps, "isOpen">) => {
   const [draftValue, setDraftValue] = useState(() => [...value]);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -49,6 +51,13 @@ const OpenSelectionBottomSheet = ({
   if (!appRoot) return null;
 
   const toggleOption = (optionValue: string) => {
+    if (!allowMultiple) {
+      setDraftValue((current) =>
+        current.includes(optionValue) ? [] : [optionValue],
+      );
+      return;
+    }
+
     setDraftValue((current) =>
       current.includes(optionValue)
         ? current.filter((value) => value !== optionValue)
@@ -88,6 +97,7 @@ const OpenSelectionBottomSheet = ({
             <label key={option.value} className="selection-sheet-option">
               <input
                 type="checkbox"
+                role={allowMultiple ? undefined : "radio"}
                 value={option.value}
                 checked={draftValue.includes(option.value)}
                 onChange={() => toggleOption(option.value)}

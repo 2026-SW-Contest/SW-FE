@@ -3,107 +3,149 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 
-import emptyImage from "../assets/icons/placeholders/image-placeholder.svg";
-import waitingStatusIcon from "../assets/icons/status/waiting.svg";
+import {
+  createFacilityRequest,
+  getAllMyFacilityRequests,
+  getFacilityRequest,
+  getFacilityRequests,
+  mapFacilityItem,
+  updateFacilityRequest,
+} from "../api/facility";
 import { facilityListData } from "../mock/facility";
 import { FacilityItem } from "../types/facility";
-
-const SUBMITTED_FACILITY_ITEMS_KEY = "submittedFacilityItems";
+import { useAuth } from "./AuthContext";
 
 interface NewFacilityInquiry {
   title: string;
   description: string;
-  type: string;
-  location: string;
-  images?: string[];
+  categoryIds: number[];
+  locationIds: number[];
+  images: File[];
 }
 
 interface FacilityInquiryContextValue {
   facilityItems: FacilityItem[];
   submittedItems: FacilityItem[];
-  addFacilityInquiry: (inquiry: NewFacilityInquiry) => FacilityItem;
+  isLoading: boolean;
+  error: string;
+  addFacilityInquiry: (inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
+  editFacilityInquiry: (id: number, inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
+  refresh: () => Promise<void>;
 }
-
-const getToday = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-
-  return `${year}.${month}.${day}`;
-};
-
-const getInitialSubmittedItems = (): FacilityItem[] => {
-  try {
-    const storedItems = JSON.parse(
-      localStorage.getItem(SUBMITTED_FACILITY_ITEMS_KEY) ?? "[]",
-    ) as FacilityItem[];
-
-    return storedItems.map((item) => ({
-      ...item,
-      image: item.images?.[0] ?? emptyImage,
-      status: "waiting",
-      statusIcon: waitingStatusIcon,
-    }));
-  } catch {
-    localStorage.removeItem(SUBMITTED_FACILITY_ITEMS_KEY);
-    return [];
-  }
-};
 
 const FacilityInquiryContext =
   createContext<FacilityInquiryContextValue | null>(null);
 
 export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) => {
-  const [submittedItems, setSubmittedItems] = useState(
-    getInitialSubmittedItems,
+  const { isAuthenticated, user } = useAuth();
+  const [facilityItems, setFacilityItems] = useState<FacilityItem[]>([]);
+  const [submittedItems, setSubmittedItems] = useState<FacilityItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const refresh = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await getFacilityRequests();
+      setFacilityItems(response.content);
+    } catch (requestError) {
+      // 백엔드가 내려가도 디자인·필터 확인은 가능하게 목업을 폴백으로 유지한다.
+      setFacilityItems(facilityListData);
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : "시설 문의 목록을 불러오지 못했습니다.",
+      );
+    }
+
+    if (isAuthenticated) {
+      try {
+        const myItems = await getAllMyFacilityRequests();
+        setSubmittedItems(myItems);
+      } catch (requestError) {
+        setSubmittedItems([]);
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : "내 시설 문의 내역을 불러오지 못했습니다.",
+        );
+      }
+    } else {
+      setSubmittedItems([]);
+    }
+
+    setIsLoading(false);
+  }, [isAuthenticated, user?.userId]);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const addFacilityInquiry = useCallback(
+    async (inquiry: NewFacilityInquiry) => {
+      const response = await createFacilityRequest({
+        title: inquiry.title,
+        description: inquiry.description,
+        categoryId: inquiry.categoryIds[0],
+        locationId: inquiry.locationIds[0],
+        images: inquiry.images,
+      });
+      const responseId = response.facilityRequestId ?? response.id;
+      const item = responseId
+        ? await getFacilityRequest(responseId)
+        : mapFacilityItem({
+            ...response,
+            title: response.title || inquiry.title,
+            description: response.description || inquiry.description,
+          });
+
+      setFacilityItems((current) => [item, ...current]);
+      setSubmittedItems((current) => [item, ...current]);
+      return item;
+    },
+    [],
   );
 
-  const addFacilityInquiry = useCallback((inquiry: NewFacilityInquiry) => {
-    const newItem: FacilityItem = {
-      id: Date.now(),
-      image: inquiry.images?.[0] ?? emptyImage,
-      images: inquiry.images,
-      title: inquiry.title,
-      description: inquiry.description,
-      detailDescription: inquiry.description,
-      date: getToday(),
-      type: inquiry.type,
-      location: inquiry.location,
-      status: "waiting",
-      statusIcon: waitingStatusIcon,
-    };
+  const editFacilityInquiry = useCallback(
+    async (id: number, inquiry: NewFacilityInquiry) => {
+      await updateFacilityRequest(id, {
+        title: inquiry.title,
+        description: inquiry.description,
+        categoryId: inquiry.categoryIds[0],
+        locationId: inquiry.locationIds[0],
+        images: inquiry.images,
+      });
+      const item = await getFacilityRequest(id);
 
-    setSubmittedItems((current) => {
-      const nextItems = [newItem, ...current];
-
-      try {
-        localStorage.setItem(
-          SUBMITTED_FACILITY_ITEMS_KEY,
-          JSON.stringify(nextItems),
-        );
-      } catch {
-        // 이미지 용량으로 저장소 한도를 넘더라도 현재 세션의 등록은 유지한다.
-      }
-
-      return nextItems;
-    });
-
-    return newItem;
-  }, []);
-
-  const facilityItems = useMemo(
-    () => [...submittedItems, ...facilityListData],
-    [submittedItems],
+      setFacilityItems((current) =>
+        current.map((currentItem) => currentItem.id === id ? item : currentItem),
+      );
+      setSubmittedItems((current) =>
+        current.map((currentItem) => currentItem.id === id ? item : currentItem),
+      );
+      return item;
+    },
+    [],
   );
 
   const value = useMemo(
-    () => ({ facilityItems, submittedItems, addFacilityInquiry }),
-    [addFacilityInquiry, facilityItems, submittedItems],
+    () => ({
+      facilityItems,
+      submittedItems,
+      isLoading,
+      error,
+      addFacilityInquiry,
+      editFacilityInquiry,
+      refresh,
+    }),
+    [addFacilityInquiry, editFacilityInquiry, error, facilityItems, isLoading, refresh, submittedItems],
   );
 
   return (

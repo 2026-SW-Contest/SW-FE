@@ -89,7 +89,7 @@
 
 .facility-detail-content {
 
-    height: 338px;
+    min-height: 338px;
 
     padding: 16px;
 
@@ -163,6 +163,82 @@
     white-space: pre-wrap;
 
     line-height: 160%;
+}
+
+/* ---------- 관리자 답변 ---------- */
+
+.facility-detail-responses {
+
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.facility-detail-response {
+
+    min-height: 63px;
+
+    padding: 10px 8px 10px 4px;
+
+    border-radius: 8px;
+
+    background: var(--gray-50);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    box-sizing: border-box;
+}
+
+.facility-detail-response-copy {
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 4px;
+}
+
+.facility-detail-response-icon {
+
+    width: 24px;
+    height: 20px;
+
+    color: var(--gray-300);
+
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+
+    flex-shrink: 0;
+}
+
+.facility-detail-response-content {
+
+    margin: 0;
+
+    color: var(--gray-700);
+
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 150%;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.facility-detail-response-date {
+
+    color: var(--gray-300);
+
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+    text-align: right;
 }
 
 /* ---------- 버튼 ---------- */

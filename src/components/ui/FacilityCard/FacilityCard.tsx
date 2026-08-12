@@ -2,6 +2,7 @@ import "./FacilityCard.css";
 
 import { useNavigate } from "react-router-dom";
 
+import emptyImage from "../../../assets/icons/placeholders/image-placeholder.svg";
 import { FacilityItem } from "../../../types/facility";
 
 interface FacilityCardProps {
@@ -20,7 +21,9 @@ const FacilityCard = ({
     >
       <div className="facility-card-image-wrapper">
         <img
-          className="facility-card-image"
+          className={`facility-card-image ${
+            item.image !== emptyImage ? "uploaded" : "placeholder"
+          }`}
           src={item.image}
           alt={item.title}
         />

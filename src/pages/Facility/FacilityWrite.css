@@ -265,6 +265,8 @@
     background:var(--gray-50);
 
     flex-shrink:0;
+
+    position:relative;
 }
 
 .facility-write-preview-image{
@@ -275,6 +277,40 @@
     object-fit:cover;
 
     display:block;
+}
+
+.facility-write-preview-remove{
+
+    position:absolute;
+
+    top:4px;
+    right:4px;
+
+    width:20px;
+    height:20px;
+
+    padding:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid rgba(255, 255, 255, .8);
+    border-radius:50%;
+
+    background:var(--black-65);
+
+    cursor:pointer;
+}
+
+.facility-write-preview-remove img{
+
+    width:12px;
+    height:12px;
+
+    display:block;
+
+    filter:brightness(0) invert(1);
 }
 
 /* ---------- 버튼 ---------- */

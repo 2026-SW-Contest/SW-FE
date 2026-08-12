@@ -17,7 +17,7 @@ import { matchesFacilityFilters } from "../../utils/listFilters";
 import "./HistoryPage.css";
 
 const RepairHistoryPage = () => {
-  const { facilityItems } = useFacilityInquiries();
+  const { submittedItems } = useFacilityInquiries();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
     createEmptyFilterSelection,
@@ -25,8 +25,8 @@ const RepairHistoryPage = () => {
 
   const filteredHistory = useMemo(
     () =>
-      facilityItems.filter((item) => matchesFacilityFilters(item, filters)),
-    [facilityItems, filters],
+      submittedItems.filter((item) => matchesFacilityFilters(item, filters)),
+    [submittedItems, filters],
   );
 
   const closeFilter = useCallback(() => setIsFilterOpen(false), []);
