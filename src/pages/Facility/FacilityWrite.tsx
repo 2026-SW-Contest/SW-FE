@@ -1,19 +1,35 @@
 import { ChangeEvent, useRef, useState } from "react";
 
+import SelectionBottomSheet from "../../components/common/SelectionBottomSheet/SelectionBottomSheet";
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 
+import chevronRightIcon from "../../assets/icons/actions/chevron-right.svg";
 import plusIcon from "../../assets/icons/actions/plus.svg";
+import {
+  CAMPUS_LOCATION_OPTIONS,
+  FACILITY_FILTER_DEFINITION,
+} from "../../constants/filterOptions";
 
 import "./FacilityWrite.css";
 
 const FacilityWrite = () => {
-  const [category, setCategory] = useState("");
-  const [location, setLocation] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [openSelection, setOpenSelection] = useState<
+    "category" | "location" | null
+  >(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const resizeContentTextarea = (textarea: HTMLTextAreaElement) => {
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.max(textarea.scrollHeight, 112)}px`;
+  };
 
   const handleUploadClick = () => {
     if (images.length >= 5) return;
@@ -40,9 +56,19 @@ const FacilityWrite = () => {
   };
 
   const isFormValid =
-    category.trim() !== "" &&
-    location.trim() !== "" &&
+    categories.length > 0 &&
+    locations.length > 0 &&
+    title.trim() !== "" &&
     content.trim() !== "";
+
+  const categoryLabel = FACILITY_FILTER_DEFINITION.category
+    .filter((option) => categories.includes(option.value))
+    .map((option) => option.label)
+    .join(", ");
+  const locationLabel = CAMPUS_LOCATION_OPTIONS
+    .filter((option) => locations.includes(option.value))
+    .map((option) => option.label)
+    .join(", ");
 
   return (
     <Layout
@@ -66,21 +92,25 @@ const FacilityWrite = () => {
             <button
               type="button"
               className="facility-write-select"
-              onClick={() => setCategory("전기/조명")}
+              aria-haspopup="dialog"
+              aria-expanded={openSelection === "category"}
+              onClick={() => setOpenSelection("category")}
             >
               <span
                 className={`body06 ${
-                  category
+                  categories.length > 0
                     ? "facility-write-select-value"
                     : "facility-write-placeholder"
                 }`}
               >
-                {category || "문의할 카테고리를 선택하세요"}
+                {categoryLabel || "문의할 카테고리를 선택하세요"}
               </span>
 
-              <span className="facility-write-arrow">
-                ⌄
-              </span>
+              <img
+                src={chevronRightIcon}
+                alt=""
+                className="facility-write-arrow"
+              />
 
             </button>
 
@@ -98,23 +128,51 @@ const FacilityWrite = () => {
             <button
               type="button"
               className="facility-write-select"
-              onClick={() => setLocation("학생회관")}
+              aria-haspopup="dialog"
+              aria-expanded={openSelection === "location"}
+              onClick={() => setOpenSelection("location")}
             >
               <span
                 className={`body06 ${
-                  location
+                  locations.length > 0
                     ? "facility-write-select-value"
                     : "facility-write-placeholder"
                 }`}
               >
-                {location || "문의할 장소를 선택하세요"}
+                {locationLabel || "문의할 장소를 선택하세요"}
               </span>
 
-              <span className="facility-write-arrow">
-                ⌄
-              </span>
+              <img
+                src={chevronRightIcon}
+                alt=""
+                className="facility-write-arrow"
+              />
 
             </button>
+
+          </div>
+
+          {/* ---------- 제목 ---------- */}
+
+          <div className="facility-write-group">
+
+            <label
+              htmlFor="facility-inquiry-title"
+              className="body01 facility-write-label"
+            >
+              제목
+              <span> *</span>
+            </label>
+
+            <input
+              id="facility-inquiry-title"
+              type="text"
+              className="body06 facility-write-title-input"
+              placeholder="제목을 입력하세요"
+              value={title}
+              maxLength={100}
+              onChange={(event) => setTitle(event.target.value)}
+            />
 
           </div>
 
@@ -130,13 +188,15 @@ const FacilityWrite = () => {
             <div className="facility-write-textarea-wrapper">
 
               <textarea
+                ref={contentTextareaRef}
                 className="facility-write-textarea body06"
                 placeholder="문의할 내용을 입력하세요"
                 value={content}
                 maxLength={500}
-                onChange={(event) =>
-                  setContent(event.target.value)
-                }
+                onChange={(event) => {
+                  setContent(event.target.value);
+                  resizeContentTextarea(event.currentTarget);
+                }}
               />
 
               <span className="caption04 facility-write-count">
@@ -220,6 +280,24 @@ const FacilityWrite = () => {
           </PrimaryButton>
 
         </div>
+
+        <SelectionBottomSheet
+          isOpen={openSelection === "category"}
+          title="카테고리 선택"
+          options={FACILITY_FILTER_DEFINITION.category}
+          value={categories}
+          onApply={setCategories}
+          onClose={() => setOpenSelection(null)}
+        />
+
+        <SelectionBottomSheet
+          isOpen={openSelection === "location"}
+          title="장소 선택"
+          options={CAMPUS_LOCATION_OPTIONS}
+          value={locations}
+          onApply={setLocations}
+          onClose={() => setOpenSelection(null)}
+        />
 
       </div>
     </Layout>

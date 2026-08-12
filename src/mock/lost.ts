@@ -2,6 +2,8 @@ import { LostItem } from "../types/lost";
 
 import emptyImage from "../assets/icons/placeholders/image-placeholder.svg";
 import storedStatusIcon from "../assets/icons/status/stored.svg";
+import inProgressStatusIcon from "../assets/icons/status/in-progress.svg";
+import resolvedStatusIcon from "../assets/icons/status/resolved.svg";
 
 export const lostListData: LostItem[] = [
   {
@@ -21,6 +23,7 @@ export const lostListData: LostItem[] = [
     date: "26.07.24 - 26.07.30",
 
     statusIcon: storedStatusIcon,
+    status: "stored",
 
     storageLocation: "본관 경비실",
     foundLocation: "방목학술정보관 3층",
@@ -46,7 +49,8 @@ export const lostListData: LostItem[] = [
     location: "공학관 1층",
     date: "26.07.24 - 26.07.30",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     storageLocation: "공학관 교학팀",
     foundLocation: "공학관 1층 로비",
@@ -72,7 +76,8 @@ export const lostListData: LostItem[] = [
     location: "학생회관 2층",
     date: "26.07.24 - 26.07.30",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     storageLocation: "학생회관 관리실",
     foundLocation: "학생회관 2층 복도",
@@ -99,6 +104,7 @@ export const lostListData: LostItem[] = [
     date: "26.07.23 - 26.07.29",
 
     statusIcon: storedStatusIcon,
+    status: "stored",
 
     storageLocation: "도서관 안내데스크",
     foundLocation: "방목학술정보관 2층 열람실",
@@ -124,7 +130,8 @@ export const lostListData: LostItem[] = [
     location: "본관 1층",
     date: "26.07.22 - 26.07.28",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     storageLocation: "본관 경비실",
     foundLocation: "본관 1층 휴게 공간",
@@ -150,7 +157,8 @@ export const lostListData: LostItem[] = [
     location: "공학관 3층",
     date: "26.07.21 - 26.07.27",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     storageLocation: "공학관 교학팀",
     foundLocation: "공학관 3층 강의실",
@@ -177,6 +185,7 @@ export const lostListData: LostItem[] = [
     date: "26.07.20 - 26.07.26",
 
     statusIcon: storedStatusIcon,
+    status: "stored",
 
     storageLocation: "체육관 관리실",
     foundLocation: "운동장 중앙 관람석",
@@ -202,7 +211,8 @@ export const lostListData: LostItem[] = [
     location: "본관 204호",
     date: "26.07.17 - 26.07.23",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     storageLocation: "본관 경비실",
     foundLocation: "본관 204호 강의실",
@@ -228,7 +238,8 @@ export const lostListData: LostItem[] = [
     location: "학생회관 1층",
     date: "26.07.10 - 26.07.16",
 
-    statusIcon: storedStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     storageLocation: "학생회관 관리실",
     foundLocation: "학생회관 1층 소파",
@@ -255,6 +266,7 @@ export const lostListData: LostItem[] = [
     date: "26.06.28 - 26.07.04",
 
     statusIcon: storedStatusIcon,
+    status: "stored",
 
     storageLocation: "공학관 교학팀",
     foundLocation: "공학관 1층 출입구 우산꽂이",

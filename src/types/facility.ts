@@ -1,3 +1,5 @@
+export type FacilityStatus = "waiting" | "inProgress" | "resolved";
+
 export interface FacilityItem {
   id: number;
 
@@ -12,6 +14,7 @@ export interface FacilityItem {
   type: string;
 
   statusIcon: string;
+  status: FacilityStatus;
 
   location: string;
 
