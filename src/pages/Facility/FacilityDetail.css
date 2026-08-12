@@ -1,0 +1,337 @@
+.facility-detail {
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- 이미지 ---------- */
+
+.facility-detail-image-wrapper {
+
+    position: relative;
+
+    width: 100%;
+    height: 402px;
+
+    background: var(--gray-100);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    flex-shrink: 0;
+}
+
+.facility-detail-image {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.facility-detail-image-count {
+
+    position: absolute;
+
+    top: 16px;
+    right: 16px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background: var(--black-65);
+
+    color: var(--white);
+
+    font-size: 12px;
+}
+
+/* ---------- 이미지 없음 ---------- */
+
+.facility-detail-empty-image {
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 20px;
+
+    background: var(--gray-200);
+}
+
+.facility-detail-empty-image-icon {
+
+    width: 65px;
+    height: 65px;
+
+    display: block;
+}
+
+.facility-detail-empty-image-text {
+
+    color: var(--white);
+}
+
+/* ---------- 본문 ---------- */
+
+.facility-detail-content {
+
+    min-height: 338px;
+
+    padding: 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}
+
+/* ---------- 정보 ---------- */
+
+.facility-detail-info {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.facility-detail-row {
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.facility-detail-label {
+
+    width: 64px;
+
+    color: var(--gray-300);
+
+    flex-shrink: 0;
+}
+
+.facility-detail-value {
+
+    color: var(--gray-700);
+}
+
+.facility-detail-status {
+
+    height: 20px;
+
+    display: block;
+}
+
+/* ---------- Divider ---------- */
+
+.facility-detail-divider {
+
+    width: calc(100% + 32px);
+    height: 5px;
+
+    margin: 20px -16px 16px;
+
+    background: var(--gray-50);
+}
+
+/* ---------- 설명 ---------- */
+
+.facility-detail-description {
+
+    margin: 0;
+
+    color: var(--gray-700);
+
+    white-space: pre-wrap;
+
+    line-height: 160%;
+}
+
+/* ---------- 관리자 답변 ---------- */
+
+.facility-detail-responses {
+
+    margin-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.facility-detail-response {
+
+    min-height: 63px;
+
+    padding: 10px 8px 10px 4px;
+
+    border-radius: 8px;
+
+    background: var(--gray-50);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    box-sizing: border-box;
+}
+
+.facility-detail-response-copy {
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 4px;
+}
+
+.facility-detail-response-icon {
+
+    width: 24px;
+    height: 20px;
+
+    color: var(--gray-300);
+
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+
+    flex-shrink: 0;
+}
+
+.facility-detail-response-content {
+
+    margin: 0;
+
+    color: var(--gray-700);
+
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 150%;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.facility-detail-response-date {
+
+    color: var(--gray-300);
+
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+    text-align: right;
+}
+
+/* ---------- 버튼 ---------- */
+
+.facility-detail-button {
+
+    margin-top: auto;
+
+    padding: 16px;
+
+    background: var(--white);
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    flex-shrink: 0;
+}
+
+.facility-detail-delete,
+.facility-detail-edit {
+
+    flex: 1;
+
+    height: 40px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+/* ---------- 삭제하기 ---------- */
+
+.facility-detail-delete {
+
+    border: 1px solid var(--gray-100);
+
+    background: var(--white);
+
+    color: var(--gray-400);
+}
+
+/* ---------- 수정하기 ---------- */
+
+.facility-detail-edit {
+
+    border: none;
+
+    background: var(--blue-400);
+
+    color: var(--white);
+}
+
+/* ---------- Empty ---------- */
+
+.facility-detail-empty {
+
+    padding: 24px;
+
+    text-align: center;
+}
+
+/* ---------- Upload ---------- */
+
+.facility-upload-button {
+
+    width: 100px;
+    height: 100px;
+
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background: var(--white);
+
+    gap: 8px;
+}
+
+.facility-upload-icon {
+
+    width: 24px;
+    height: 24px;
+
+    display: block;
+}
+
+.facility-upload-count {
+
+    color: var(--gray-300);
+}

@@ -1,0 +1,110 @@
+.lost-page {
+
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:16px;
+}
+
+/* ---------- 제목 ---------- */
+
+.lost-title{
+
+    height:24px;
+
+    display:flex;
+    align-items:center;
+
+    flex-shrink:0;
+}
+
+.lost-title h1{
+
+    margin:0;
+}
+
+/* ---------- 필터 ---------- */
+
+.lost-filter{
+
+    display:flex;
+    align-items:center;
+
+    margin-top:12px;
+    margin-bottom:12px;
+
+    flex-shrink:0;
+}
+
+.lost-filter-button{
+
+    padding:0;
+
+    border:none;
+    background:transparent;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+}
+
+.lost-filter-button img{
+
+    width:47px;
+    height:22px;
+
+    display:block;
+}
+
+/* ---------- 리스트 ---------- */
+
+.lost-list{
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+    min-height:0;
+
+    overflow-y:scroll;
+
+    scrollbar-width:thin;
+    scrollbar-color:var(--gray-300) var(--gray-50);
+    scrollbar-gutter:stable;
+}
+
+.lost-list::-webkit-scrollbar{
+
+    width:6px;
+}
+
+.lost-list::-webkit-scrollbar-thumb{
+
+    border-radius:999px;
+    background:var(--gray-300);
+}
+
+.lost-list::-webkit-scrollbar-track{
+
+    border-radius:999px;
+    background:var(--gray-50);
+}
+
+/* ---------- Empty ---------- */
+
+.lost-empty{
+
+    flex:1;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:var(--gray-200);
+}

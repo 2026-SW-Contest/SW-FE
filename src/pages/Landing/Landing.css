@@ -1,0 +1,100 @@
+.landing{
+
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:16px;
+
+    overflow:hidden;
+}
+
+/* ---------- 공통 ---------- */
+
+.landing-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.landing-header h2{
+
+    margin:0;
+
+    color:var(--gray-700);
+}
+
+.landing-more{
+
+    padding:0;
+
+    border:none;
+
+    background:transparent;
+
+    color:var(--gray-300);
+
+    cursor:pointer;
+}
+
+/* ---------- 최근 등록 ---------- */
+
+.landing-lost-section{
+
+    flex-shrink:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+}
+
+/* ---------- 종합 서비스 ---------- */
+
+.landing-facility-section{
+
+    margin-top:15px;
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    min-height:0;
+}
+
+/* ---------- 시설 리스트 ---------- */
+
+.landing-facility-list{
+
+    flex:1;
+
+    min-height:0;
+
+    margin-top:8px;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    scrollbar-width:none;
+}
+
+.landing-facility-list::-webkit-scrollbar{
+
+    display:none;
+}
+
+/* ---------- 시설 버튼 ---------- */
+
+.landing-facility-button{
+
+    flex-shrink:0;
+
+    margin-top:8px;
+
+    padding-top:8px;
+
+    background:var(--white);
+}

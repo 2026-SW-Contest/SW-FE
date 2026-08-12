@@ -1,0 +1,375 @@
+/* =========================================================
+   Signup
+========================================================= */
+
+.signup {
+    position: relative;
+
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--white);
+}
+
+/* =========================================================
+   AppBar
+========================================================= */
+
+.signup-appbar {
+    position: relative;
+
+    width: 100%;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    border-bottom: 1px solid var(--gray-100);
+
+    box-sizing: border-box;
+}
+
+.signup-appbar-title {
+    color: var(--gray-700);
+}
+
+.signup-close-button {
+    position: absolute;
+
+    top: 18px;
+    right: 12px;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.signup-close-button img {
+    display: block;
+
+    width: 24px;
+    height: 24px;
+}
+
+/* =========================================================
+   Logo
+========================================================= */
+
+.signup-logo {
+    width: 100%;
+    height: 112px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4px 0;
+
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}
+
+.signup-logo-image {
+    display: block;
+
+    width: 100px;
+    height: 100px;
+}
+
+/* =========================================================
+   Form
+========================================================= */
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+}
+
+.signup-form-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+.signup-student-info,
+.signup-form-fields {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+/* =========================================================
+   Input
+========================================================= */
+
+.signup-field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    width: 100%;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+}
+
+.signup-label {
+    color: var(--gray-600);
+}
+
+.signup-input {
+    width: 100%;
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--gray-100);
+    border-radius: 8px;
+
+    box-sizing: border-box;
+
+    background: var(--white);
+    color: var(--gray-700);
+
+    outline: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.signup-input::placeholder {
+    color: var(--gray-300);
+}
+
+.signup-input:focus {
+    border-color: var(--gray-300);
+}
+
+.signup-helper {
+    margin: 0;
+
+    color: var(--gray-400);
+}
+
+.signup-error {
+    margin: 0;
+
+    color: var(--red-500);
+}
+
+/* =========================================================
+   Verify
+========================================================= */
+
+.signup-inline-field {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    width: 100%;
+}
+
+.signup-inline-field .signup-input {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.signup-inline-button {
+    width: 82px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--blue-400);
+    color: var(--white);
+
+    cursor: pointer;
+}
+
+.signup-inline-button:hover {
+    opacity: .95;
+}
+
+.signup-inline-button:active {
+    opacity: .9;
+}
+
+/* =========================================================
+   Password
+========================================================= */
+
+.signup-password-wrapper {
+    position: relative;
+
+    width: 100%;
+}
+
+.signup-password-wrapper .signup-input {
+    padding-right: 48px;
+}
+
+.signup-password-toggle {
+    position: absolute;
+
+    top: 50%;
+    right: 12px;
+
+    transform: translateY(-50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 24px;
+    height: 24px;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+}
+
+.signup-password-toggle img {
+    display: block;
+
+    width: 24px;
+    height: 24px;
+}
+
+/* =========================================================
+   Agreement
+========================================================= */
+
+.signup-agreements {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+
+    margin-top: 16px;
+}
+
+.signup-agreement {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    min-height: 24px;
+
+    padding: 0 16px;
+
+    box-sizing: border-box;
+
+    color: var(--gray-600);
+
+    cursor: pointer;
+}
+
+.signup-agreement input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.signup-checkbox {
+    position: relative;
+
+    width: 20px;
+    height: 20px;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--gray-100);
+    border-radius: 2px;
+
+    box-sizing: border-box;
+
+    background: var(--white);
+}
+
+.signup-agreement input:checked + .signup-checkbox {
+    border-color: var(--blue-400);
+
+    background: var(--blue-400);
+}
+
+.signup-agreement input:checked + .signup-checkbox::after {
+    content: "";
+
+    position: absolute;
+
+    left: 6px;
+    top: 2px;
+
+    width: 5px;
+    height: 10px;
+
+    border-right: 2px solid var(--white);
+    border-bottom: 2px solid var(--white);
+
+    transform: rotate(45deg);
+}
+
+.signup-agreement-type {
+    color: var(--gray-500);
+}
+
+.signup-agreement-divider {
+    width: calc(100% - 32px);
+    height: 1px;
+
+    margin: 0 16px;
+
+    background: var(--gray-100);
+}
+
+/* =========================================================
+   Submit
+========================================================= */
+
+.signup-submit {
+    margin-top: auto;
+
+    padding: 10px 16px 20px;
+
+    background: var(--white);
+
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}

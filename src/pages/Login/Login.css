@@ -1,0 +1,199 @@
+.login{
+
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    background:var(--white);
+}
+
+/* ---------- 로고 ---------- */
+
+.login-logo{
+
+    height:220px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding-top:100px;
+    padding-bottom:20px;
+
+    box-sizing:border-box;
+
+    flex-shrink:0;
+}
+
+.login-logo-image{
+
+    width:100px;
+    height:100px;
+
+    display:block;
+}
+
+/* ---------- 입력 ---------- */
+
+.login-form{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:16px;
+
+    padding:0 16px;
+}
+
+.login-field{
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+}
+
+.login-label{
+
+    padding-left:2px;
+
+    color:var(--gray-600);
+}
+
+.login-input{
+
+    width:100%;
+    height:48px;
+
+    padding:0 16px;
+
+    border:1px solid var(--gray-100);
+    border-radius:8px;
+
+    background:var(--white);
+
+    box-sizing:border-box;
+
+    color:var(--gray-700);
+
+    outline:none;
+
+    appearance:none;
+    -webkit-appearance:none;
+}
+
+.login-input::placeholder{
+
+    color:var(--gray-300);
+}
+
+.login-input:focus{
+
+    border:1.5px solid var(--gray-300);
+
+    outline:none;
+
+    box-shadow:none;
+}
+
+.login-error{
+
+    margin:0;
+
+    color:var(--red-500);
+}
+
+/* ---------- 버튼 ---------- */
+
+.login-button{
+
+    padding:16px;
+}
+
+/* ---------- 하단 ---------- */
+
+.login-footer{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:8px;
+
+    padding:0 16px;
+}
+
+.login-link{
+
+    padding:0;
+
+    border:none;
+
+    background:none;
+
+    color:var(--gray-300);
+
+    cursor:pointer;
+}
+
+.login-link:hover{
+
+    color:var(--gray-500);
+}
+
+.login-divider{
+
+    color:var(--gray-300);
+
+    font-size:12px;
+}
+
+/* ---------- 비밀번호 ---------- */
+
+.login-password-wrapper{
+
+    position:relative;
+
+    width:100%;
+}
+
+.login-password-wrapper .login-input{
+
+    padding-right:52px;
+}
+
+.login-password-toggle{
+
+    position:absolute;
+
+    top:50%;
+    right:16px;
+
+    transform:translateY(-50%);
+
+    width:24px;
+    height:24px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:0;
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+}
+
+.login-password-toggle img{
+
+    width:24px;
+    height:24px;
+
+    display:block;
+}

@@ -1,0 +1,167 @@
+.mypage {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Profile ---------- */
+
+.mypage-profile {
+  height: 60px;
+
+  padding: 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid var(--gray-100);
+
+  box-sizing: border-box;
+}
+
+.mypage-profile-left {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.mypage-profile-icon {
+  width: 36px;
+  height: 36px;
+
+  display: block;
+}
+
+.mypage-profile-name {
+  color: var(--gray-700);
+}
+
+.mypage-profile-bell {
+  width: 24px;
+  height: 24px;
+
+  border: none;
+  background: transparent;
+
+  padding: 0;
+
+  cursor: pointer;
+}
+
+.mypage-profile-bell img {
+  width: 24px;
+  height: 24px;
+
+  display: block;
+}
+
+/* ---------- Section ---------- */
+
+.mypage-section {
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.mypage-section-title {
+  color: var(--gray-800);
+}
+
+/* ---------- Card ---------- */
+
+.mypage-card {
+  padding: 12px;
+
+  border-radius: 8px;
+
+  background: var(--gray-50);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.mypage-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: transparent;
+  border: none;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  color: var(--gray-600);
+}
+
+.mypage-card-header img {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- History ---------- */
+
+.mypage-history-list {
+  display: flex;
+
+  gap: 8px;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.mypage-history-list::-webkit-scrollbar {
+  display: none;
+}
+
+.mypage-history-item {
+  flex-shrink: 0;
+}
+
+.mypage-history-image,
+.mypage-history-placeholder {
+  width: 120px;
+  height: 129px;
+
+  border-radius: 8px;
+
+  background: var(--gray-100);
+
+  object-fit: cover;
+
+  display: block;
+}
+
+/* ---------- Setting ---------- */
+
+.mypage-setting {
+  height: 48px;
+
+  padding: 0 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: var(--gray-50);
+
+  cursor: pointer;
+
+  color: var(--gray-600);
+}
+
+.mypage-setting img {
+  width: 18px;
+  height: 18px;
+}

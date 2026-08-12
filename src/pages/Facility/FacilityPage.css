@@ -1,0 +1,140 @@
+.facility-page{
+
+    position:relative;
+
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:16px;
+}
+
+/* ---------- 제목 ---------- */
+
+.facility-title{
+
+    height:24px;
+
+    display:flex;
+    align-items:center;
+
+    flex-shrink:0;
+}
+
+.facility-title h1{
+
+    margin:0;
+}
+
+/* ---------- 필터 ---------- */
+
+.facility-filter{
+
+    display:flex;
+    align-items:center;
+
+    margin-top:12px;
+    margin-bottom:12px;
+
+    flex-shrink:0;
+}
+
+.facility-filter-button{
+
+    padding:0;
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+}
+
+.facility-filter-button img{
+
+    width:47px;
+    height:22px;
+
+    display:block;
+}
+
+/* ---------- 리스트 ---------- */
+
+.facility-list{
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:8px;
+
+    min-height:0;
+
+    overflow-y:scroll;
+
+    scrollbar-width:thin;
+    scrollbar-color:var(--gray-300) var(--gray-50);
+    scrollbar-gutter:stable;
+}
+
+.facility-list::-webkit-scrollbar{
+
+    width:6px;
+}
+
+.facility-list::-webkit-scrollbar-thumb{
+
+    border-radius:999px;
+    background:var(--gray-300);
+}
+
+.facility-list::-webkit-scrollbar-track{
+
+    border-radius:999px;
+    background:var(--gray-50);
+}
+
+/* ---------- Empty ---------- */
+
+.facility-empty{
+
+    flex:1;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:var(--gray-200);
+}
+
+/* ---------- FAB ---------- */
+
+.facility-fab{
+
+    position:absolute;
+
+    right:8px;
+    bottom:8px;
+
+    padding:0;
+
+    border:none;
+    background:transparent;
+
+    cursor:pointer;
+
+    z-index:10;
+}
+
+.facility-fab img{
+
+    display:block;
+
+    width:auto;
+    height:48px;
+}
