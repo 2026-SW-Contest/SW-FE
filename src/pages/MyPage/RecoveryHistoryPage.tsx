@@ -1,54 +1,67 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
+import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
 import Layout from "../../components/layout/Layout";
 import LostCard from "../../components/ui/LostCard";
+import filterActiveIcon from "../../assets/icons/actions/filter-active.svg";
 import filterIcon from "../../assets/icons/actions/filter.svg";
-import { recoveryHistory } from "../../mock/mypage";
+import {
+  countActiveFilters,
+  createEmptyFilterSelection,
+  FilterSelection,
+  LOST_FILTER_DEFINITION,
+} from "../../constants/filterOptions";
+import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
+import { matchesLostFilters } from "../../utils/listFilters";
 
 import "./HistoryPage.css";
 
-const INITIAL_VISIBLE_COUNT = 5;
-
 const RecoveryHistoryPage = () => {
-  const [showAll, setShowAll] = useState(false);
+  const { recoveryItems } = useRecoveryRequests();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterSelection>(
+    createEmptyFilterSelection,
+  );
 
-  const visibleHistory = showAll
-    ? recoveryHistory
-    : recoveryHistory.slice(0, INITIAL_VISIBLE_COUNT);
+  const filteredHistory = useMemo(
+    () =>
+      recoveryItems.filter((item) => matchesLostFilters(item, filters)),
+    [filters, recoveryItems],
+  );
 
-  const canToggleHistory =
-    recoveryHistory.length > INITIAL_VISIBLE_COUNT;
+  const closeFilter = useCallback(() => setIsFilterOpen(false), []);
+  const activeFilterCount = countActiveFilters(filters);
 
   return (
     <Layout current="mypage">
       <div className="mypage-history-page">
         <div className="mypage-history-title-row">
           <h1 className="body01">분실물 회수 내역</h1>
-
-          {canToggleHistory && (
-            <button
-              type="button"
-              className="caption02 mypage-history-more"
-              onClick={() => setShowAll((previous) => !previous)}
-            >
-              {showAll ? "접기" : "더보기"}
-            </button>
-          )}
         </div>
 
         <div className="mypage-history-filter">
           <button
             type="button"
             className="mypage-history-filter-button"
-            aria-label="분실물 회수 내역 필터"
+            aria-label={
+              activeFilterCount > 0
+                ? `분실물 회수 내역 필터 열기, ${activeFilterCount}개 적용 중`
+                : "분실물 회수 내역 필터 열기"
+            }
+            aria-haspopup="dialog"
+            aria-expanded={isFilterOpen}
+            onClick={() => setIsFilterOpen(true)}
           >
-            <img src={filterIcon} alt="" />
+            <img
+              src={activeFilterCount > 0 ? filterActiveIcon : filterIcon}
+              alt=""
+            />
           </button>
         </div>
 
-        {visibleHistory.length > 0 ? (
+        {filteredHistory.length > 0 ? (
           <div className="mypage-history-card-list">
-            {visibleHistory.map((item) => (
+            {filteredHistory.map((item) => (
               <LostCard key={item.id} item={item} />
             ))}
           </div>
@@ -58,6 +71,14 @@ const RecoveryHistoryPage = () => {
           </div>
         )}
       </div>
+
+      <FilterBottomSheet
+        isOpen={isFilterOpen}
+        definition={LOST_FILTER_DEFINITION}
+        value={filters}
+        onApply={setFilters}
+        onClose={closeFilter}
+      />
     </Layout>
   );
 };

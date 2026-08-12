@@ -16,13 +16,14 @@ import {
   FACILITY_FILTER_DEFINITION,
   FilterSelection,
 } from "../../constants/filterOptions";
-import { facilityListData } from "../../mock";
+import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 import { matchesFacilityFilters } from "../../utils/listFilters";
 
 import "./FacilityPage.css";
 
 const FacilityPage = () => {
   const navigate = useNavigate();
+  const { facilityItems } = useFacilityInquiries();
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
@@ -31,10 +32,10 @@ const FacilityPage = () => {
 
   const filteredItems = useMemo(
     () =>
-      facilityListData.filter((item) =>
+      facilityItems.filter((item) =>
         matchesFacilityFilters(item, filters),
       ),
-    [filters],
+    [facilityItems, filters],
   );
 
   const closeFilter = useCallback(() => setIsFilterOpen(false), []);

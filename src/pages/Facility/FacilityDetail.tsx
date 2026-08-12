@@ -2,17 +2,18 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
+import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
 
-import { facilityListData } from "../../mock";
-import cameraIcon from "../../assets/icons/placeholders/no-photo.svg";
+import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 
 import "./FacilityDetail.css";
 
 const FacilityDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { facilityItems } = useFacilityInquiries();
 
-  const item = facilityListData.find(
+  const item = facilityItems.find(
     (item) => item.id === Number(id)
   );
 
@@ -39,37 +40,10 @@ const FacilityDetail = () => {
 
         {/* ---------- 사진 ---------- */}
 
-        <div className="facility-detail-image-wrapper">
-
-          {item.images && item.images.length > 0 ? (
-            <>
-              <img
-                className="facility-detail-image"
-                src={item.images[0]}
-                alt={item.title}
-              />
-
-              <div className="facility-detail-image-count">
-                1 / {item.images.length}
-              </div>
-            </>
-          ) : (
-            <div className="facility-detail-empty-image">
-
-              <img
-                src={cameraIcon}
-                alt="등록된 이미지 없음"
-                className="facility-detail-empty-image-icon"
-              />
-
-              <span className="body07 facility-detail-empty-image-text">
-                등록된 이미지가 없습니다.
-              </span>
-
-            </div>
-          )}
-
-        </div>
+        <DetailImageCarousel
+          images={item.images}
+          title={item.title}
+        />
 
         {/* ---------- 내용 ---------- */}
 

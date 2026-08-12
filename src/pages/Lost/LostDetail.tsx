@@ -1,18 +1,42 @@
-import { useParams } from "react-router-dom";
+import { useCallback, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
+import AlertModal from "../../components/common/AlertModal/AlertModal";
+import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
 import Layout from "../../components/layout/Layout";
+import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
 
 import { lostListData } from "../../mock";
-import cameraIcon from "../../assets/icons/placeholders/no-photo.svg";
+import OwnerRequestModal from "./OwnerRequestModal";
 
 import "./LostDetail.css";
 
 const LostDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { requestedIds, requestRecovery } = useRecoveryRequests();
+  const [isOwnerRequestOpen, setIsOwnerRequestOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const item = lostListData.find(
     (item) => item.id === Number(id)
   );
+  const isRequested = item ? requestedIds.includes(item.id) : false;
+
+  const closeOwnerRequest = useCallback(
+    () => setIsOwnerRequestOpen(false),
+    [],
+  );
+
+  const handleOwnerRequestOpen = () => {
+    if (localStorage.getItem("isLogin") !== "true") {
+      setIsLoginModalOpen(true);
+      return;
+    }
+
+    setIsOwnerRequestOpen(true);
+  };
 
   if (!item) {
     return (
@@ -37,37 +61,10 @@ const LostDetail = () => {
 
         {/* 사진 */}
 
-        <div className="lost-detail-image-wrapper">
-
-          {item.images && item.images.length > 0 ? (
-            <>
-              <img
-                className="lost-detail-image"
-                src={item.images[0]}
-                alt={item.title}
-              />
-
-              <div className="lost-detail-image-count">
-                1 / {item.images.length}
-              </div>
-            </>
-          ) : (
-            <div className="lost-detail-empty-image">
-
-              <img
-                src={cameraIcon}
-                alt="등록된 이미지 없음"
-                className="lost-detail-empty-image-icon"
-              />
-
-              <span className="body07 lost-detail-empty-image-text">
-                등록된 이미지가 없습니다.
-              </span>
-
-            </div>
-          )}
-
-        </div>
+        <DetailImageCarousel
+          images={item.images}
+          title={item.title}
+        />
 
         {/* 내용 */}
 
@@ -151,13 +148,42 @@ const LostDetail = () => {
 
         <div className="lost-detail-button">
 
-          <button className="primary-button">
-            소유자 확인 요청
+          <button
+            type="button"
+            className="primary-button"
+            disabled={isRequested}
+            onClick={handleOwnerRequestOpen}
+          >
+            {isRequested ? "소유자 확인 요청 완료" : "소유자 확인 요청"}
           </button>
 
         </div>
 
       </div>
+
+      <OwnerRequestModal
+        open={isOwnerRequestOpen}
+        onCancel={closeOwnerRequest}
+        onSubmit={() => {
+          requestRecovery(item.id);
+          closeOwnerRequest();
+        }}
+      />
+
+      <AlertModal
+        open={isLoginModalOpen}
+        message={"로그인이 필요한 서비스입니다.\n로그인 하시겠습니까?"}
+        cancelLabel="취소"
+        confirmLabel="확인"
+        onCancel={() => setIsLoginModalOpen(false)}
+        onConfirm={() =>
+          navigate("/login", {
+            state: {
+              from: `${location.pathname}${location.search}${location.hash}`,
+            },
+          })
+        }
+      />
     </Layout>
   );
 };

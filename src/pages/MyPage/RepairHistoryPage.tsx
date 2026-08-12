@@ -1,54 +1,67 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
+import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
 import Layout from "../../components/layout/Layout";
 import FacilityCard from "../../components/ui/FacilityCard";
+import filterActiveIcon from "../../assets/icons/actions/filter-active.svg";
 import filterIcon from "../../assets/icons/actions/filter.svg";
-import { repairHistory } from "../../mock/mypage";
+import {
+  countActiveFilters,
+  createEmptyFilterSelection,
+  FACILITY_FILTER_DEFINITION,
+  FilterSelection,
+} from "../../constants/filterOptions";
+import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
+import { matchesFacilityFilters } from "../../utils/listFilters";
 
 import "./HistoryPage.css";
 
-const INITIAL_VISIBLE_COUNT = 6;
-
 const RepairHistoryPage = () => {
-  const [showAll, setShowAll] = useState(false);
+  const { facilityItems } = useFacilityInquiries();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterSelection>(
+    createEmptyFilterSelection,
+  );
 
-  const visibleHistory = showAll
-    ? repairHistory
-    : repairHistory.slice(0, INITIAL_VISIBLE_COUNT);
+  const filteredHistory = useMemo(
+    () =>
+      facilityItems.filter((item) => matchesFacilityFilters(item, filters)),
+    [facilityItems, filters],
+  );
 
-  const canToggleHistory =
-    repairHistory.length > INITIAL_VISIBLE_COUNT;
+  const closeFilter = useCallback(() => setIsFilterOpen(false), []);
+  const activeFilterCount = countActiveFilters(filters);
 
   return (
     <Layout current="mypage">
       <div className="mypage-history-page">
         <div className="mypage-history-title-row">
           <h1 className="body01">수리·개선 문의 내역</h1>
-
-          {canToggleHistory && (
-            <button
-              type="button"
-              className="caption02 mypage-history-more"
-              onClick={() => setShowAll((previous) => !previous)}
-            >
-              {showAll ? "접기" : "더보기"}
-            </button>
-          )}
         </div>
 
         <div className="mypage-history-filter">
           <button
             type="button"
             className="mypage-history-filter-button"
-            aria-label="수리·개선 문의 내역 필터"
+            aria-label={
+              activeFilterCount > 0
+                ? `수리·개선 문의 내역 필터 열기, ${activeFilterCount}개 적용 중`
+                : "수리·개선 문의 내역 필터 열기"
+            }
+            aria-haspopup="dialog"
+            aria-expanded={isFilterOpen}
+            onClick={() => setIsFilterOpen(true)}
           >
-            <img src={filterIcon} alt="" />
+            <img
+              src={activeFilterCount > 0 ? filterActiveIcon : filterIcon}
+              alt=""
+            />
           </button>
         </div>
 
-        {visibleHistory.length > 0 ? (
+        {filteredHistory.length > 0 ? (
           <div className="mypage-history-card-list">
-            {visibleHistory.map((item) => (
+            {filteredHistory.map((item) => (
               <FacilityCard key={item.id} item={item} />
             ))}
           </div>
@@ -60,6 +73,14 @@ const RepairHistoryPage = () => {
           </div>
         )}
       </div>
+
+      <FilterBottomSheet
+        isOpen={isFilterOpen}
+        definition={FACILITY_FILTER_DEFINITION}
+        value={filters}
+        onApply={setFilters}
+        onClose={closeFilter}
+      />
     </Layout>
   );
 };
