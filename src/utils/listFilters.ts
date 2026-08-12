@@ -150,7 +150,7 @@ export const matchesFacilityFilters = (
   selection: FilterSelection,
 ) =>
   matchesSelectedOptions(
-    `${item.title} ${item.description}`,
+    `${item.type} ${item.title} ${item.description}`,
     selection.category,
     FACILITY_CATEGORY_MATCHERS,
   ) &&

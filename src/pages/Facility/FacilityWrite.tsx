@@ -1,4 +1,5 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import SelectionBottomSheet from "../../components/common/SelectionBottomSheet/SelectionBottomSheet";
 import Layout from "../../components/layout/Layout";
@@ -10,15 +11,28 @@ import {
   CAMPUS_LOCATION_OPTIONS,
   FACILITY_FILTER_DEFINITION,
 } from "../../constants/filterOptions";
+import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 
 import "./FacilityWrite.css";
 
+const readFileAsDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+
 const FacilityWrite = () => {
+  const navigate = useNavigate();
+  const { addFacilityInquiry } = useFacilityInquiries();
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openSelection, setOpenSelection] = useState<
     "category" | "location" | null
   >(null);
@@ -70,13 +84,37 @@ const FacilityWrite = () => {
     .map((option) => option.label)
     .join(", ");
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!isFormValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const imageUrls = await Promise.all(images.map(readFileAsDataUrl));
+
+      addFacilityInquiry({
+        title: title.trim(),
+        description: content.trim(),
+        type: categoryLabel,
+        location: locationLabel,
+        images: imageUrls.length > 0 ? imageUrls : undefined,
+      });
+
+      navigate("/facility", { replace: true });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout
       appBarVariant="detail"
       showBottomNavigation={false}
       scrollable={false}
     >
-      <div className="facility-write">
+      <form className="facility-write" onSubmit={handleSubmit}>
 
         <div className="facility-write-content">
 
@@ -275,8 +313,11 @@ const FacilityWrite = () => {
 
         <div className="facility-write-button">
 
-          <PrimaryButton disabled={!isFormValid}>
-            등록하기
+          <PrimaryButton
+            type="submit"
+            disabled={!isFormValid || isSubmitting}
+          >
+            {isSubmitting ? "등록 중..." : "등록하기"}
           </PrimaryButton>
 
         </div>
@@ -299,7 +340,7 @@ const FacilityWrite = () => {
           onClose={() => setOpenSelection(null)}
         />
 
-      </div>
+      </form>
     </Layout>
   );
 };

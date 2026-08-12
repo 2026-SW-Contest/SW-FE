@@ -19,6 +19,7 @@ import RecoveryHistoryPage from "../pages/MyPage/RecoveryHistoryPage";
 import RepairHistoryPage from "../pages/MyPage/RepairHistoryPage";
 import EditProfilePage from "../pages/MyPage/EditProfilePage";
 import ChangePasswordPage from "../pages/MyPage/ChangePasswordPage";
+import NotificationPage from "../pages/Notification/NotificationPage";
 
 const AppRouter = () => {
   return (
@@ -28,6 +29,7 @@ const AppRouter = () => {
       {/* 회원 */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/notifications" element={<NotificationPage />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route
         path="/mypage/recovery-history"

@@ -55,7 +55,7 @@ const Layout = ({
   rightIcon = "none",
 
   searchValue = "",
-  notificationCount = 0,
+  notificationCount,
 
   showAppBar = true,
   showBottomNavigation = true,

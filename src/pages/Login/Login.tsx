@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import Toast from "../../components/common/Toast/Toast";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
+import { mockUser } from "../../mock/user";
 
 import logo from "../../assets/icons/brand/logo-stacked.svg";
 import eyeOffIcon from "../../assets/icons/actions/visibility-off.svg";
@@ -14,6 +15,7 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
   const [email, setEmail] = useState("");
@@ -37,12 +39,24 @@ const Login = () => {
       return;
     }
 
-    // ===== Toast 테스트 =====
-    setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
-    setShowToast(true);
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    // 실제 API 연결 전까지는 여기서 종료
-    return;
+    const isMockUser =
+      email.trim() === mockUser.email && password === mockUser.password;
+
+    if (!isMockUser) {
+      setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
+      setShowToast(true);
+      setIsSubmitting(false);
+      return;
+    }
+
+    localStorage.setItem("isLogin", "true");
+
+    const returnPath = (location.state as { from?: string } | null)?.from;
+
+    navigate(returnPath || "/mypage", { replace: true });
   };
 
   return (
@@ -53,7 +67,13 @@ const Login = () => {
       showBottomNavigation={false}
       scrollable={false}
     >
-      <div className="login">
+      <form
+        className="login"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleLogin();
+        }}
+      >
 
         {/* ---------- 로고 ---------- */}
 
@@ -113,6 +133,12 @@ const Login = () => {
                     event.target.value
                   )
                 }
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter") return;
+
+                  event.preventDefault();
+                  void handleLogin();
+                }}
               />
 
               {password.length > 0 && (
@@ -157,11 +183,11 @@ const Login = () => {
         <div className="login-button">
 
           <PrimaryButton
+            type="submit"
             disabled={
               !isFormValid ||
               isSubmitting
             }
-            onClick={handleLogin}
           >
             {isSubmitting
               ? "로그인 중..."
@@ -214,7 +240,7 @@ const Login = () => {
           onClose={() => setShowToast(false)}
         />
 
-      </div>
+      </form>
     </Layout>
   );
 };

@@ -5,8 +5,7 @@ import closeIcon from "../../assets/icons/actions/close.svg";
 import clearInputIcon from "../../assets/icons/actions/clear-input.svg";
 import searchIcon from "../../assets/icons/actions/search.svg";
 import logoIcon from "../../assets/icons/brand/logo-horizontal.svg";
-import bellActiveIcon from "../../assets/icons/notifications/bell-active.svg";
-import bellDefaultIcon from "../../assets/icons/notifications/bell.svg";
+import NotificationBellButton from "../common/NotificationBellButton/NotificationBellButton";
 
 import { useNavigate } from "react-router-dom";
 
@@ -35,7 +34,7 @@ const AppBar = ({
   variant = "main",
   title = "",
   searchValue = "",
-  notificationCount = 0,
+  notificationCount,
   rightIcon = "none",
 
   onBack,
@@ -47,8 +46,6 @@ const AppBar = ({
   onNotificationClick,
 }: AppBarProps) => {
   const navigate = useNavigate();
-
-  const hasNotification = notificationCount > 0;
 
   /* ---------- Search ---------- */
 
@@ -156,22 +153,12 @@ const AppBar = ({
         <img src={logoIcon} alt="Connecthing" />
       </div>
 
-      <button
-        type="button"
+      <NotificationBellButton
         className="app-bar-notification-button"
+        iconClassName="app-bar-notification-icon"
+        notificationCount={notificationCount}
         onClick={onNotificationClick}
-        aria-label="알림"
-      >
-        <img
-          src={
-            hasNotification
-              ? bellActiveIcon
-              : bellDefaultIcon
-          }
-          alt=""
-          className="app-bar-notification-icon"
-        />
-      </button>
+      />
     </header>
   );
 };

@@ -72,8 +72,6 @@
 
     box-sizing:border-box;
 
-    border-bottom:1px solid var(--gray-50);
-
     flex-shrink:0;
 }
 

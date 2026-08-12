@@ -7,14 +7,35 @@ import FacilityPreviewCard from "../../components/ui/FacilityPreviewCard/Facilit
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 
 import {
-  facilityListData,
   lostListData,
 } from "../../mock";
+import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 
 import "./Landing.css";
 
+const PREVIEW_ITEM_COUNT = 5;
+
+const getItemDateTime = (date: string) => {
+  const match = date.match(/^(\d{2,4})\.(\d{2})\.(\d{2})/);
+
+  if (!match) return 0;
+
+  const rawYear = Number(match[1]);
+  const year = rawYear < 100 ? 2000 + rawYear : rawYear;
+
+  return new Date(year, Number(match[2]) - 1, Number(match[3])).getTime();
+};
+
+const getLatestItems = <T extends { date: string }>(items: T[]) =>
+  [...items]
+    .sort((first, second) =>
+      getItemDateTime(second.date) - getItemDateTime(first.date),
+    )
+    .slice(0, PREVIEW_ITEM_COUNT);
+
 const Landing = () => {
   const navigate = useNavigate();
+  const { facilityItems } = useFacilityInquiries();
 
   return (
     <Layout current="home">
@@ -41,7 +62,7 @@ const Landing = () => {
           </div>
 
           <LostPreviewCard
-            items={lostListData}
+            items={getLatestItems(lostListData)}
           />
 
         </section>
@@ -68,7 +89,7 @@ const Landing = () => {
           <div className="landing-facility-list">
 
             <FacilityPreviewCard
-              items={facilityListData}
+              items={getLatestItems(facilityItems)}
             />
 
           </div>

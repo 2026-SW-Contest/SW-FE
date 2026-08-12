@@ -1,18 +1,28 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import AlertModal from "../../components/common/AlertModal/AlertModal";
 import Layout from "../../components/layout/Layout";
+import NotificationBellButton from "../../components/common/NotificationBellButton/NotificationBellButton";
 
 import { mockUser } from "../../mock/user";
-import { recoveryHistory } from "../../mock/mypage";
+import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
 
 import "./MyPage.css";
 
 import profileIcon from "../../assets/icons/account/profile.svg";
 import chevronRightIcon from "../../assets/icons/actions/chevron-right.svg";
-import bellIcon from "../../assets/icons/notifications/bell.svg";
 
 const MyPage = () => {
   const navigate = useNavigate();
+  const { recoveryItems } = useRecoveryRequests();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLogin");
+    setIsLogoutModalOpen(false);
+    navigate("/", { replace: true });
+  };
 
   return (
     <Layout
@@ -35,15 +45,9 @@ const MyPage = () => {
             </span>
           </div>
 
-          <button
-            type="button"
+          <NotificationBellButton
             className="mypage-profile-bell"
-          >
-            <img
-              src={bellIcon}
-              alt="알림"
-            />
-          </button>
+          />
         </section>
 
         {/* ---------- 활동 ---------- */}
@@ -74,7 +78,7 @@ const MyPage = () => {
             </button>
 
             <div className="mypage-history-list">
-              {recoveryHistory.slice(0, 3).map((item) => (
+              {recoveryItems.slice(0, 3).map((item) => (
                 <div
                   key={item.id}
                   className="mypage-history-item"
@@ -140,9 +144,7 @@ const MyPage = () => {
           <button
             type="button"
             className="mypage-setting"
-            onClick={() => {
-              console.log("로그아웃");
-            }}
+            onClick={() => setIsLogoutModalOpen(true)}
           >
             <span className="body05">
               로그아웃
@@ -171,6 +173,15 @@ const MyPage = () => {
             />
           </button>
         </section>
+
+        <AlertModal
+          open={isLogoutModalOpen}
+          message="로그아웃 하시겠습니까?"
+          cancelLabel="취소"
+          confirmLabel="확인"
+          onCancel={() => setIsLogoutModalOpen(false)}
+          onConfirm={handleLogout}
+        />
       </div>
     </Layout>
   );
