@@ -1,5 +1,10 @@
 export type AdminStatus = "waiting" | "inProgress" | "resolved";
-export type AdminSection = "dashboard" | "lost" | "requests" | "facility";
+export type AdminSection =
+  | "dashboard"
+  | "lost"
+  | "requests"
+  | "facility"
+  | "account";
 
 export interface AdminLostItem {
   id: number;
@@ -27,10 +32,31 @@ export interface OwnerRequest {
 export interface AdminFacilityItem {
   id: number;
   title: string;
+  requesterId?: number;
+  requesterName?: string;
+  studentNumber?: string;
+  requesterEmail?: string;
   category: string;
+  categoryId?: number;
   location: string;
+  locationId?: number;
   submittedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   description: string;
   status: AdminStatus;
+  statusName?: string;
+  thumbnailUrl?: string | null;
+  imageUrls?: string[];
+  attachments?: Array<{
+    fileId: number;
+    originalFilename: string;
+    fileUrl: string;
+  }>;
+  adminResponses?: Array<{
+    responseId: number;
+    content: string;
+    createdAt: string;
+  }>;
   answer?: string;
 }
