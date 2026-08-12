@@ -6,10 +6,8 @@ import LostPreviewCard from "../../components/ui/LostPreviewCard/LostPreviewCard
 import FacilityPreviewCard from "../../components/ui/FacilityPreviewCard/FacilityPreviewCard";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 
-import {
-  lostListData,
-} from "../../mock";
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
+import { useLostItems } from "../../context/LostItemContext";
 
 import "./Landing.css";
 
@@ -36,6 +34,7 @@ const getLatestItems = <T extends { date: string }>(items: T[]) =>
 const Landing = () => {
   const navigate = useNavigate();
   const { facilityItems } = useFacilityInquiries();
+  const { lostItems } = useLostItems();
 
   return (
     <Layout current="home">
@@ -62,7 +61,7 @@ const Landing = () => {
           </div>
 
           <LostPreviewCard
-            items={getLatestItems(lostListData)}
+            items={getLatestItems(lostItems)}
           />
 
         </section>

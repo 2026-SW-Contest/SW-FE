@@ -9,9 +9,75 @@
     padding:16px;
 }
 
+.search-recent-header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+}
+
 .search-recent h2{
-    margin:0 0 24px;
+    margin:0;
     color:var(--gray-800);
+}
+
+.search-recent-delete-all{
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--gray-400);
+    cursor:pointer;
+}
+
+.search-recent-delete-all:disabled,
+.search-recent-delete:disabled{
+    cursor:default;
+    opacity:.5;
+}
+
+.search-recent-chip-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.search-recent-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 11px 6px 12px;
+    border:1px solid var(--gray-100);
+    border-radius:8px;
+    background:var(--white);
+}
+
+.search-recent-keyword,
+.search-recent-delete{
+    padding:0;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+}
+
+.search-recent-keyword{
+    color:var(--gray-500);
+    white-space:nowrap;
+}
+
+.search-recent-delete{
+    width:16px;
+    height:21px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+}
+
+.search-recent-delete img{
+    width:16px;
+    height:16px;
+    display:block;
 }
 
 /* ---------- Empty ---------- */

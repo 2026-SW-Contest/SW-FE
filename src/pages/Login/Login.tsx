@@ -5,7 +5,9 @@ import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import Toast from "../../components/common/Toast/Toast";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
-import { mockUser } from "../../mock/user";
+import { useAuth } from "../../context/AuthContext";
+import { createAdminSession } from "../../api/auth";
+import { isAdminUser, redirectToAdminApp } from "../../utils/authRole";
 
 import logo from "../../assets/icons/brand/logo-stacked.svg";
 import eyeOffIcon from "../../assets/icons/actions/visibility-off.svg";
@@ -16,7 +18,7 @@ import "./Login.css";
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,21 +44,24 @@ const Login = () => {
     setIsSubmitting(true);
     setErrorMessage("");
 
-    const isMockUser =
-      email.trim() === mockUser.email && password === mockUser.password;
+    try {
+      const user = await login(email.trim(), password);
 
-    if (!isMockUser) {
+      if (isAdminUser(user)) {
+        await createAdminSession({ email: email.trim(), password });
+        redirectToAdminApp(user);
+        return;
+      }
+
+      const returnPath = (location.state as { from?: string } | null)?.from;
+      navigate(returnPath || "/mypage", { replace: true });
+    } catch (error) {
       setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
       setShowToast(true);
+      setErrorMessage(error instanceof Error ? error.message : "");
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    localStorage.setItem("isLogin", "true");
-
-    const returnPath = (location.state as { from?: string } | null)?.from;
-
-    navigate(returnPath || "/mypage", { replace: true });
   };
 
   return (

@@ -2,6 +2,7 @@ import "./LostCard.css";
 
 import { useNavigate } from "react-router-dom";
 
+import emptyImage from "../../../assets/icons/placeholders/image-placeholder.svg";
 import { LostItem } from "../../../types/lost";
 
 interface LostCardProps {
@@ -22,7 +23,9 @@ const LostCard = ({
 
       <div className="lost-card-image-wrapper">
         <img
-          className="lost-card-image"
+          className={`lost-card-image ${
+            item.image === emptyImage ? "placeholder" : "uploaded"
+          }`}
           src={item.image}
           alt={item.title}
         />

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
@@ -5,17 +6,67 @@ import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
 
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
+import { getFacilityRequest } from "../../api/facility";
+import { FacilityItem } from "../../types/facility";
 
 import "./FacilityDetail.css";
+
+const formatAdminResponseDate = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  })
+    .format(date)
+    .replace(/\.\s?/g, ".")
+    .replace(/\.$/, "");
+};
 
 const FacilityDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { facilityItems } = useFacilityInquiries();
 
-  const item = facilityItems.find(
+  const listItem = facilityItems.find(
     (item) => item.id === Number(id)
   );
+  const [item, setItem] = useState<FacilityItem | undefined>(listItem);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const facilityRequestId = Number(id);
+    if (!Number.isFinite(facilityRequestId)) {
+      setIsLoading(false);
+      return;
+    }
+
+    let active = true;
+    void getFacilityRequest(facilityRequestId)
+      .then((response) => {
+        if (active) setItem(response);
+      })
+      .catch(() => {
+        // 목록 데이터가 있으면 상세 조회 실패 시에도 기본 정보는 유지한다.
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (isLoading && !item) {
+    return (
+      <Layout appBarVariant="detail" showBottomNavigation={false}>
+        <div className="facility-detail-empty">불러오는 중...</div>
+      </Layout>
+    );
+  }
 
   if (!item) {
     return (
@@ -97,29 +148,65 @@ const FacilityDetail = () => {
             {item.detailDescription}
           </p>
 
+          {(item.adminResponses?.length ?? 0) > 0 && (
+            <section
+              className="facility-detail-responses"
+              aria-label="관리자 답변 내역"
+            >
+              {item.adminResponses?.map((response) => (
+                <article
+                  key={response.responseId}
+                  className="facility-detail-response"
+                >
+                  <div className="facility-detail-response-copy">
+                    <span
+                      className="facility-detail-response-icon"
+                      aria-hidden="true"
+                    >
+                      ↳
+                    </span>
+                    <p className="facility-detail-response-content">
+                      {response.content}
+                    </p>
+                  </div>
+                  <time
+                    className="facility-detail-response-date"
+                    dateTime={response.createdAt}
+                  >
+                    {formatAdminResponseDate(response.createdAt)}
+                  </time>
+                </article>
+              ))}
+            </section>
+          )}
+
         </div>
 
-        <div className="facility-detail-button">
+        {(item.deletable || item.editable) && (
+          <div className="facility-detail-button">
+            {item.deletable && (
+              <button
+                type="button"
+                className="facility-detail-delete body02"
+                onClick={() => {
+                  // 추후 삭제 확인창과 API 연결
+                }}
+              >
+                삭제하기
+              </button>
+            )}
 
-        <button
-            type="button"
-            className="facility-detail-delete body02"
-            onClick={() => {
-            // 추후 삭제 API 연결
-            }}
-        >
-          삭제하기
-        </button>
-
-        <button
-            type="button"
-            className="facility-detail-edit body02"
-            onClick={() => navigate("/facility/write")}
-        >
-          수정하기
-        </button>
-
-        </div>
+            {item.editable && (
+              <button
+                type="button"
+                className="facility-detail-edit body02"
+                onClick={() => navigate(`/facility/${item.id}/edit`)}
+              >
+                수정하기
+              </button>
+            )}
+          </div>
+        )}
 
       </div>
     </Layout>

@@ -5,15 +5,23 @@ import logoSymbol from "../../assets/icons/brand/logo-symbol.svg";
 import AlertModal from "../../components/common/AlertModal/AlertModal";
 import Layout from "../../components/layout/Layout";
 import { useNotifications } from "../../context/NotificationContext";
+import { useAuth } from "../../context/AuthContext";
 
 import "./NotificationPage.css";
 
 const NotificationPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { notifications, markAsRead } = useNotifications();
-  const isLoggedIn = localStorage.getItem("isLogin") === "true";
-  const [showLoginModal, setShowLoginModal] = useState(!isLoggedIn);
+  const {
+    notifications,
+    markAsRead,
+    markAllAsRead,
+    unreadCount,
+    isLoading,
+    error,
+  } = useNotifications();
+  const { isAuthenticated } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(!isAuthenticated);
 
   return (
     <Layout
@@ -22,9 +30,24 @@ const NotificationPage = () => {
       scrollable={false}
     >
       <div className="notification-page">
-        <h1 className="notification-title">알림</h1>
+        <div className="notification-heading">
+          <h1 className="notification-title">알림</h1>
+          {isAuthenticated && unreadCount > 0 ? (
+            <button
+              type="button"
+              className="notification-read-all"
+              onClick={() => void markAllAsRead().catch(() => undefined)}
+            >
+              모두 읽음
+            </button>
+          ) : null}
+        </div>
 
-        {isLoggedIn && notifications.length > 0 ? (
+        {isAuthenticated && isLoading ? (
+          <div className="notification-empty">
+            <p className="body05">알림을 불러오는 중입니다.</p>
+          </div>
+        ) : isAuthenticated && notifications.length > 0 ? (
           <ul className="notification-list">
             {notifications.map((notification) => (
               <li
@@ -36,9 +59,15 @@ const NotificationPage = () => {
                 <button
                   type="button"
                   className="notification-item"
-                  onClick={() => {
-                    markAsRead(notification.id);
-                    navigate(notification.targetPath);
+                  onClick={async () => {
+                    try {
+                      await markAsRead(notification.id);
+                      if (notification.targetPath) {
+                        navigate(notification.targetPath);
+                      }
+                    } catch {
+                      // API 실패 시 읽음 상태와 화면 이동을 유지하지 않는다.
+                    }
                   }}
                 >
                   <img
@@ -59,9 +88,11 @@ const NotificationPage = () => {
               </li>
             ))}
           </ul>
-        ) : isLoggedIn ? (
+        ) : isAuthenticated ? (
           <div className="notification-empty">
-            <p className="body05">도착한 알림이 없습니다.</p>
+            <p className="body05">
+              {error || "도착한 알림이 없습니다."}
+            </p>
           </div>
         ) : null}
       </div>

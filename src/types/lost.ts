@@ -23,4 +23,10 @@ export interface LostItem {
   foundDate?: string;
 
   detailDescription?: string;
+
+  itemClaimId?: number;
+  claimStatus?: "WAITING" | "APPROVED" | "REJECTED";
+  claimStatusName?: string;
+  decisionMessage?: string | null;
+  decidedAt?: string | null;
 }

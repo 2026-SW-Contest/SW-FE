@@ -14,20 +14,21 @@ import {
   FilterSelection,
   LOST_FILTER_DEFINITION,
 } from "../../constants/filterOptions";
-import { lostListData } from "../../mock";
+import { useLostItems } from "../../context/LostItemContext";
 import { matchesLostFilters } from "../../utils/listFilters";
 
 import "./LostPage.css";
 
 const LostPage = () => {
+  const { lostItems, isLoading } = useLostItems();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
     createEmptyFilterSelection,
   );
 
   const filteredItems = useMemo(
-    () => lostListData.filter((item) => matchesLostFilters(item, filters)),
-    [filters],
+    () => lostItems.filter((item) => matchesLostFilters(item, filters)),
+    [filters, lostItems],
   );
 
   const closeFilter = useCallback(() => setIsFilterOpen(false), []);
@@ -63,7 +64,9 @@ const LostPage = () => {
           </button>
         </div>
 
-        {filteredItems.length > 0 ? (
+        {isLoading ? (
+          <div className="lost-empty"><p className="body05">불러오는 중...</p></div>
+        ) : filteredItems.length > 0 ? (
           <div className="lost-list">
 
             {filteredItems.map((item) => (

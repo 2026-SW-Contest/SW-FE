@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import bellActiveIcon from "../../../assets/icons/notifications/bell-active.svg";
 import bellDefaultIcon from "../../../assets/icons/notifications/bell.svg";
 import { useNotifications } from "../../../context/NotificationContext";
+import { useAuth } from "../../../context/AuthContext";
 import AlertModal from "../AlertModal/AlertModal";
 
 interface NotificationBellButtonProps {
@@ -22,10 +23,10 @@ const NotificationBellButton = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { unreadCount } = useNotifications();
+  const { isAuthenticated } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const isLoggedIn = localStorage.getItem("isLogin") === "true";
-  const count = isLoggedIn ? (notificationCount ?? unreadCount) : 0;
+  const count = isAuthenticated ? (notificationCount ?? unreadCount) : 0;
 
   const handleClick = () => {
     if (onClick) {
@@ -33,7 +34,7 @@ const NotificationBellButton = ({
       return;
     }
 
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
     }

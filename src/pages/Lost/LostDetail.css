@@ -91,8 +91,7 @@
 /* ---------- 본문 ---------- */
 
 .lost-detail-content{
-
-    height:338px;
+    min-height:338px;
 
     padding:16px;
 
@@ -188,6 +187,45 @@
   white-space: pre-wrap;
 
   line-height: 160%;
+}
+
+.lost-detail-claim-result {
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-top:20px;
+  padding:12px;
+  border-radius:8px;
+  background:var(--gray-50);
+}
+
+.lost-detail-claim-result.rejected {
+  background:#FFF4F4;
+}
+
+.lost-detail-claim-result-arrow {
+  color:var(--gray-300);
+  line-height:150%;
+}
+
+.lost-detail-claim-result-content {
+  min-width:0;
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  gap:4px;
+}
+
+.lost-detail-claim-result-content p {
+  margin:0;
+  color:var(--gray-600);
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.lost-detail-claim-result-content time {
+  align-self:flex-end;
+  color:var(--gray-300);
 }
 
 /* ---------- 버튼 ---------- */

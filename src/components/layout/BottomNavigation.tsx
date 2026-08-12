@@ -1,6 +1,7 @@
 import "./BottomNavigation.css";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 import homeIcon from "../../assets/icons/navigation/home.svg";
 import homeActiveIcon from "../../assets/icons/navigation/home-active.svg";
@@ -25,9 +26,7 @@ const BottomNavigation = ({
   current,
 }: BottomNavigationProps) => {
   const navigate = useNavigate();
-
-  const isLogin =
-    localStorage.getItem("isLogin") === "true";
+  const { isAuthenticated } = useAuth();
 
   return (
     <nav className="bottom-nav">
@@ -103,7 +102,7 @@ const BottomNavigation = ({
               ? facilitiesActiveIcon
               : facilitiesIcon
           }
-          alt="시설·기자재"
+          alt="수리·개선"
         />
         <span
           className={
@@ -112,7 +111,7 @@ const BottomNavigation = ({
               : "caption02"
           }
         >
-          시설·기자재
+          수리·개선
         </span>
       </div>
 
@@ -121,7 +120,7 @@ const BottomNavigation = ({
         className={`nav-item ${current === "mypage" ? "active" : ""}`}
         onClick={() =>
           navigate(
-            isLogin
+            isAuthenticated
               ? "/mypage"
               : "/login"
           )

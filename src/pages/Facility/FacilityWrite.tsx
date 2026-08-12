@@ -1,38 +1,39 @@
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import SelectionBottomSheet from "../../components/common/SelectionBottomSheet/SelectionBottomSheet";
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
+import Toast from "../../components/common/Toast/Toast";
 
 import chevronRightIcon from "../../assets/icons/actions/chevron-right.svg";
+import closeIcon from "../../assets/icons/actions/close.svg";
 import plusIcon from "../../assets/icons/actions/plus.svg";
-import {
-  CAMPUS_LOCATION_OPTIONS,
-  FACILITY_FILTER_DEFINITION,
-} from "../../constants/filterOptions";
+import { getFacilityCategories, getLocations } from "../../api/reference";
+import { getFacilityRequest } from "../../api/facility";
+import { FilterOption } from "../../constants/filterOptions";
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 
 import "./FacilityWrite.css";
 
-const readFileAsDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
-
 const FacilityWrite = () => {
   const navigate = useNavigate();
-  const { addFacilityInquiry } = useFacilityInquiries();
+  const { id } = useParams();
+  const facilityRequestId = Number(id);
+  const isEditMode = Number.isFinite(facilityRequestId);
+  const { addFacilityInquiry, editFacilityInquiry } = useFacilityInquiries();
   const [categories, setCategories] = useState<string[]>([]);
   const [locations, setLocations] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [isInitializing, setIsInitializing] = useState(isEditMode);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<FilterOption[]>([]);
+  const [locationOptions, setLocationOptions] = useState<FilterOption[]>([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
   const [openSelection, setOpenSelection] = useState<
     "category" | "location" | null
   >(null);
@@ -40,13 +41,89 @@ const FacilityWrite = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
 
+  useEffect(() => {
+    let active = true;
+
+    void Promise.all([getFacilityCategories(), getLocations()])
+      .then(([categoryResponse, locationResponse]) => {
+        if (!active) return;
+        setCategoryOptions(
+          categoryResponse.map((category) => ({
+            value: String(category.categoryId),
+            label: category.categoryName,
+          })),
+        );
+        setLocationOptions(
+          locationResponse.map((location) => ({
+            value: String(location.locationId),
+            label: location.locationCode
+              ? `${location.locationCode} ${location.locationName}`
+              : location.locationName,
+          })),
+        );
+      })
+      .catch((error) => {
+        if (!active) return;
+        setToastMessage(
+          error instanceof Error
+            ? error.message
+            : "카테고리와 장소를 불러오지 못했습니다.",
+        );
+        setShowToast(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isEditMode) return;
+
+    let active = true;
+    void getFacilityRequest(facilityRequestId)
+      .then((item) => {
+        if (!active) return;
+        if (!item.editable) {
+          navigate(`/facility/${facilityRequestId}`, { replace: true });
+          return;
+        }
+
+        setCategories(item.categoryId ? [String(item.categoryId)] : []);
+        setLocations(item.locationId ? [String(item.locationId)] : []);
+        setTitle(item.title);
+        setContent(item.detailDescription ?? item.description);
+        setExistingImages(item.images ?? []);
+      })
+      .catch((error) => {
+        if (!active) return;
+        setToastMessage(
+          error instanceof Error ? error.message : "문의 내용을 불러오지 못했습니다.",
+        );
+        setShowToast(true);
+      })
+      .finally(() => {
+        if (active) setIsInitializing(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [facilityRequestId, isEditMode, navigate]);
+
+  useEffect(() => {
+    if (contentTextareaRef.current) {
+      resizeContentTextarea(contentTextareaRef.current);
+    }
+  }, [content]);
+
   const resizeContentTextarea = (textarea: HTMLTextAreaElement) => {
     textarea.style.height = "auto";
     textarea.style.height = `${Math.max(textarea.scrollHeight, 112)}px`;
   };
 
   const handleUploadClick = () => {
-    if (images.length >= 5) return;
+    if (existingImages.length + images.length >= 5) return;
 
     fileInputRef.current?.click();
   };
@@ -60,7 +137,7 @@ const FacilityWrite = () => {
 
     if (selectedFiles.length === 0) return;
 
-    const remainCount = 5 - images.length;
+    const remainCount = 5 - existingImages.length - images.length;
 
     const filesToAdd = selectedFiles.slice(0, remainCount);
 
@@ -75,14 +152,46 @@ const FacilityWrite = () => {
     title.trim() !== "" &&
     content.trim() !== "";
 
-  const categoryLabel = FACILITY_FILTER_DEFINITION.category
-    .filter((option) => categories.includes(option.value))
-    .map((option) => option.label)
-    .join(", ");
-  const locationLabel = CAMPUS_LOCATION_OPTIONS
-    .filter((option) => locations.includes(option.value))
-    .map((option) => option.label)
-    .join(", ");
+  const categoryLabel = useMemo(
+    () =>
+      categoryOptions
+        .filter((option) => categories.includes(option.value))
+        .map((option) => option.label)
+        .join(", "),
+    [categories, categoryOptions],
+  );
+  const locationLabel = useMemo(
+    () =>
+      locationOptions
+        .filter((option) => locations.includes(option.value))
+        .map((option) => option.label)
+        .join(", "),
+    [locationOptions, locations],
+  );
+
+  const imagePreviewUrls = useMemo(
+    () => images.map((image) => URL.createObjectURL(image)),
+    [images],
+  );
+
+  useEffect(
+    () => () => {
+      imagePreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+    },
+    [imagePreviewUrls],
+  );
+
+  const handleRemoveExistingImage = (indexToRemove: number) => {
+    setExistingImages((current) =>
+      current.filter((_, index) => index !== indexToRemove),
+    );
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImages((current) =>
+      current.filter((_, index) => index !== indexToRemove),
+    );
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -92,17 +201,34 @@ const FacilityWrite = () => {
     setIsSubmitting(true);
 
     try {
-      const imageUrls = await Promise.all(images.map(readFileAsDataUrl));
-
-      addFacilityInquiry({
+      const inquiry = {
         title: title.trim(),
         description: content.trim(),
-        type: categoryLabel,
-        location: locationLabel,
-        images: imageUrls.length > 0 ? imageUrls : undefined,
-      });
+        categoryIds: categories.map(Number),
+        locationIds: locations.map(Number),
+        images,
+      };
 
-      navigate("/facility", { replace: true });
+      if (isEditMode) {
+        await editFacilityInquiry(facilityRequestId, inquiry);
+      } else {
+        await addFacilityInquiry(inquiry);
+      }
+
+      if (isEditMode) {
+        // 상세 → 수정으로 진입했으므로 새 상세 이력을 쌓지 않고
+        // 기존 상세 이력으로 돌아간다.
+        navigate(-1);
+      } else {
+        navigate("/facility", { replace: true });
+      }
+    } catch (error) {
+      setToastMessage(
+        error instanceof Error
+          ? error.message
+          : `시설 문의 ${isEditMode ? "수정" : "등록"}에 실패했습니다.`,
+      );
+      setShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -111,8 +237,10 @@ const FacilityWrite = () => {
   return (
     <Layout
       appBarVariant="detail"
+      appBarTitle={isEditMode ? "문의 수정" : undefined}
       showBottomNavigation={false}
       scrollable={false}
+      onBack={isEditMode ? () => navigate(-1) : undefined}
     >
       <form className="facility-write" onSubmit={handleSubmit}>
 
@@ -267,7 +395,7 @@ const FacilityWrite = () => {
                 type="button"
                 className="facility-write-upload"
                 onClick={handleUploadClick}
-                disabled={images.length >= 5}
+                disabled={existingImages.length + images.length >= 5}
               >
                 <img
                   src={plusIcon}
@@ -276,7 +404,7 @@ const FacilityWrite = () => {
                 />
 
                 <span className="caption05 facility-write-upload-count">
-                  ({images.length}/5)
+                  ({existingImages.length + images.length}/5)
                 </span>
 
               </button>
@@ -290,6 +418,27 @@ const FacilityWrite = () => {
                 onChange={handleImageChange}
               />
 
+              {existingImages.map((image, index) => (
+                <div
+                  key={`${image}-${index}`}
+                  className="facility-write-preview"
+                >
+                  <img
+                    src={image}
+                    alt={`기존 첨부 이미지 ${index + 1}`}
+                    className="facility-write-preview-image"
+                  />
+                  <button
+                    type="button"
+                    className="facility-write-preview-remove"
+                    aria-label={`기존 첨부 이미지 ${index + 1} 삭제`}
+                    onClick={() => handleRemoveExistingImage(index)}
+                  >
+                    <img src={closeIcon} alt="" />
+                  </button>
+                </div>
+              ))}
+
               {images.map((image, index) => (
 
                 <div
@@ -297,10 +446,18 @@ const FacilityWrite = () => {
                   className="facility-write-preview"
                 >
                   <img
-                    src={URL.createObjectURL(image)}
+                    src={imagePreviewUrls[index]}
                     alt={`첨부 이미지 ${index + 1}`}
                     className="facility-write-preview-image"
                   />
+                  <button
+                    type="button"
+                    className="facility-write-preview-remove"
+                    aria-label={`첨부 이미지 ${index + 1} 삭제`}
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    <img src={closeIcon} alt="" />
+                  </button>
                 </div>
 
               ))}
@@ -315,9 +472,13 @@ const FacilityWrite = () => {
 
           <PrimaryButton
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={!isFormValid || isSubmitting || isInitializing}
           >
-            {isSubmitting ? "등록 중..." : "등록하기"}
+            {isSubmitting
+              ? `${isEditMode ? "수정" : "등록"} 중...`
+              : isEditMode
+                ? "수정하기"
+                : "등록하기"}
           </PrimaryButton>
 
         </div>
@@ -325,8 +486,9 @@ const FacilityWrite = () => {
         <SelectionBottomSheet
           isOpen={openSelection === "category"}
           title="카테고리 선택"
-          options={FACILITY_FILTER_DEFINITION.category}
+          options={categoryOptions}
           value={categories}
+          allowMultiple={false}
           onApply={setCategories}
           onClose={() => setOpenSelection(null)}
         />
@@ -334,10 +496,17 @@ const FacilityWrite = () => {
         <SelectionBottomSheet
           isOpen={openSelection === "location"}
           title="장소 선택"
-          options={CAMPUS_LOCATION_OPTIONS}
+          options={locationOptions}
           value={locations}
+          allowMultiple={false}
           onApply={setLocations}
           onClose={() => setOpenSelection(null)}
+        />
+
+        <Toast
+          visible={showToast}
+          message={toastMessage}
+          onClose={() => setShowToast(false)}
         />
 
       </form>
