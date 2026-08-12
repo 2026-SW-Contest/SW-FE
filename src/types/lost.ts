@@ -1,3 +1,5 @@
+export type LostStatus = "stored" | "inProgress" | "resolved";
+
 export interface LostItem {
   id: number;
 
@@ -14,6 +16,7 @@ export interface LostItem {
   date: string;
 
   statusIcon: string;
+  status: LostStatus;
 
   storageLocation?: string;
   foundLocation?: string;

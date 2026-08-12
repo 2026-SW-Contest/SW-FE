@@ -2,6 +2,8 @@ import { FacilityItem } from "../types/facility";
 
 import emptyImage from "../assets/icons/placeholders/image-placeholder.svg";
 import waitingStatusIcon from "../assets/icons/status/waiting.svg";
+import inProgressStatusIcon from "../assets/icons/status/in-progress.svg";
+import resolvedStatusIcon from "../assets/icons/status/resolved.svg";
 
 export const facilityListData: FacilityItem[] = [
   {
@@ -19,6 +21,7 @@ export const facilityListData: FacilityItem[] = [
     location: "방목학술정보관 자율열람실",
 
     statusIcon: waitingStatusIcon,
+    status: "waiting",
 
     detailDescription:
       "도서관 자율열람실 의자 다리가 흔들려 사용이 어렵습니다. 빠른 점검 부탁드립니다.",
@@ -38,7 +41,8 @@ export const facilityListData: FacilityItem[] = [
     type: "시설",
     location: "본관 1층",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     detailDescription:
       "천장에서 지속적으로 누수가 발생하여 바닥이 미끄럽습니다.",
@@ -58,7 +62,8 @@ export const facilityListData: FacilityItem[] = [
     type: "시설",
     location: "학생회관 2층",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     detailDescription:
       "에어컨 배수 문제로 추정됩니다. 점검 부탁드립니다. 줄바꿈용ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ",
@@ -79,6 +84,7 @@ export const facilityListData: FacilityItem[] = [
     location: "지하주차장 1층",
 
     statusIcon: waitingStatusIcon,
+    status: "waiting",
 
     detailDescription:
       "조명 안정기 교체가 필요한 것으로 보입니다.",
@@ -98,7 +104,8 @@ export const facilityListData: FacilityItem[] = [
     type: "기자재",
     location: "공학관 302호",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     detailDescription:
       "프로젝터 전원은 켜지지만 화면이 출력되지 않습니다.",
@@ -118,7 +125,8 @@ export const facilityListData: FacilityItem[] = [
     type: "시설",
     location: "본관 3층",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     detailDescription:
       "형광등 또는 안정기 교체가 필요해 보입니다.",
@@ -139,6 +147,7 @@ export const facilityListData: FacilityItem[] = [
     location: "공학관",
 
     statusIcon: waitingStatusIcon,
+    status: "waiting",
 
     detailDescription:
       "엘리베이터 내부 3층 버튼이 동작하지 않습니다.",
@@ -158,7 +167,8 @@ export const facilityListData: FacilityItem[] = [
     type: "시설",
     location: "학생회관 1층",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: inProgressStatusIcon,
+    status: "inProgress",
 
     detailDescription:
       "수도꼭지 패킹 교체가 필요한 것으로 보입니다.",
@@ -178,7 +188,8 @@ export const facilityListData: FacilityItem[] = [
     type: "시설",
     location: "본관 계단",
 
-    statusIcon: waitingStatusIcon,
+    statusIcon: resolvedStatusIcon,
+    status: "resolved",
 
     detailDescription:
       "계단 손잡이 볼트가 풀린 것으로 보입니다.",
@@ -199,6 +210,7 @@ export const facilityListData: FacilityItem[] = [
     location: "방목학술정보관 2층",
 
     statusIcon: waitingStatusIcon,
+    status: "waiting",
 
     detailDescription:
       "콘센트 전원이 공급되지 않아 사용이 어렵습니다.",

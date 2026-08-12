@@ -1,20 +1,44 @@
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
 import Layout from "../../components/layout/Layout";
 
 import FacilityCard from "../../components/ui/FacilityCard";
 
+import filterActiveIcon from "../../assets/icons/actions/filter-active.svg";
 import filterIcon from "../../assets/icons/actions/filter.svg";
 import createInquiryFab from "../../assets/icons/actions/create-inquiry-fab.svg";
 
+import {
+  countActiveFilters,
+  createEmptyFilterSelection,
+  FACILITY_FILTER_DEFINITION,
+  FilterSelection,
+} from "../../constants/filterOptions";
 import { facilityListData } from "../../mock";
+import { matchesFacilityFilters } from "../../utils/listFilters";
 
 import "./FacilityPage.css";
 
 const FacilityPage = () => {
   const navigate = useNavigate();
 
-  const hasItems = true;
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterSelection>(
+    createEmptyFilterSelection,
+  );
+
+  const filteredItems = useMemo(
+    () =>
+      facilityListData.filter((item) =>
+        matchesFacilityFilters(item, filters),
+      ),
+    [filters],
+  );
+
+  const closeFilter = useCallback(() => setIsFilterOpen(false), []);
+  const activeFilterCount = countActiveFilters(filters);
 
   return (
     <Layout current="repair">
@@ -30,18 +54,26 @@ const FacilityPage = () => {
           <button
             type="button"
             className="facility-filter-button"
+            aria-label={
+              activeFilterCount > 0
+                ? `시설 필터 열기, ${activeFilterCount}개 적용 중`
+                : "시설 필터 열기"
+            }
+            aria-haspopup="dialog"
+            aria-expanded={isFilterOpen}
+            onClick={() => setIsFilterOpen(true)}
           >
             <img
-              src={filterIcon}
-              alt="필터"
+              src={activeFilterCount > 0 ? filterActiveIcon : filterIcon}
+              alt=""
             />
           </button>
         </div>
 
-        {hasItems ? (
+        {filteredItems.length > 0 ? (
           <div className="facility-list">
 
-            {facilityListData.map((item) => (
+            {filteredItems.map((item) => (
               <FacilityCard
                 key={item.id}
                 item={item}
@@ -71,6 +103,14 @@ const FacilityPage = () => {
         </button>
 
       </div>
+
+      <FilterBottomSheet
+        isOpen={isFilterOpen}
+        definition={FACILITY_FILTER_DEFINITION}
+        value={filters}
+        onApply={setFilters}
+        onClose={closeFilter}
+      />
     </Layout>
   );
 };
