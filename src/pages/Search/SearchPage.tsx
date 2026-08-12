@@ -1,202 +1,229 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
-
+import closeIcon from "../../assets/icons/actions/close.svg";
 import searchIcon from "../../assets/icons/actions/search.svg";
-
+import { getSearchSuggestions, SearchSuggestions } from "../../api/search";
 import {
-  lostListData,
-  facilityListData,
-} from "../../mock";
+  addRecentSearch,
+  deleteAllRecentSearches,
+  deleteRecentSearch,
+  getRecentSearches,
+  RecentSearchItem,
+} from "../../api/recentSearch";
+import { useAuth } from "../../context/AuthContext";
 
 import "./SearchPage.css";
 
+const EMPTY_SUGGESTIONS: SearchSuggestions = {
+  lostItemSuggestions: [],
+  facilityRequestSuggestions: [],
+};
+
 const SearchPage = () => {
   const navigate = useNavigate();
-
+  const { isAuthenticated } = useAuth();
   const [searchValue, setSearchValue] = useState("");
+  const [suggestions, setSuggestions] = useState(EMPTY_SUGGESTIONS);
+  const [recentSearches, setRecentSearches] = useState<RecentSearchItem[]>([]);
+  const [deletingRecentSearchIds, setDeletingRecentSearchIds] = useState<Set<number>>(
+    new Set(),
+  );
+  const [isDeletingAllRecentSearches, setIsDeletingAllRecentSearches] =
+    useState(false);
+  const keyword = searchValue.trim();
 
-  const keyword = searchValue.trim().toLowerCase();
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setRecentSearches([]);
+      return;
+    }
 
-  const lostResult = useMemo(() => {
-    if (!keyword) return [];
+    let active = true;
+    void getRecentSearches()
+      .then((items) => {
+        if (active) setRecentSearches(items);
+      })
+      .catch(() => {
+        if (active) setRecentSearches([]);
+      });
 
-    return lostListData.filter((item) => {
-      return (
-        item.title.toLowerCase().includes(keyword) 
-      );
-    });
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!keyword) {
+      setSuggestions(EMPTY_SUGGESTIONS);
+      return;
+    }
+
+    let active = true;
+    const timer = window.setTimeout(() => {
+      void getSearchSuggestions(keyword)
+        .then((response) => {
+          if (active) setSuggestions(response);
+        })
+        .catch(() => {
+          if (active) setSuggestions(EMPTY_SUGGESTIONS);
+        });
+    }, 250);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
   }, [keyword]);
 
-  const facilityResult = useMemo(() => {
-    if (!keyword) return [];
+  const submitSearch = (value = searchValue) => {
+    const query = value.trim();
+    if (!query) return;
 
-    return facilityListData.filter((item) => {
-      return (
-        item.title.toLowerCase().includes(keyword)
-      );
-    });
-  }, [keyword]);
+    if (isAuthenticated) {
+      void addRecentSearch(query).then(setRecentSearches).catch(() => undefined);
+    }
+    navigate(`/search/result?q=${encodeURIComponent(query)}`);
+  };
+
+  const handleDeleteRecentSearch = async (recentSearchId: number) => {
+    if (deletingRecentSearchIds.has(recentSearchId)) return;
+
+    const previousSearches = recentSearches;
+    setDeletingRecentSearchIds((current) => new Set(current).add(recentSearchId));
+    setRecentSearches((current) =>
+      current.filter((item) => item.recentSearchId !== recentSearchId),
+    );
+
+    try {
+      await deleteRecentSearch(recentSearchId);
+    } catch {
+      setRecentSearches(previousSearches);
+    } finally {
+      setDeletingRecentSearchIds((current) => {
+        const next = new Set(current);
+        next.delete(recentSearchId);
+        return next;
+      });
+    }
+  };
+
+  const handleDeleteAllRecentSearches = async () => {
+    if (isDeletingAllRecentSearches || recentSearches.length === 0) return;
+
+    const previousSearches = recentSearches;
+    setIsDeletingAllRecentSearches(true);
+    setRecentSearches([]);
+
+    try {
+      await deleteAllRecentSearches();
+    } catch {
+      setRecentSearches(previousSearches);
+    } finally {
+      setIsDeletingAllRecentSearches(false);
+    }
+  };
+
+  const renderSuggestionList = (items: string[], type: "lost" | "facility") =>
+    items.length > 0 ? (
+      <div className="search-list">
+        {items.map((item) => (
+          <button
+            key={`${type}-${item}`}
+            type="button"
+            className="search-item"
+            onClick={() => submitSearch(item)}
+          >
+            <img src={searchIcon} alt="" className="search-item-icon" />
+            <span className="body06 search-item-title">{item}</span>
+          </button>
+        ))}
+      </div>
+    ) : (
+      <div className="search-no-result">
+        <img src={searchIcon} alt="" className="search-item-icon" />
+        <span className="body06 search-empty-text">검색 내역이 없습니다</span>
+      </div>
+    );
 
   return (
-      <Layout
-        current="search"
-        appBarVariant="search"
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-        onSearchSubmit={() => {
-          if (searchValue.trim()) {
-            navigate(
-              `/search/result?q=${encodeURIComponent(searchValue)}`
-            );
-          }
-        }}
-        onClearSearch={() => setSearchValue("")}
-      >
+    <Layout
+      current="search"
+      appBarVariant="search"
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      onSearchSubmit={() => submitSearch()}
+      onClearSearch={() => setSearchValue("")}
+    >
       <div className="search-page">
-
         {!keyword ? (
-
           <section className="search-recent">
-
-            <h2 className="body01 search-title">
-              최근 검색
-            </h2>
-
-            <div className="search-empty">
-
-              <p className="body06">
-                최근 검색 내역이 없습니다
-              </p>
-
+            <div className="search-recent-header">
+              <h2 className="body01 search-title">최근 검색</h2>
+              {recentSearches.length > 0 && (
+                <button
+                  type="button"
+                  className="caption02 search-recent-delete-all"
+                  disabled={isDeletingAllRecentSearches}
+                  onClick={() => void handleDeleteAllRecentSearches()}
+                >
+                  전체 삭제
+                </button>
+              )}
             </div>
-
-          </section>
-
-        ) : (
-
-          <>
-
-            {/* 분실물 */}
-
-            <section className="search-section">
-
-              <h2 className="body01 search-section-title">
-                분실물 검색 내역
-              </h2>
-
-              {lostResult.length > 0 ? (
-
-                <div className="search-list">
-
-                  {lostResult.map((item) => (
-
+            {recentSearches.length > 0 ? (
+              <div className="search-recent-chip-list">
+                {recentSearches.map((item) => (
+                  <div className="search-recent-chip" key={item.recentSearchId}>
                     <button
-                      key={item.id}
-                      className="search-item"
+                      type="button"
+                      className="body06 search-recent-keyword"
+                      onClick={() => submitSearch(item.keyword)}
+                    >
+                      {item.keyword}
+                    </button>
+                    <button
+                      type="button"
+                      className="search-recent-delete"
+                      aria-label={`${item.keyword} 최근 검색어 삭제`}
+                      disabled={deletingRecentSearchIds.has(item.recentSearchId)}
                       onClick={() =>
-                        navigate(`/lost/${item.id}`)
+                        void handleDeleteRecentSearch(item.recentSearchId)
                       }
                     >
-                      <img
-                        src={searchIcon}
-                        alt=""
-                        className="search-item-icon"
-                      />
-
-                      <span className="body06 search-item-title">
-                        {item.title}
-                      </span>
-
+                      <img src={closeIcon} alt="" />
                     </button>
-
-                  ))}
-
-                </div>
-
-              ) : (
-
-                <div className="search-no-result">
-
-                  <img
-                    src={searchIcon}
-                    alt=""
-                    className="search-item-icon"
-                  />
-
-                  <span className="body06 search-empty-text">
-                    검색 내역이 없습니다
-                  </span>
-
-                </div>
-
-              )}
-
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="search-empty">
+                <p className="body06">최근 검색 내역이 없습니다</p>
+              </div>
+            )}
+          </section>
+        ) : (
+          <>
+            <section className="search-section">
+              <h2 className="body01 search-section-title">분실물 검색 내역</h2>
+              {renderSuggestionList(suggestions.lostItemSuggestions, "lost")}
             </section>
 
             <div className="search-divider" />
 
-            {/* 시설 */}
-
             <section className="search-section">
-
               <h2 className="body01 search-section-title">
                 시설·기자재 검색 내역
               </h2>
-
-              {facilityResult.length > 0 ? (
-
-                <div className="search-list">
-
-                  {facilityResult.map((item) => (
-
-                    <button
-                      key={item.id}
-                      className="search-item"
-                    >
-                      <img
-                        src={searchIcon}
-                        alt=""
-                        className="search-item-icon"
-                      />
-
-                      <span className="body06 search-item-title">
-                        {item.title}
-                      </span>
-
-                    </button>
-
-                  ))}
-
-                </div>
-
-              ) : (
-
-                <div className="search-no-result">
-
-                  <img
-                    src={searchIcon}
-                    alt=""
-                    className="search-item-icon"
-                  />
-
-                  <span className="body06 search-empty-text">
-                    검색 내역이 없습니다
-                  </span>
-
-                </div>
-
+              {renderSuggestionList(
+                suggestions.facilityRequestSuggestions,
+                "facility",
               )}
-
             </section>
-
           </>
-
         )}
-
       </div>
-
     </Layout>
   );
 };
