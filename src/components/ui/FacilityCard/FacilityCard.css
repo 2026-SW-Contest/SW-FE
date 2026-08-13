@@ -201,3 +201,38 @@
 
     display: none;
 }
+
+@media (min-width: 900px) {
+    .facility-card {
+        height:146px;
+        min-height:146px;
+        gap:14px;
+        margin:0;
+        padding:14px;
+        border:1px solid var(--gray-100);
+        border-radius:16px;
+        background:var(--white);
+        box-sizing:border-box;
+        transition:transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .facility-card:hover {
+        transform:translateY(-2px);
+        border-color:var(--blue-100);
+        box-shadow:0 10px 24px var(--gray-100);
+    }
+
+    .facility-card::after {
+        display:none;
+    }
+
+    .facility-card-image-wrapper {
+        width:116px;
+        height:116px;
+        border-radius:12px;
+    }
+
+    .facility-card-content {
+        height:116px;
+    }
+}

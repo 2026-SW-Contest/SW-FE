@@ -6,8 +6,6 @@ const ADMIN_SESSION_COOKIE = "CONNECTHING_ADMIN_SESSION";
 const LOCAL_SESSION_COOKIE_PATTERN = /^(?:CONNECTHING_(?:DEV|STUDENT|ADMIN)_SESSION)=/i;
 
 const apiProxy = (target: string, localSessionCookie: string) => {
-  let latestBackendSession: string | null = null;
-
   return {
     target,
     changeOrigin: true,
@@ -34,6 +32,11 @@ const apiProxy = (target: string, localSessionCookie: string) => {
     proxy.on("proxyReq", (proxyRequest, request) => {
       const browserCookies = request.headers.cookie ?? "";
 
+      // 브라우저에는 localhost:5173이 동일 출처지만, 프록시가 이 Origin을
+      // 운영 백엔드까지 전달하면 Spring CORS가 로컬 출처를 차단한다.
+      // 개발 서버 프록시 경계에서만 제거해 실제 인증 요청까지 전달한다.
+      proxyRequest.removeHeader("origin");
+
       const backendCookies = browserCookies
         .split(";")
         .map((cookie) => cookie.trim())
@@ -52,8 +55,7 @@ const apiProxy = (target: string, localSessionCookie: string) => {
         .pop()
         ?.replace(new RegExp(`^${localSessionCookie}=`, "i"), "SESSION=");
 
-      const session = browserSession ?? latestBackendSession;
-      if (session) backendCookies.push(session);
+      if (browserSession) backendCookies.push(browserSession);
 
       proxyRequest.removeHeader("cookie");
       if (backendCookies.length > 0) {
@@ -64,11 +66,6 @@ const apiProxy = (target: string, localSessionCookie: string) => {
     proxy.on("proxyRes", (proxyResponse) => {
       const cookies = proxyResponse.headers["set-cookie"];
       if (!cookies) return;
-
-      const backendSession = cookies
-        .map((cookie) => cookie.split(";", 1)[0])
-        .find((cookie) => /^SESSION=/i.test(cookie));
-      if (backendSession) latestBackendSession = backendSession;
 
       // 로컬 HTTP 개발 환경에서만 AWS의 Secure 쿠키를 사용할 수 있게 완화한다.
       proxyResponse.headers["set-cookie"] = cookies.map((cookie) =>

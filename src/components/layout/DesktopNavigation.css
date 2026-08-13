@@ -1,0 +1,98 @@
+.desktop-navigation {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .desktop-navigation {
+    height: 65px;
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: 170px 1fr 80px;
+    align-items: center;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--gray-100);
+    background: var(--white);
+    box-sizing: border-box;
+    z-index: 110;
+  }
+
+  .desktop-navigation-logo,
+  .desktop-navigation-item,
+  .desktop-navigation-notification {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .desktop-navigation-logo {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .desktop-navigation-logo img {
+    display: block;
+    width: 138px;
+    height: auto;
+  }
+
+  .desktop-navigation-menu {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .desktop-navigation-item {
+    position: relative;
+    min-width: 70px;
+    padding: 0 12px;
+    color: var(--gray-500);
+    font-size: 15px;
+    font-weight: 600;
+    transition: color 160ms ease, background 160ms ease;
+  }
+
+  .desktop-navigation-item:hover {
+    color: var(--gray-700);
+    background: var(--gray-50);
+  }
+
+  .desktop-navigation-item.active {
+    color: var(--blue-400);
+  }
+
+  .desktop-navigation-item.active::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 0;
+    height: 3px;
+    border-radius: 999px 999px 0 0;
+    background: var(--blue-400);
+  }
+
+  .desktop-navigation-notification {
+    justify-self: end;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 160ms ease;
+  }
+
+  .desktop-navigation-notification:hover {
+    background: var(--gray-50);
+  }
+
+  .desktop-navigation-notification-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+}

@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
 
-  gap: 4px;
+  gap: 10px;
 }
 
 .mypage-profile-icon {
@@ -164,4 +164,81 @@
 .mypage-setting img {
   width: 18px;
   height: 18px;
+}
+
+@media (min-width: 900px) {
+  .mypage {
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+    align-content: start;
+    gap: 20px;
+    padding: 32px 36px 48px;
+    background: var(--gray-50);
+    box-sizing: border-box;
+  }
+
+  .mypage-profile {
+    grid-column: 1 / -1;
+    height: auto;
+    min-height: 82px;
+    padding: 20px 24px;
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    background: var(--white);
+  }
+
+  .mypage-profile-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mypage-profile-bell {
+    display: none;
+  }
+
+  .mypage-section {
+    min-width: 0;
+    padding: 24px;
+    gap: 12px;
+    border: 1px solid var(--gray-100);
+    border-radius: 16px;
+    background: var(--white);
+    box-sizing: border-box;
+  }
+
+  .mypage-section-title {
+    margin-bottom: 4px;
+  }
+
+  .mypage-card {
+    padding: 16px;
+    gap: 12px;
+    border: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+
+  .mypage-history-image,
+  .mypage-history-placeholder {
+    width: 104px;
+    height: 112px;
+  }
+
+  .mypage-setting {
+    min-height: 52px;
+    height: auto;
+    border: 1px solid var(--gray-100);
+    background: var(--white);
+  }
+
+  .mypage-card,
+  .mypage-setting {
+    transition: border-color 160ms ease, background 160ms ease;
+  }
+
+  .mypage-card:hover,
+  .mypage-setting:hover {
+    border-color: var(--blue-100);
+    background: var(--blue-50);
+  }
 }

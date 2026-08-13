@@ -41,6 +41,24 @@ const Landing = () => {
 
       <div className="landing">
 
+        <section className="landing-hero">
+          <div className="landing-hero-copy">
+            <span className="landing-hero-eyebrow">SMART CAMPUS SERVICE</span>
+            <h1>교내 분실물과 시설 문의를<br />한곳에서 빠르게 해결하세요</h1>
+            <p>
+              잃어버린 물건을 확인하고, 불편한 시설을 간편하게 제보할 수 있어요.
+            </p>
+            <div className="landing-hero-actions">
+              <button type="button" onClick={() => navigate("/lost")}>분실물 찾아보기</button>
+              <button type="button" onClick={() => navigate("/facility/write")}>수리·개선 문의하기</button>
+            </div>
+          </div>
+          <div className="landing-hero-summary" aria-label="서비스 현황">
+            <div><strong>{lostItems.length}</strong><span>등록 분실물</span></div>
+            <div><strong>{facilityItems.length}</strong><span>시설 문의</span></div>
+          </div>
+        </section>
+
         {/* 최근 등록된 분실물 */}
         <section className="landing-lost-section">
 

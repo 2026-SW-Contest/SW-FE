@@ -4,6 +4,8 @@ export const TOAST_MESSAGE = {
 
   LOGIN_SUCCESS: "로그인되었습니다.",
   LOGIN_ERROR: "입력 정보를 다시 확인해주세요.",
+  LOGIN_ADMIN_REQUIRED: "관리자 권한이 있는 계정으로 로그인해주세요.",
+  LOGIN_ADMIN_MODE_REQUIRED: "관리자 계정은 커넥띵 관리자 탭에서 로그인해주세요.",
   LOGOUT_SUCCESS: "로그아웃되었습니다.",
 
   /* ---------- 회원가입 ---------- */

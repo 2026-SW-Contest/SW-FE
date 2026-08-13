@@ -1,8 +1,10 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
-import { isAdminUser, redirectToAdminApp } from "../utils/authRole";
+import logoSymbol from "../assets/icons/brand/logo-symbol.svg";
+
+import "./StudentRoute.css";
 
 interface StudentRouteProps {
   children: ReactNode;
@@ -11,12 +13,17 @@ interface StudentRouteProps {
 
 const StudentRoute = ({ children, loginNotice }: StudentRouteProps) => {
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const shouldRedirectToAdmin = isAuthenticated && isAdminUser(user);
+  const { isAuthChecking, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (shouldRedirectToAdmin) redirectToAdminApp();
-  }, [shouldRedirectToAdmin]);
+  if (isAuthChecking) {
+    return (
+      <div className="auth-route-loading" role="status" aria-live="polite">
+        <img src={logoSymbol} alt="" className="auth-route-loading-logo" />
+        <span className="auth-route-loading-spinner" aria-hidden="true" />
+        <span className="caption02">로그인 상태를 확인하고 있어요</span>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (
@@ -30,8 +37,6 @@ const StudentRoute = ({ children, loginNotice }: StudentRouteProps) => {
       />
     );
   }
-
-  if (shouldRedirectToAdmin) return null;
 
   return children;
 };

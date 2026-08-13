@@ -8,7 +8,10 @@ import { FacilityInquiryProvider } from "./context/FacilityInquiryContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import { RecoveryRequestProvider } from "./context/RecoveryRequestContext";
 import { LostItemProvider } from "./context/LostItemContext";
+import { registerServiceWorker } from "./pwa/registerServiceWorker";
 import "./styles/globals.css";
+
+registerServiceWorker();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

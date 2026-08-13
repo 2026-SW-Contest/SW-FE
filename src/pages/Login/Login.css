@@ -34,6 +34,58 @@
     display:block;
 }
 
+/* ---------- 로그인 유형 ---------- */
+
+.login-tabs {
+    position:relative;
+
+    height:48px;
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    margin:0 16px 20px;
+
+    border-bottom:1px solid var(--gray-100);
+}
+
+.login-tabs::after {
+    content:"";
+
+    position:absolute;
+    bottom:-1px;
+    left:0;
+
+    width:50%;
+    height:2px;
+
+    border-radius:999px 999px 0 0;
+    background:var(--blue-400);
+
+    transform:translateX(0);
+    transition:transform var(--motion-normal) var(--ease-emphasized);
+    pointer-events:none;
+}
+
+.login-tabs.admin-active::after {
+    transform:translateX(100%);
+}
+
+.login-tab {
+    position:relative;
+
+    border:none;
+    background:transparent;
+
+    color:var(--gray-300);
+
+    cursor:pointer;
+}
+
+.login-tab.active {
+    color:var(--gray-700);
+}
+
 /* ---------- 입력 ---------- */
 
 .login-form{
@@ -196,4 +248,25 @@
     height:24px;
 
     display:block;
+}
+
+@media (min-width: 900px) {
+    .login-logo {
+        height:210px;
+        padding-top:72px;
+    }
+
+    .login-tabs,
+    .login-form,
+    .login-button,
+    .login-footer {
+        width:100%;
+        max-width:520px;
+        margin-right:auto;
+        margin-left:auto;
+    }
+
+    .login-tabs {
+        margin-bottom:24px;
+    }
 }

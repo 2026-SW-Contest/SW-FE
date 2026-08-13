@@ -18,7 +18,7 @@ import "./Login.css";
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
+  const { clearLocalAuth, login, logout } = useAuth();
   const routeState = location.state as {
     from?: string;
     loginNotice?: string;
@@ -27,6 +27,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMode, setLoginMode] = useState<"student" | "admin">("student");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -46,20 +47,37 @@ const Login = () => {
     setIsSubmitting(true);
     try {
       const user = await login(email.trim(), password);
+      const adminUser = isAdminUser(user);
 
-      if (isAdminUser(user)) {
+      if (loginMode === "admin" && !adminUser) {
+        await logout().catch(() => undefined);
+        setToastMessage(TOAST_MESSAGE.LOGIN_ADMIN_REQUIRED);
+        setShowToast(true);
+        return;
+      }
+
+      if (loginMode === "student" && adminUser) {
+        await logout().catch(() => undefined);
+        setToastMessage(TOAST_MESSAGE.LOGIN_ADMIN_MODE_REQUIRED);
+        setShowToast(true);
+        return;
+      }
+
+      if (adminUser) {
         // 로컬에서는 5173/5174 프록시가 서로 다른 세션 쿠키를 사용한다.
         // 운영에서는 관리자 앱을 같은 출처의 /admin에 제공하므로 이미 생성된
         // SESSION 쿠키를 그대로 공유하고 중복 로그인을 만들지 않는다.
         if (import.meta.env.DEV) {
           await createAdminSession({ email: email.trim(), password });
         }
+        // 관리자 세션은 관리자 앱에서 사용하고 학생 앱의 로컬 인증 정보는
+        // 제거한다. 이후 학생 앱에서 마이를 눌러도 5174를 경유하지 않는다.
+        clearLocalAuth();
         redirectToAdminApp(user);
         return;
       }
 
-      const returnPath = routeState?.from;
-      navigate(returnPath || "/mypage", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
       setShowToast(true);
@@ -92,6 +110,38 @@ const Login = () => {
             alt="ConnecThing"
             className="login-logo-image"
           />
+        </div>
+
+        <div
+          className={`login-tabs ${loginMode === "admin" ? "admin-active" : ""}`}
+          role="tablist"
+          aria-label="로그인 유형"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={loginMode === "student"}
+            className={`body05 login-tab ${loginMode === "student" ? "active" : ""}`}
+            onClick={() => {
+              setLoginMode("student");
+              setShowToast(false);
+            }}
+          >
+            학생
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={loginMode === "admin"}
+            className={`body05 login-tab ${loginMode === "admin" ? "active" : ""}`}
+            onClick={() => {
+              setLoginMode("admin");
+              setShowToast(false);
+            }}
+          >
+            커넥띵 관리자
+          </button>
         </div>
 
         {/* ---------- 입력 ---------- */}
@@ -201,7 +251,7 @@ const Login = () => {
 
         {/* ---------- 하단 ---------- */}
 
-        <div className="login-footer">
+        {loginMode === "student" && <div className="login-footer">
 
           <button
             type="button"
@@ -235,7 +285,7 @@ const Login = () => {
             비밀번호 찾기
           </button>
 
-        </div>
+        </div>}
         
         <Toast
           visible={showToast}
