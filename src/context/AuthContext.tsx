@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -17,6 +18,7 @@ import {
   withdraw as withdrawRequest,
 } from "../api/auth";
 import { AUTH_SESSION_EXPIRED_EVENT } from "../api/client";
+import { isAdminUser } from "../utils/authRole";
 
 const AUTH_STORAGE_KEY = "connecthingAuth";
 
@@ -26,8 +28,11 @@ interface StoredAuth {
 }
 
 interface AuthContextValue {
+  isAuthChecking: boolean;
   isAuthenticated: boolean;
   user: AuthUser | null;
+  verifySession: () => Promise<AuthUser | null>;
+  clearLocalAuth: () => void;
   login: (email: string, password: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
   withdraw: () => Promise<void>;
@@ -54,6 +59,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [auth, setAuth] = useState<StoredAuth>(readStoredAuth);
+  const [isAuthChecking, setIsAuthChecking] = useState(auth.authenticated);
+  const shouldVerifyInitialSession = useRef(auth.authenticated);
+  const verificationRequest = useRef<Promise<AuthUser | null> | null>(null);
 
   const persistAuth = useCallback((next: StoredAuth) => {
     setAuth(next);
@@ -63,6 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAuth = useCallback(() => {
     setAuth({ authenticated: false, user: null });
+    setIsAuthChecking(false);
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem("isLogin");
   }, []);
@@ -73,30 +82,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleExpired);
   }, [clearAuth]);
 
-  useEffect(() => {
-    if (!auth.authenticated) return;
+  const verifySession = useCallback(() => {
+    if (verificationRequest.current) return verificationRequest.current;
 
-    let active = true;
-    void getCurrentUser()
+    setIsAuthChecking(true);
+
+    const request = getCurrentUser()
       .then((currentUser) => {
-        if (!active) return;
+        // 관리자 인증 정보는 관리자 앱에서만 유지한다. 학생 앱에 관리자 role이
+        // 남아 있으면 마이페이지 진입 시 5174를 경유하는 화면 깜빡임이 생긴다.
+        if (isAdminUser(currentUser)) {
+          clearAuth();
+          return currentUser;
+        }
 
-        const nextUser: AuthUser = {
-          ...auth.user,
-          ...currentUser,
-          roles:
-            currentUser.roles?.length > 0
-              ? currentUser.roles
-              : auth.user?.roles ?? [],
-        };
-        persistAuth({ authenticated: true, user: nextUser });
+        persistAuth({ authenticated: true, user: currentUser });
+        return currentUser;
       })
-      .catch(() => undefined);
+      .catch(() => {
+        clearAuth();
+        return null;
+      })
+      .finally(() => {
+        verificationRequest.current = null;
+        setIsAuthChecking(false);
+      });
 
-    return () => {
-      active = false;
-    };
-  }, [auth.authenticated, auth.user?.userId, persistAuth]);
+    verificationRequest.current = request;
+    return request;
+  }, [clearAuth, persistAuth]);
+
+  useEffect(() => {
+    if (shouldVerifyInitialSession.current) {
+      void verifySession();
+    }
+  }, [verifySession]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -153,14 +173,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(
     () => ({
-      isAuthenticated: auth.authenticated,
+      isAuthChecking,
+      // 저장된 인증 정보는 서버 세션 확인이 끝난 뒤에만 사용한다.
+      // 확인 중에는 로그아웃 상태로 노출해 보호 경로를 거쳐 로그인 화면으로
+      // 재이동하는 이중 내비게이션을 방지한다.
+      isAuthenticated: !isAuthChecking && auth.authenticated,
       user: auth.user,
+      verifySession,
+      clearLocalAuth: clearAuth,
       login,
       logout,
       withdraw,
       changePassword,
     }),
-    [auth, changePassword, login, logout, withdraw],
+    [auth, changePassword, clearAuth, isAuthChecking, login, logout, verifySession, withdraw],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

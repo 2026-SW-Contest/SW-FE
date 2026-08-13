@@ -1,9 +1,13 @@
 import { AuthUser } from "../api/auth";
 
-export const hasRole = (user: AuthUser | null, role: string) =>
-  user?.roles?.some((item) => item.toUpperCase() === role.toUpperCase()) ?? false;
+const normalizeRole = (role: string) =>
+  role.trim().toUpperCase().replace(/^ROLE_/, "");
 
-export const isAdminUser = (user: AuthUser | null) => hasRole(user, "ADMIN");
+export const hasRole = (user: AuthUser | null, role: string) =>
+  user?.roles?.some((item) => normalizeRole(item) === normalizeRole(role)) ?? false;
+
+export const isAdminUser = (user: AuthUser | null) =>
+  hasRole(user, "ADMIN") || hasRole(user, "SUPER_ADMIN");
 
 export const isStudentUser = (user: AuthUser | null) => hasRole(user, "STUDENT");
 

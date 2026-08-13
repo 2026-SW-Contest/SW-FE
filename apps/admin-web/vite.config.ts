@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from "vite";
 import react from "@vitejs/plugin-react";
 
-let latestBackendSession: string | null = null;
 const LOCAL_SESSION_COOKIE = "CONNECTHING_ADMIN_SESSION";
 const LOCAL_SESSION_COOKIE_PATTERN = /^(?:CONNECTHING_(?:DEV|STUDENT|ADMIN)_SESSION)=/i;
 
@@ -56,8 +55,7 @@ const apiProxy = (target: string) => ({
         .pop()
         ?.replace(new RegExp(`^${LOCAL_SESSION_COOKIE}=`, "i"), "SESSION=");
 
-      const session = browserSession ?? latestBackendSession;
-      if (session) backendCookies.push(session);
+      if (browserSession) backendCookies.push(browserSession);
 
       proxyRequest.removeHeader("cookie");
       if (backendCookies.length > 0) {
@@ -68,11 +66,6 @@ const apiProxy = (target: string) => ({
     proxy.on("proxyRes", (proxyResponse) => {
       const cookies = proxyResponse.headers["set-cookie"];
       if (!cookies) return;
-
-      const backendSession = cookies
-        .map((cookie) => cookie.split(";", 1)[0])
-        .find((cookie) => /^SESSION=/i.test(cookie));
-      if (backendSession) latestBackendSession = backendSession;
 
       proxyResponse.headers["set-cookie"] = cookies.map((cookie) =>
         cookie

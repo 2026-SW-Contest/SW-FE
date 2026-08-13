@@ -1,13 +1,7 @@
 .owner-request-backdrop {
   position: fixed;
-  top: 0;
-  left: 50%;
-  z-index: 1000;
-
-  width: min(402px, 100vw);
-  height: min(874px, 100dvh);
-
-  transform: translateX(-50%);
+  inset: 0;
+  z-index: 10000;
 
   display: flex;
   justify-content: center;
@@ -16,6 +10,8 @@
   padding: 20px;
 
   background: var(--black-65);
+
+  animation: owner-request-backdrop-enter var(--motion-normal) var(--ease-standard);
 }
 
 .owner-request-modal {
@@ -28,6 +24,8 @@
   border-radius: 8px;
   background: var(--white);
   outline: none;
+
+  animation: owner-request-modal-enter var(--motion-normal) var(--ease-emphasized);
 }
 
 .owner-request-title {
@@ -252,4 +250,46 @@
 .owner-request-submit:disabled {
   background: var(--gray-300);
   cursor: not-allowed;
+}
+
+@keyframes owner-request-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes owner-request-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (min-width: 900px) {
+  .owner-request-backdrop {
+    padding: 40px;
+  }
+
+  .owner-request-modal {
+    width: min(520px, calc(100vw - 80px));
+    height: min(680px, calc(100dvh - 80px));
+    border-radius: 16px;
+    box-shadow: 0 12px 32px var(--gray-300);
+  }
+
+  .owner-request-title {
+    padding: 24px 24px 0;
+  }
+
+  .owner-request-scroll-area {
+    padding: 20px 24px;
+  }
+
+  .owner-request-actions {
+    padding: 20px 24px 24px;
+  }
 }
