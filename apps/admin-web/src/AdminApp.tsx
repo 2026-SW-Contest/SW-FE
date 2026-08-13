@@ -15,7 +15,7 @@ import {
   createStoredItem,
   decideItemClaim,
   getItemClaim,
-  getOfficeItemClaims,
+  getAllOfficeItemClaims,
   updateStoredItemStatus,
 } from "../../../src/api/adminLost";
 import { getLostItemOffices } from "../../../src/api/reference";
@@ -194,9 +194,9 @@ const AdminApp = () => {
         const offices = await getLostItemOffices();
         const claimGroups = await Promise.all(
           offices.map(async (office) =>
-            getOfficeItemClaims(office.officeId, { size: 50 })
-              .then((result) => result.content)
-              .catch(() => []),
+            getAllOfficeItemClaims(office.officeId, { size: 50 }).catch(
+              () => [],
+            ),
           ),
         );
         if (!active) return;
@@ -207,7 +207,8 @@ const AdminApp = () => {
           ).values(),
         ).sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 
-        setOwnerRequests(claims.map((claim) => ({
+        setOwnerRequests(
+          claims.map((claim) => ({
             id: claim.itemClaimId,
             lostItemId: claim.storedItemId,
             itemTitle: claim.itemName,

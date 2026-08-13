@@ -13,7 +13,7 @@ import {
   deleteFacilityRequest,
   getAllMyFacilityRequests,
   getFacilityRequest,
-  getFacilityRequests,
+  getAllFacilityRequests,
   mapFacilityItem,
   updateFacilityRequest,
 } from "../api/facility";
@@ -55,8 +55,8 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
     setError("");
 
     try {
-      const response = await getFacilityRequests();
-      setFacilityItems(response.content);
+      const items = await getAllFacilityRequests();
+      setFacilityItems(items);
     } catch (requestError) {
       setFacilityItems([]);
       setError(getUserErrorMessage(requestError, "시설 문의 목록을 불러오지 못했습니다."));
