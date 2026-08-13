@@ -160,6 +160,7 @@ button { cursor: pointer; }
 .admin-photo-filename { overflow: hidden; color: var(--gray-400); font-size: 10px; font-weight: 400; text-overflow: ellipsis; white-space: nowrap; }
 .admin-modal-actions { position: sticky; bottom: 0; display: flex; justify-content: flex-end; gap: 9px; padding: 16px 24px; border-top: 1px solid var(--gray-100); background: var(--white); }
 .admin-modal-actions button, .admin-drawer-actions button { min-width: 100px; height: 42px; padding: 0 16px; border: 1px solid var(--gray-100); border-radius: 8px; background: var(--white); color: var(--gray-500); }
+.admin-modal-actions .admin-delete-button { margin-right: auto; border-color: #ffd5d5; background: #fff5f5; color: var(--red-500); font-weight: 600; }
 
 .admin-drawer-backdrop { display: flex; justify-content: flex-end; animation: admin-backdrop-in .22s ease-out both; }
 .admin-drawer { width: 520px; height: 100%; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; background: var(--white); box-shadow: -15px 0 50px rgba(0, 0, 0, .12); animation: admin-drawer-in .32s cubic-bezier(.22, 1, .36, 1) both; will-change: transform; }

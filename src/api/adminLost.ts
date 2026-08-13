@@ -23,6 +23,35 @@ export interface StoredItemMutationResponse {
   updatedAt?: string;
 }
 
+export interface StoredItemEditDetail {
+  storedItemId: number;
+  itemName: string;
+  description: string;
+  category: {
+    categoryId: number;
+    name: string;
+  };
+  foundLocation: {
+    locationId: number | null;
+    name: string;
+    locationText: string | null;
+  } | null;
+  foundDate: string;
+  publicStatus: StoredItemStatus;
+  publicStatusName: string;
+  office: {
+    officeId: number;
+    name: string;
+  };
+  attachments: Array<{
+    fileId: number;
+    originalFilename: string;
+    fileUrl?: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ItemClaimSummary {
   itemClaimId: number;
   storedItemId: number;
@@ -113,6 +142,9 @@ export const updateStoredItem = (
     method: "PATCH",
     body: toMultipartBody(request, files),
   });
+
+export const getStoredItemForEdit = (storedItemId: number) =>
+  apiGet<StoredItemEditDetail>(`/api/stored-items/${storedItemId}`);
 
 export const updateStoredItemStatus = (
   storedItemId: number,

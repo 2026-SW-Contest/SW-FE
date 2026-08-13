@@ -13,9 +13,13 @@ import { getServerHealth, ServerHealthStatus } from "../../../src/api/health";
 import { getStoredItem, getStoredItems } from "../../../src/api/lost";
 import {
   createStoredItem,
+  deleteStoredItem,
   decideItemClaim,
   getItemClaim,
   getAllOfficeItemClaims,
+  getStoredItemForEdit,
+  StoredItemEditDetail,
+  updateStoredItem,
   updateStoredItemStatus,
 } from "../../../src/api/adminLost";
 import { getLostItemOffices } from "../../../src/api/reference";
@@ -32,6 +36,10 @@ import { toAdminLostStatus, toStoredItemStatus } from "./utils/status";
 import { AccountPanel } from "./components/account/AccountPanel";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { FacilityTable, LostTable, RequestTable } from "./components/tables/AdminTables";
+import {
+  LostEditInput,
+  LostEditModal,
+} from "./components/lost/LostEditModal";
 import {
   LostRegistrationInput,
   LostRegistrationModal,
@@ -53,6 +61,7 @@ const AdminApp = () => {
   const [isFacilityLoading, setIsFacilityLoading] = useState(true);
   const [facilityError, setFacilityError] = useState("");
   const [showLostForm, setShowLostForm] = useState(false);
+  const [editingLostItem, setEditingLostItem] = useState<StoredItemEditDetail | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<OwnerRequest | null>(null);
   const [selectedFacility, setSelectedFacility] = useState<AdminFacilityItem | null>(null);
   const [isFacilityDetailLoading, setIsFacilityDetailLoading] = useState(false);
@@ -277,6 +286,47 @@ const AdminApp = () => {
       .catch(() => undefined);
   };
 
+  const openLostEdit = (storedItemId: number) => {
+    void getStoredItemForEdit(storedItemId)
+      .then(setEditingLostItem)
+      .catch(() => undefined);
+  };
+
+  const saveLostEdit = async (input: LostEditInput) => {
+    if (!editingLostItem) return;
+
+    const storedItemId = editingLostItem.storedItemId;
+    await updateStoredItem(storedItemId, {
+      officeId: input.officeId,
+      categoryId: input.categoryId,
+      foundLocationId: input.locationId,
+      foundLocationText: input.detailLocation.trim() || undefined,
+      itemName: input.title.trim(),
+      description: input.description.trim(),
+      foundDate: input.foundDate,
+      keepFileIds: editingLostItem.attachments.map((attachment) => attachment.fileId),
+    });
+
+    if (input.status !== toAdminLostStatus(editingLostItem.publicStatus)) {
+      await updateStoredItemStatus(storedItemId, toStoredItemStatus(input.status));
+    }
+
+    setLostItems((items) => items.map((item) => item.id === storedItemId
+      ? {
+          ...item,
+          title: input.title.trim(),
+          category: input.categoryName,
+          location: [input.locationName, input.detailLocation.trim()]
+            .filter(Boolean)
+            .join(" "),
+          storageLocation: input.storageLocation,
+          foundDate: input.foundDate.replace(/-/g, "."),
+          status: input.status,
+        }
+      : item));
+    setEditingLostItem(null);
+  };
+
   const openOwnerRequest = (request: OwnerRequest) => {
     setSelectedRequest(request);
     void getItemClaim(request.id)
@@ -423,7 +473,11 @@ const AdminApp = () => {
             </section>
 
             {section === "lost" && (
-              <LostTable items={filteredLostItems} onStatusChange={updateLostStatus} />
+              <LostTable
+                items={filteredLostItems}
+                onStatusChange={updateLostStatus}
+                onEdit={openLostEdit}
+              />
             )}
             {section === "requests" && (
               <RequestTable items={filteredRequests} onSelect={openOwnerRequest} />
@@ -476,6 +530,20 @@ const AdminApp = () => {
               status: input.status,
             }, ...items]);
             setShowLostForm(false);
+          }}
+        />
+      )}
+      {editingLostItem && (
+        <LostEditModal
+          item={editingLostItem}
+          onClose={() => setEditingLostItem(null)}
+          onSubmit={saveLostEdit}
+          onDelete={async () => {
+            const storedItemId = editingLostItem.storedItemId;
+            await deleteStoredItem(storedItemId);
+            setLostItems((items) => items.filter(
+              (item) => item.id !== storedItemId,
+            ));
           }}
         />
       )}

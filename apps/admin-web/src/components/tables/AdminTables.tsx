@@ -1,19 +1,20 @@
 import { AdminFacilityItem, AdminLostItem, AdminStatus, OwnerRequest } from "../../types";
 import { EmptyRow, StatusBadge } from "../common/AdminPrimitives";
 
-export const LostTable = ({ items, onStatusChange }: {
+export const LostTable = ({ items, onStatusChange, onEdit }: {
   items: AdminLostItem[];
   onStatusChange: (id: number, status: AdminStatus) => void;
+  onEdit: (id: number) => void;
 }) => (
   <section className="admin-table-card">
     <div className="admin-table-title"><h2>분실물 목록</h2><span>총 {items.length}건</span></div>
-    <table><thead><tr><th>번호</th><th>게시글 제목</th><th>카테고리</th><th>습득 장소</th><th>보관 장소</th><th>습득 일자</th><th>처리 상태</th></tr></thead>
-      <tbody>{items.length === 0 ? <EmptyRow colSpan={7} /> : items.map((item) => (
+    <table><thead><tr><th>번호</th><th>게시글 제목</th><th>카테고리</th><th>습득 장소</th><th>보관 장소</th><th>습득 일자</th><th>처리 상태</th><th>관리</th></tr></thead>
+      <tbody>{items.length === 0 ? <EmptyRow colSpan={8} /> : items.map((item) => (
         <tr key={item.id}><td>#{item.id}</td><td className="admin-table-strong">{item.title}</td><td>{item.category}</td><td>{item.location}</td><td>{item.storageLocation}</td><td>{item.foundDate}</td><td>
           <select className={`admin-status-select ${item.status}`} value={item.status} onChange={(event) => onStatusChange(item.id, event.target.value as AdminStatus)}>
             <option value="waiting">보관중</option><option value="inProgress">진행중</option><option value="resolved">해결완료</option>
           </select>
-        </td></tr>
+        </td><td><button type="button" className="admin-table-action" onClick={() => onEdit(item.id)}>수정</button></td></tr>
       ))}</tbody>
     </table>
   </section>
@@ -50,4 +51,3 @@ export const FacilityTable = ({ items, totalElements, isLoading, error, onSelect
     </table>
   </section>
 );
-
