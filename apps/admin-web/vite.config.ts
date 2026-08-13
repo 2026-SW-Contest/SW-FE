@@ -87,10 +87,12 @@ const apiProxy = (target: string) => ({
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "../../", "");
   const proxyTarget = env.VITE_API_PROXY_TARGET || "http://3.19.74.97";
+  const isVercelBuild = mode === "vercel";
 
   return {
     root: __dirname,
     envDir: "../../",
+    base: isVercelBuild ? "/admin/" : "/",
     // 학생 앱(5173)의 최적화 캐시와 분리해 Outdated Optimize Dep를 방지한다.
     cacheDir: "../../node_modules/.vite-admin",
     plugins: [react()],
@@ -105,8 +107,8 @@ export default defineConfig(({ mode }) => {
       },
     },
     build: {
-      outDir: "../../dist-admin",
-      emptyOutDir: true,
+      outDir: isVercelBuild ? "../../dist/admin" : "../../dist-admin",
+      emptyOutDir: !isVercelBuild,
     },
   };
 });

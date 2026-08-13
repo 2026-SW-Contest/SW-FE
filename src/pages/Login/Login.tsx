@@ -48,7 +48,12 @@ const Login = () => {
       const user = await login(email.trim(), password);
 
       if (isAdminUser(user)) {
-        await createAdminSession({ email: email.trim(), password });
+        // 로컬에서는 5173/5174 프록시가 서로 다른 세션 쿠키를 사용한다.
+        // 운영에서는 관리자 앱을 같은 출처의 /admin에 제공하므로 이미 생성된
+        // SESSION 쿠키를 그대로 공유하고 중복 로그인을 만들지 않는다.
+        if (import.meta.env.DEV) {
+          await createAdminSession({ email: email.trim(), password });
+        }
         redirectToAdminApp(user);
         return;
       }

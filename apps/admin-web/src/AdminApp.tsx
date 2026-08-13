@@ -72,8 +72,8 @@ interface AdminAccount {
 
 const ADMIN_AUTH_KEY = "connecthingAdminAuth";
 const getStudentLoginUrl = () => {
-  const studentAppUrl =
-    import.meta.env.VITE_STUDENT_APP_URL || "http://localhost:5173";
+  const studentAppUrl = import.meta.env.VITE_STUDENT_APP_URL ||
+    (import.meta.env.DEV ? "http://localhost:5173" : window.location.origin);
   return `${studentAppUrl.replace(/\/$/, "")}/login`;
 };
 

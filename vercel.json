@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "rewrites": [
     {
@@ -14,6 +14,14 @@
     {
       "source": "/actuator/:path*",
       "destination": "http://3.19.74.97/actuator/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/",
+      "destination": "/admin/index.html"
     },
     {
       "source": "/:path*",

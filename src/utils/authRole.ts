@@ -7,8 +7,15 @@ export const isAdminUser = (user: AuthUser | null) => hasRole(user, "ADMIN");
 
 export const isStudentUser = (user: AuthUser | null) => hasRole(user, "STUDENT");
 
-export const getAdminAppUrl = () =>
-  import.meta.env.VITE_ADMIN_APP_URL || "http://localhost:5174";
+export const getAdminAppUrl = () => {
+  if (import.meta.env.VITE_ADMIN_APP_URL) {
+    return import.meta.env.VITE_ADMIN_APP_URL;
+  }
+
+  return import.meta.env.DEV
+    ? "http://localhost:5174"
+    : `${window.location.origin}/admin`;
+};
 
 export const redirectToAdminApp = (user?: AuthUser | null) => {
   if (!user) {
