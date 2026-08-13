@@ -10,6 +10,7 @@ import {
 
 import {
   createFacilityRequest,
+  deleteFacilityRequest,
   getAllMyFacilityRequests,
   getFacilityRequest,
   getFacilityRequests,
@@ -35,6 +36,7 @@ interface FacilityInquiryContextValue {
   error: string;
   addFacilityInquiry: (inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
   editFacilityInquiry: (id: number, inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
+  deleteFacilityInquiry: (id: number) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -126,6 +128,16 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
     [],
   );
 
+  const deleteFacilityInquiry = useCallback(async (id: number) => {
+    await deleteFacilityRequest(id);
+    setFacilityItems((current) =>
+      current.filter((currentItem) => currentItem.id !== id),
+    );
+    setSubmittedItems((current) =>
+      current.filter((currentItem) => currentItem.id !== id),
+    );
+  }, []);
+
   const value = useMemo(
     () => ({
       facilityItems,
@@ -134,9 +146,19 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
       error,
       addFacilityInquiry,
       editFacilityInquiry,
+      deleteFacilityInquiry,
       refresh,
     }),
-    [addFacilityInquiry, editFacilityInquiry, error, facilityItems, isLoading, refresh, submittedItems],
+    [
+      addFacilityInquiry,
+      deleteFacilityInquiry,
+      editFacilityInquiry,
+      error,
+      facilityItems,
+      isLoading,
+      refresh,
+      submittedItems,
+    ],
   );
 
   return (

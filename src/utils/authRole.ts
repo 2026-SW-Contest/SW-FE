@@ -19,7 +19,7 @@ export const getAdminAppUrl = () => {
 
 export const redirectToAdminApp = (user?: AuthUser | null) => {
   if (!user) {
-    window.location.assign(getAdminAppUrl());
+    window.location.replace(getAdminAppUrl());
     return;
   }
 
@@ -34,5 +34,5 @@ export const redirectToAdminApp = (user?: AuthUser | null) => {
       }),
     ),
   );
-  window.location.assign(`${getAdminAppUrl()}#auth=${payload}`);
+  window.location.replace(`${getAdminAppUrl()}#auth=${payload}`);
 };

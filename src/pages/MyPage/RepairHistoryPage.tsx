@@ -1,6 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
+import Toast from "../../components/common/Toast/Toast";
 import Layout from "../../components/layout/Layout";
 import FacilityCard from "../../components/ui/FacilityCard";
 import filterActiveIcon from "../../assets/icons/actions/filter-active.svg";
@@ -17,7 +19,14 @@ import { matchesFacilityFilters } from "../../utils/listFilters";
 import "./HistoryPage.css";
 
 const RepairHistoryPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { submittedItems } = useFacilityInquiries();
+  const routeToastMessage = (
+    location.state as { toastMessage?: string } | null
+  )?.toastMessage;
+  const [toastMessage] = useState(routeToastMessage ?? "");
+  const [showToast, setShowToast] = useState(Boolean(routeToastMessage));
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
     createEmptyFilterSelection,
@@ -31,6 +40,15 @@ const RepairHistoryPage = () => {
 
   const closeFilter = useCallback(() => setIsFilterOpen(false), []);
   const activeFilterCount = countActiveFilters(filters);
+
+  useEffect(() => {
+    if (!routeToastMessage) return;
+
+    navigate(`${location.pathname}${location.search}`, {
+      replace: true,
+      state: null,
+    });
+  }, [location.pathname, location.search, navigate, routeToastMessage]);
 
   return (
     <Layout current="mypage">
@@ -80,6 +98,13 @@ const RepairHistoryPage = () => {
         value={filters}
         onApply={setFilters}
         onClose={closeFilter}
+      />
+
+      <Toast
+        visible={showToast}
+        message={toastMessage}
+        placement="above-navigation"
+        onClose={() => setShowToast(false)}
       />
     </Layout>
   );
