@@ -65,9 +65,12 @@ export interface ItemClaimDetail {
   updatedAt: string;
 }
 
-interface CursorSlice<T> {
+export interface OffsetPage<T> {
   content: T[];
-  nextCursor: string | null;
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
   hasNext: boolean;
 }
 
@@ -133,18 +136,54 @@ export const deleteStoredItem = (storedItemId: number) =>
 
 export const getStoredItemClaims = (
   storedItemId: number,
-  query: { status?: ItemClaimStatus; cursor?: string; size?: number } = {},
+  query: { status?: ItemClaimStatus; page?: number; size?: number } = {},
 ) =>
-  apiGet<CursorSlice<ItemClaimSummary>>(
+  apiGet<OffsetPage<ItemClaimSummary>>(
     `/api/stored-items/${storedItemId}/claims${toQueryString(query)}`,
   );
 
 export const getOfficeItemClaims = (
   officeId: number,
-  query: { status?: ItemClaimStatus; cursor?: string; size?: number } = {},
+  query: { status?: ItemClaimStatus; page?: number; size?: number } = {},
 ) =>
-  apiGet<CursorSlice<ItemClaimSummary>>(
+  apiGet<OffsetPage<ItemClaimSummary>>(
     `/api/lost-item-offices/${officeId}/claims${toQueryString(query)}`,
+  );
+
+const collectClaimPages = async (
+  getPage: (page: number, size: number) => Promise<OffsetPage<ItemClaimSummary>>,
+  size = 50,
+) => {
+  const content: ItemClaimSummary[] = [];
+  let page = 0;
+
+  while (true) {
+    const response = await getPage(page, size);
+    content.push(...response.content);
+
+    if (!response.hasNext || page + 1 >= response.totalPages) break;
+    page += 1;
+  }
+
+  return content;
+};
+
+export const getAllStoredItemClaims = (
+  storedItemId: number,
+  query: { status?: ItemClaimStatus; size?: number } = {},
+) =>
+  collectClaimPages(
+    (page, size) => getStoredItemClaims(storedItemId, { ...query, page, size }),
+    query.size,
+  );
+
+export const getAllOfficeItemClaims = (
+  officeId: number,
+  query: { status?: ItemClaimStatus; size?: number } = {},
+) =>
+  collectClaimPages(
+    (page, size) => getOfficeItemClaims(officeId, { ...query, page, size }),
+    query.size,
   );
 
 export const getItemClaim = (itemClaimId: number) =>

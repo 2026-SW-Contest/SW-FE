@@ -10,15 +10,6 @@ import {
 import { apiGet, apiRequest, toQueryString } from "./client";
 import { getPublicFileUrl } from "./file";
 
-interface PageResponse<T> {
-  content: T[];
-  page?: number;
-  size?: number;
-  totalElements?: number;
-  totalPages?: number;
-  hasNext?: boolean;
-}
-
 interface CursorResponse<T> {
   content: T[];
   nextCursor: string | null;
@@ -166,9 +157,9 @@ export const mapFacilityItem = (item: FacilityRequestResponse): FacilityItem => 
   };
 };
 
-export const getFacilityRequests = async (page = 0, size = 100) => {
-  const response = await apiGet<PageResponse<FacilityRequestResponse>>(
-    `/api/facility-requests${toQueryString({ page, size })}`,
+export const getFacilityRequests = async (cursor?: string, size = 50) => {
+  const response = await apiGet<CursorResponse<FacilityRequestResponse>>(
+    `/api/facility-requests${toQueryString({ cursor, size })}`,
   );
 
   // 목록 응답에는 description이 포함되지 않으므로 카드 본문을 표시하려면
@@ -226,6 +217,22 @@ export const getMyFacilityRequests = async (
   );
 
   return { ...response, content };
+};
+
+export const getAllFacilityRequests = async (size = 50) => {
+  const content: FacilityItem[] = [];
+  let cursor: string | undefined;
+
+  while (true) {
+    const response = await getFacilityRequests(cursor, size);
+    content.push(...response.content);
+
+    const nextCursor = response.nextCursor ?? undefined;
+    if (!response.hasNext || !nextCursor || nextCursor === cursor) break;
+    cursor = nextCursor;
+  }
+
+  return content;
 };
 
 export const getAllMyFacilityRequests = async () => {

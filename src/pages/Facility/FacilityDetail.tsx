@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
-import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
+import AlertModal from "../../components/common/AlertModal/AlertModal";
 import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
+import Toast from "../../components/common/Toast/Toast";
 
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
 import { getFacilityRequest } from "../../api/facility";
+import { TOAST_MESSAGE } from "../../constants/toastMessage";
 import { FacilityItem } from "../../types/facility";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 
 import "./FacilityDetail.css";
 
@@ -28,13 +31,16 @@ const formatAdminResponseDate = (value: string) => {
 const FacilityDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { facilityItems } = useFacilityInquiries();
+  const { deleteFacilityInquiry, facilityItems } = useFacilityInquiries();
 
   const listItem = facilityItems.find(
     (item) => item.id === Number(id)
   );
   const [item, setItem] = useState<FacilityItem | undefined>(listItem);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     const facilityRequestId = Number(id);
@@ -59,6 +65,32 @@ const FacilityDetail = () => {
       active = false;
     };
   }, [id]);
+
+  const handleDeleteConfirm = async () => {
+    if (!item || isDeleting) return;
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    try {
+      await deleteFacilityInquiry(item.id);
+      setIsDeleteModalOpen(false);
+      navigate("/mypage/repair-history", {
+        replace: true,
+        state: { toastMessage: TOAST_MESSAGE.FACILITY_DELETED },
+      });
+    } catch (error) {
+      setIsDeleteModalOpen(false);
+      setDeleteError(
+        getUserErrorMessage(
+          error,
+          "수리·개선 문의를 삭제하지 못했습니다.",
+        ),
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   if (isLoading && !item) {
     return (
@@ -188,9 +220,8 @@ const FacilityDetail = () => {
               <button
                 type="button"
                 className="facility-detail-delete body02"
-                onClick={() => {
-                  // 추후 삭제 확인창과 API 연결
-                }}
+                disabled={isDeleting}
+                onClick={() => setIsDeleteModalOpen(true)}
               >
                 삭제하기
               </button>
@@ -207,6 +238,22 @@ const FacilityDetail = () => {
             )}
           </div>
         )}
+
+        <AlertModal
+          open={isDeleteModalOpen}
+          message="수리·개선 문의를 삭제하시겠습니까?"
+          confirmLabel={isDeleting ? "삭제 중..." : "삭제"}
+          onConfirm={() => void handleDeleteConfirm()}
+          onCancel={() => {
+            if (!isDeleting) setIsDeleteModalOpen(false);
+          }}
+        />
+
+        <Toast
+          visible={Boolean(deleteError)}
+          message={deleteError}
+          onClose={() => setDeleteError("")}
+        />
 
       </div>
     </Layout>

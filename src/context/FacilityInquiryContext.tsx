@@ -10,9 +10,10 @@ import {
 
 import {
   createFacilityRequest,
+  deleteFacilityRequest,
   getAllMyFacilityRequests,
   getFacilityRequest,
-  getFacilityRequests,
+  getAllFacilityRequests,
   mapFacilityItem,
   updateFacilityRequest,
 } from "../api/facility";
@@ -35,6 +36,7 @@ interface FacilityInquiryContextValue {
   error: string;
   addFacilityInquiry: (inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
   editFacilityInquiry: (id: number, inquiry: NewFacilityInquiry) => Promise<FacilityItem>;
+  deleteFacilityInquiry: (id: number) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -53,8 +55,8 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
     setError("");
 
     try {
-      const response = await getFacilityRequests();
-      setFacilityItems(response.content);
+      const items = await getAllFacilityRequests();
+      setFacilityItems(items);
     } catch (requestError) {
       setFacilityItems([]);
       setError(getUserErrorMessage(requestError, "시설 문의 목록을 불러오지 못했습니다."));
@@ -126,6 +128,16 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
     [],
   );
 
+  const deleteFacilityInquiry = useCallback(async (id: number) => {
+    await deleteFacilityRequest(id);
+    setFacilityItems((current) =>
+      current.filter((currentItem) => currentItem.id !== id),
+    );
+    setSubmittedItems((current) =>
+      current.filter((currentItem) => currentItem.id !== id),
+    );
+  }, []);
+
   const value = useMemo(
     () => ({
       facilityItems,
@@ -134,9 +146,19 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
       error,
       addFacilityInquiry,
       editFacilityInquiry,
+      deleteFacilityInquiry,
       refresh,
     }),
-    [addFacilityInquiry, editFacilityInquiry, error, facilityItems, isLoading, refresh, submittedItems],
+    [
+      addFacilityInquiry,
+      deleteFacilityInquiry,
+      editFacilityInquiry,
+      error,
+      facilityItems,
+      isLoading,
+      refresh,
+      submittedItems,
+    ],
   );
 
   return (
