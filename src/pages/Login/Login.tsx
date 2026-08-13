@@ -19,6 +19,10 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const routeState = location.state as {
+    from?: string;
+    loginNotice?: string;
+  } | null;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,11 +30,9 @@ const Login = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [showToast, setShowToast] = useState(Boolean(routeState?.loginNotice));
 
-  const [showToast, setShowToast] = useState(false);
-
-  const [toastMessage, setToastMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState(routeState?.loginNotice ?? "");
 
   const isFormValid =
     email.trim() !== "" &&
@@ -42,8 +44,6 @@ const Login = () => {
     }
 
     setIsSubmitting(true);
-    setErrorMessage("");
-
     try {
       const user = await login(email.trim(), password);
 
@@ -58,12 +58,11 @@ const Login = () => {
         return;
       }
 
-      const returnPath = (location.state as { from?: string } | null)?.from;
+      const returnPath = routeState?.from;
       navigate(returnPath || "/mypage", { replace: true });
-    } catch (error) {
+    } catch {
       setToastMessage(TOAST_MESSAGE.LOGIN_ERROR);
       setShowToast(true);
-      setErrorMessage(error instanceof Error ? error.message : "");
     } finally {
       setIsSubmitting(false);
     }
@@ -179,12 +178,6 @@ const Login = () => {
             </div>
 
           </div>
-
-          {errorMessage && (
-            <p className="caption02 login-error">
-              {errorMessage}
-            </p>
-          )}
 
         </div>
 

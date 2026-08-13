@@ -27,6 +27,8 @@ interface AppBarProps {
   onSearchChange?: (value: string) => void;
   onSearchSubmit?: () => void;
   onClearSearch?: () => void;
+  onSearchFocus?: () => void;
+  searchAutoFocus?: boolean;
   onNotificationClick?: () => void;
 }
 
@@ -43,6 +45,8 @@ const AppBar = ({
   onSearchChange,
   onSearchSubmit,
   onClearSearch,
+  onSearchFocus,
+  searchAutoFocus = false,
   onNotificationClick,
 }: AppBarProps) => {
   const navigate = useNavigate();
@@ -72,6 +76,8 @@ const AppBar = ({
             type="text"
             value={searchValue}
             placeholder="검색어 입력"
+            autoFocus={searchAutoFocus}
+            onFocus={onSearchFocus}
             onChange={(event) =>
               onSearchChange?.(event.target.value)
             }

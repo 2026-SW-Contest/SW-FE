@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
+import Toast from "../../components/common/Toast/Toast";
 import Layout from "../../components/layout/Layout";
 
 import FacilityCard from "../../components/ui/FacilityCard";
@@ -23,7 +24,13 @@ import "./FacilityPage.css";
 
 const FacilityPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { facilityItems } = useFacilityInquiries();
+  const routeToastMessage = (
+    location.state as { toastMessage?: string } | null
+  )?.toastMessage;
+  const [toastMessage] = useState(routeToastMessage ?? "");
+  const [showToast, setShowToast] = useState(Boolean(routeToastMessage));
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<FilterSelection>(
@@ -40,6 +47,17 @@ const FacilityPage = () => {
 
   const closeFilter = useCallback(() => setIsFilterOpen(false), []);
   const activeFilterCount = countActiveFilters(filters);
+
+  useEffect(() => {
+    if (!routeToastMessage) return;
+
+    // 새로고침이나 뒤로가기로 성공 토스트가 반복되지 않도록
+    // 화면에 전달된 일회성 상태를 즉시 소비한다.
+    navigate(`${location.pathname}${location.search}`, {
+      replace: true,
+      state: null,
+    });
+  }, [location.pathname, location.search, navigate, routeToastMessage]);
 
   return (
     <Layout current="repair">
@@ -111,6 +129,13 @@ const FacilityPage = () => {
         value={filters}
         onApply={setFilters}
         onClose={closeFilter}
+      />
+
+      <Toast
+        visible={showToast}
+        message={toastMessage}
+        placement="above-navigation"
+        onClose={() => setShowToast(false)}
       />
     </Layout>
   );

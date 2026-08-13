@@ -41,6 +41,8 @@ interface LayoutProps {
   onSearchChange?: (value: string) => void;
   onSearchSubmit?: () => void;
   onClearSearch?: () => void;
+  onSearchFocus?: () => void;
+  searchAutoFocus?: boolean;
   onNotificationClick?: () => void;
 }
 
@@ -66,6 +68,8 @@ const Layout = ({
   onSearchChange,
   onSearchSubmit,
   onClearSearch,
+  onSearchFocus,
+  searchAutoFocus,
   onNotificationClick,
 }: LayoutProps) => {
   const navigate = useNavigate();
@@ -84,6 +88,8 @@ const Layout = ({
           onSearchChange={onSearchChange}
           onSearchSubmit={onSearchSubmit}
           onClearSearch={onClearSearch}
+          onSearchFocus={onSearchFocus}
+          searchAutoFocus={searchAutoFocus}
           onNotificationClick={onNotificationClick}
         />
       )}

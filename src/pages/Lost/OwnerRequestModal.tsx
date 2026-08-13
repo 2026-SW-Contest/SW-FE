@@ -9,6 +9,7 @@ import {
 import { createPortal } from "react-dom";
 
 import closeIcon from "../../assets/icons/actions/close.svg";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 import plusIcon from "../../assets/icons/actions/plus.svg";
 
 import "./OwnerRequestModal.css";
@@ -213,11 +214,10 @@ const OwnerRequestModal = ({
                   setImages([]);
                 })
                 .catch((submitError) => {
-                  setError(
-                    submitError instanceof Error
-                      ? submitError.message
-                      : "소유자 확인 요청에 실패했습니다.",
-                  );
+                  setError(getUserErrorMessage(
+                    submitError,
+                    "소유자 확인 요청에 실패했습니다.",
+                  ));
                 })
                 .finally(() => setIsSubmitting(false));
             }}

@@ -4,7 +4,12 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { isAdminUser, redirectToAdminApp } from "../utils/authRole";
 
-const StudentRoute = ({ children }: { children: ReactNode }) => {
+interface StudentRouteProps {
+  children: ReactNode;
+  loginNotice?: string;
+}
+
+const StudentRoute = ({ children, loginNotice }: StudentRouteProps) => {
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
   const shouldRedirectToAdmin = isAuthenticated && isAdminUser(user);
@@ -18,7 +23,10 @@ const StudentRoute = ({ children }: { children: ReactNode }) => {
       <Navigate
         to="/login"
         replace
-        state={{ from: `${location.pathname}${location.search}${location.hash}` }}
+        state={{
+          from: `${location.pathname}${location.search}${location.hash}`,
+          loginNotice,
+        }}
       />
     );
   }

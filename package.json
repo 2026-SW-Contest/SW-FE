@@ -8,7 +8,7 @@
     "dev:admin": "vite --config apps/admin-web/vite.config.ts",
     "build": "vite build",
     "build:vercel": "vite build && vite build --config apps/admin-web/vite.config.ts --mode vercel",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p apps/admin-web/tsconfig.json",
     "build:admin": "vite build --config apps/admin-web/vite.config.ts",
     "build:all": "npm run build && npm run build:admin",
     "lint": "eslint .",

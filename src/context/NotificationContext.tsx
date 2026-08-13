@@ -17,6 +17,7 @@ import {
   NotificationResponse,
 } from "../api/notification";
 import { useAuth } from "./AuthContext";
+import { getUserErrorMessage } from "../utils/userErrorMessage";
 
 export interface NotificationItem {
   id: number;
@@ -90,11 +91,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     } catch (requestError) {
       setNotifications([]);
       setUnreadCount(0);
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "알림을 불러오지 못했습니다.",
-      );
+      setError(getUserErrorMessage(requestError, "알림을 불러오지 못했습니다."));
     } finally {
       setIsLoading(false);
     }

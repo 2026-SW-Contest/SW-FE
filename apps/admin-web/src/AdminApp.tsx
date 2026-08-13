@@ -15,6 +15,7 @@ import {
   updateAdminFacilityRequest,
 } from "../../../src/api/adminFacility";
 import { ApiError } from "../../../src/api/client";
+import { getUserErrorMessage } from "../../../src/utils/userErrorMessage";
 import {
   getServerHealth,
   ServerHealthStatus,
@@ -34,17 +35,18 @@ import {
   LostItemOfficeResponse,
 } from "../../../src/api/reference";
 import {
-  initialLostItems,
-  initialOwnerRequests,
-  statusLabel,
-} from "./mock";
-import {
   AdminFacilityItem,
   AdminLostItem,
   AdminSection,
   AdminStatus,
   OwnerRequest,
 } from "./types";
+
+const statusLabel: Record<AdminStatus, string> = {
+  waiting: "대기",
+  inProgress: "진행중",
+  resolved: "해결완료",
+};
 
 const navItems: Array<{ key: AdminSection; label: string; description: string }> = [
   { key: "dashboard", label: "대시보드", description: "운영 현황" },
@@ -206,8 +208,8 @@ const AdminApp = () => {
   const [section, setSection] = useState<AdminSection>("dashboard");
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<AdminStatus | "all">("all");
-  const [lostItems, setLostItems] = useState(initialLostItems);
-  const [ownerRequests, setOwnerRequests] = useState(initialOwnerRequests);
+  const [lostItems, setLostItems] = useState<AdminLostItem[]>([]);
+  const [ownerRequests, setOwnerRequests] = useState<OwnerRequest[]>([]);
   const [facilityItems, setFacilityItems] = useState<AdminFacilityItem[]>([]);
   const [facilityTotalElements, setFacilityTotalElements] = useState(0);
   const [isFacilityLoading, setIsFacilityLoading] = useState(true);
@@ -296,14 +298,13 @@ const AdminApp = () => {
     setIsFacilityLoading(true);
     setFacilityError("");
 
-    const requestTimer = window.setTimeout(() => {
-      void getAdminFacilityRequests({
-        keyword: section === "facility" ? query.trim() || undefined : undefined,
-        status:
-          section === "facility" ? toAdminFacilityStatus(statusFilter) : undefined,
-        page: 0,
-        size: 100,
-      })
+    void getAdminFacilityRequests({
+      keyword: section === "facility" ? query.trim() || undefined : undefined,
+      status:
+        section === "facility" ? toAdminFacilityStatus(statusFilter) : undefined,
+      page: 0,
+      size: 100,
+    })
       .then((response) => {
         if (!active) return;
         setFacilityItems(response.content);
@@ -313,20 +314,17 @@ const AdminApp = () => {
         if (!active) return;
         setFacilityItems([]);
         setFacilityTotalElements(0);
-        setFacilityError(
-          error instanceof Error
-            ? error.message
-            : "시설·기자재 문의를 불러오지 못했습니다.",
-        );
+        setFacilityError(getUserErrorMessage(
+          error,
+          "시설·기자재 문의를 불러오지 못했습니다.",
+        ));
       })
       .finally(() => {
         if (active) setIsFacilityLoading(false);
       });
-    }, section === "facility" ? 250 : 0);
 
     return () => {
       active = false;
-      window.clearTimeout(requestTimer);
     };
   }, [hasAccount, query, section, statusFilter]);
 
@@ -465,11 +463,10 @@ const AdminApp = () => {
         );
       })
       .catch((error) => {
-        setFacilityDetailError(
-          error instanceof Error
-            ? error.message
-            : "첨부사진을 불러오지 못했습니다.",
-        );
+        setFacilityDetailError(getUserErrorMessage(
+          error,
+          "문의 상세 정보를 불러오지 못했습니다.",
+        ));
       })
       .finally(() => setIsFacilityDetailLoading(false));
   };
@@ -517,9 +514,7 @@ const AdminApp = () => {
         return;
       }
 
-      setLogoutError(
-        error instanceof Error ? error.message : "로그아웃에 실패했습니다.",
-      );
+      setLogoutError(getUserErrorMessage(error, "로그아웃에 실패했습니다."));
       setIsLoggingOut(false);
     }
   };
@@ -683,7 +678,7 @@ const AdminApp = () => {
                 .filter(Boolean)
                 .join(" "),
               storageLocation: input.storageLocation,
-              foundDate: input.foundDate.replaceAll("-", "."),
+              foundDate: input.foundDate.replace(/-/g, "."),
               status: input.status,
             }, ...items]);
             setShowLostForm(false);
@@ -921,11 +916,7 @@ const LostRegistrationModal = ({ onClose, onSubmit }: { onClose: () => void; onS
       })
       .catch((error) => {
         if (active) {
-          setSubmitError(
-            error instanceof Error
-              ? error.message
-              : "기준정보를 불러오지 못했습니다.",
-          );
+          setSubmitError(getUserErrorMessage(error, "기준정보를 불러오지 못했습니다."));
         }
       });
     return () => {
@@ -986,9 +977,7 @@ const LostRegistrationModal = ({ onClose, onSubmit }: { onClose: () => void; onS
       image: representativeImage,
       });
     } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : "분실물 등록에 실패했습니다.",
-      );
+      setSubmitError(getUserErrorMessage(error, "분실물 등록에 실패했습니다."));
       setIsSubmitting(false);
     }
   };
@@ -1075,9 +1064,7 @@ const OwnerRequestDrawer = ({ request, onClose, onProcess }: { request: OwnerReq
       setIsProcessing(false);
       closeWithAnimation();
     } catch (error) {
-      setProcessError(
-        error instanceof Error ? error.message : "요청 처리에 실패했습니다.",
-      );
+      setProcessError(getUserErrorMessage(error, "요청 처리에 실패했습니다."));
       setIsProcessing(false);
     }
   };
@@ -1199,11 +1186,10 @@ const FacilityDrawer = ({ item, isLoading, detailError, onClose, onSave }: { ite
       setIsSaving(false);
       closeWithAnimation();
     } catch (error) {
-      setSaveError(
-        error instanceof Error
-          ? error.message
-          : "시설 문의 처리 내용을 저장하지 못했습니다.",
-      );
+      setSaveError(getUserErrorMessage(
+        error,
+        "시설 문의 처리 내용을 저장하지 못했습니다.",
+      ));
       setIsSaving(false);
     }
   };

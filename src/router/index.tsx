@@ -65,7 +65,11 @@ const AppRouter = () => {
       />
       <Route
         path="/facility/write"
-        element={<StudentRoute><FacilityWrite /></StudentRoute>}
+        element={(
+          <StudentRoute loginNotice="로그인이 필요한 서비스입니다.">
+            <FacilityWrite />
+          </StudentRoute>
+        )}
       />
       <Route path="/facility/complete" element={<FacilityComplete />} />
 

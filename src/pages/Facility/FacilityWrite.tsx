@@ -5,6 +5,7 @@ import SelectionBottomSheet from "../../components/common/SelectionBottomSheet/S
 import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import Toast from "../../components/common/Toast/Toast";
+import { TOAST_MESSAGE } from "../../constants/toastMessage";
 
 import chevronRightIcon from "../../assets/icons/actions/chevron-right.svg";
 import closeIcon from "../../assets/icons/actions/close.svg";
@@ -13,6 +14,7 @@ import { getFacilityCategories, getLocations } from "../../api/reference";
 import { getFacilityRequest } from "../../api/facility";
 import { FilterOption } from "../../constants/filterOptions";
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 
 import "./FacilityWrite.css";
 
@@ -64,11 +66,7 @@ const FacilityWrite = () => {
       })
       .catch((error) => {
         if (!active) return;
-        setToastMessage(
-          error instanceof Error
-            ? error.message
-            : "카테고리와 장소를 불러오지 못했습니다.",
-        );
+        setToastMessage(getUserErrorMessage(error, "카테고리와 장소를 불러오지 못했습니다."));
         setShowToast(true);
       });
 
@@ -97,9 +95,7 @@ const FacilityWrite = () => {
       })
       .catch((error) => {
         if (!active) return;
-        setToastMessage(
-          error instanceof Error ? error.message : "문의 내용을 불러오지 못했습니다.",
-        );
+        setToastMessage(getUserErrorMessage(error, "문의 내용을 불러오지 못했습니다."));
         setShowToast(true);
       })
       .finally(() => {
@@ -220,14 +216,16 @@ const FacilityWrite = () => {
         // 기존 상세 이력으로 돌아간다.
         navigate(-1);
       } else {
-        navigate("/facility", { replace: true });
+        navigate("/facility", {
+          replace: true,
+          state: { toastMessage: TOAST_MESSAGE.FACILITY_CREATED },
+        });
       }
     } catch (error) {
-      setToastMessage(
-        error instanceof Error
-          ? error.message
-          : `시설 문의 ${isEditMode ? "수정" : "등록"}에 실패했습니다.`,
-      );
+      setToastMessage(getUserErrorMessage(
+        error,
+        `시설 문의 ${isEditMode ? "수정" : "등록"}에 실패했습니다.`,
+      ));
       setShowToast(true);
     } finally {
       setIsSubmitting(false);

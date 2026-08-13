@@ -12,19 +12,7 @@ import { getMyItemClaims, mapMyItemClaim } from "../api/lost";
 import inProgressStatusIcon from "../assets/icons/status/in-progress.svg";
 import { LostItem } from "../types/lost";
 import { useAuth } from "./AuthContext";
-
-const REQUESTED_LOST_ITEM_IDS_KEY = "requestedLostItemIds";
-
-const getInitialRequestedIds = () => {
-  try {
-    return JSON.parse(
-      localStorage.getItem(REQUESTED_LOST_ITEM_IDS_KEY) ?? "[]",
-    ) as number[];
-  } catch {
-    localStorage.removeItem(REQUESTED_LOST_ITEM_IDS_KEY);
-    return [];
-  }
-};
+import { getUserErrorMessage } from "../utils/userErrorMessage";
 
 interface RecoveryRequestContextValue {
   recoveryItems: LostItem[];
@@ -40,7 +28,7 @@ const RecoveryRequestContext =
 
 export const RecoveryRequestProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, user } = useAuth();
-  const [requestedIds, setRequestedIds] = useState(getInitialRequestedIds);
+  const [requestedIds, setRequestedIds] = useState<number[]>([]);
   const [recoveryItems, setRecoveryItems] = useState<LostItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -71,13 +59,8 @@ export const RecoveryRequestProvider = ({ children }: { children: ReactNode }) =
 
       setRecoveryItems(items);
       setRequestedIds(ids);
-      localStorage.setItem(REQUESTED_LOST_ITEM_IDS_KEY, JSON.stringify(ids));
     } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "분실물 회수 내역을 불러오지 못했습니다.",
-      );
+      setError(getUserErrorMessage(requestError, "분실물 회수 내역을 불러오지 못했습니다."));
       setRecoveryItems([]);
     } finally {
       setIsLoading(false);
@@ -88,7 +71,6 @@ export const RecoveryRequestProvider = ({ children }: { children: ReactNode }) =
     if (!isAuthenticated) {
       setRecoveryItems([]);
       setRequestedIds([]);
-      localStorage.removeItem(REQUESTED_LOST_ITEM_IDS_KEY);
       return;
     }
 
@@ -98,7 +80,6 @@ export const RecoveryRequestProvider = ({ children }: { children: ReactNode }) =
   const requestRecovery = useCallback((item: LostItem) => {
     setRequestedIds((current) => {
       const nextIds = [item.id, ...current.filter((id) => id !== item.id)];
-      localStorage.setItem(REQUESTED_LOST_ITEM_IDS_KEY, JSON.stringify(nextIds));
       return nextIds;
     });
     setRecoveryItems((current) => [

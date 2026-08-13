@@ -10,6 +10,7 @@ import {
   signup,
 } from "../../api/auth";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 import {
   isSignupFormValid,
   validateEmailVerificationToken,
@@ -127,9 +128,7 @@ const Signup = () => {
       setToastMessage("인증번호를 발송했습니다.");
       setShowToast(true);
     } catch (error) {
-      setEmailError(
-        error instanceof Error ? error.message : "인증번호 발송에 실패했습니다.",
-      );
+      setEmailError(getUserErrorMessage(error, "인증번호 발송에 실패했습니다."));
     } finally {
       setIsSendingCode(false);
     }
@@ -219,11 +218,7 @@ const Signup = () => {
       setShowToast(true);
     } catch (error) {
       setSignupSucceeded(false);
-      setToastMessage(
-        error instanceof Error
-          ? error.message
-          : TOAST_MESSAGE.SIGNUP_ERROR,
-      );
+      setToastMessage(getUserErrorMessage(error, TOAST_MESSAGE.SIGNUP_ERROR));
       setShowToast(true);
     } finally {
       setIsSubmitting(false);

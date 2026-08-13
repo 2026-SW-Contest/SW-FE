@@ -16,9 +16,9 @@ import {
   mapFacilityItem,
   updateFacilityRequest,
 } from "../api/facility";
-import { facilityListData } from "../mock/facility";
 import { FacilityItem } from "../types/facility";
 import { useAuth } from "./AuthContext";
+import { getUserErrorMessage } from "../utils/userErrorMessage";
 
 interface NewFacilityInquiry {
   title: string;
@@ -56,13 +56,8 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
       const response = await getFacilityRequests();
       setFacilityItems(response.content);
     } catch (requestError) {
-      // 백엔드가 내려가도 디자인·필터 확인은 가능하게 목업을 폴백으로 유지한다.
-      setFacilityItems(facilityListData);
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "시설 문의 목록을 불러오지 못했습니다.",
-      );
+      setFacilityItems([]);
+      setError(getUserErrorMessage(requestError, "시설 문의 목록을 불러오지 못했습니다."));
     }
 
     if (isAuthenticated) {
@@ -71,11 +66,7 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
         setSubmittedItems(myItems);
       } catch (requestError) {
         setSubmittedItems([]);
-        setError(
-          requestError instanceof Error
-            ? requestError.message
-            : "내 시설 문의 내역을 불러오지 못했습니다.",
-        );
+        setError(getUserErrorMessage(requestError, "내 시설 문의 내역을 불러오지 못했습니다."));
       }
     } else {
       setSubmittedItems([]);
