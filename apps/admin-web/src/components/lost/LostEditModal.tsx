@@ -1,7 +1,17 @@
-import { FormEvent, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import closeIcon from "../../../../../src/assets/icons/actions/close.svg";
+import plusIcon from "../../../../../src/assets/icons/actions/plus.svg";
 import {
   StoredItemEditDetail,
 } from "../../../../../src/api/adminLost";
+import { getPublicFileUrl } from "../../../../../src/api/file";
 import {
   getItemCategories,
   getLocations,
@@ -39,6 +49,8 @@ export interface LostEditInput {
   foundDate: string;
   description: string;
   status: AdminStatus;
+  keepFileIds: number[];
+  files: File[];
 }
 
 interface LostEditModalProps {
@@ -67,11 +79,28 @@ export const LostEditModal = ({
     categoryName: string;
   }>>([]);
   const [offices, setOffices] = useState<LostItemOfficeResponse[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState(
+    item.attachments,
+  );
+  const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const previewUrls = useMemo(
+    () => files.map((file) => URL.createObjectURL(file)),
+    [files],
+  );
+
+  useEffect(
+    () => () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    },
+    [previewUrls],
+  );
 
   useEffect(() => {
     let active = true;
@@ -96,6 +125,17 @@ export const LostEditModal = ({
       active = false;
     };
   }, []);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const remainingCount = 5 - existingAttachments.length - files.length;
+    const selectedFiles = Array.from(event.target.files ?? [])
+      .slice(0, remainingCount);
+
+    if (selectedFiles.length) {
+      setFiles((current) => [...current, ...selectedFiles]);
+    }
+    event.target.value = "";
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -136,6 +176,10 @@ export const LostEditModal = ({
         foundDate: String(data.get("foundDate")),
         description: String(data.get("description")),
         status: data.get("status") as AdminStatus,
+        keepFileIds: existingAttachments.map(
+          (attachment) => attachment.fileId,
+        ),
+        files,
       });
     } catch (error) {
       setSubmitError(getUserErrorMessage(error, "분실물 수정에 실패했습니다."));
@@ -172,6 +216,79 @@ export const LostEditModal = ({
           <button type="button" onClick={onClose}>×</button>
         </div>
         <div className="admin-form-grid">
+          <div className="admin-field admin-field-wide">
+            <div className="admin-attachment-header">
+              <span>첨부 이미지</span>
+              <small>{existingAttachments.length + files.length}/5</small>
+            </div>
+            <div className="admin-attachment-list">
+              <button
+                type="button"
+                className="admin-attachment-add"
+                disabled={
+                  isSubmitting ||
+                  isDeleting ||
+                  existingAttachments.length + files.length >= 5
+                }
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <img src={plusIcon} alt="" />
+                <span>추가</span>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="admin-photo-input"
+                onChange={handleFileChange}
+              />
+              {existingAttachments.map((attachment, index) => (
+                <div
+                  key={attachment.fileId}
+                  className="admin-attachment-preview"
+                >
+                  <img
+                    src={attachment.fileUrl ?? getPublicFileUrl(attachment.fileId)}
+                    alt={`기존 첨부 이미지 ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    disabled={isSubmitting || isDeleting}
+                    aria-label={`기존 첨부 이미지 ${index + 1} 삭제`}
+                    onClick={() => setExistingAttachments((current) =>
+                      current.filter((currentAttachment) =>
+                        currentAttachment.fileId !== attachment.fileId
+                      )
+                    )}
+                  >
+                    <img src={closeIcon} alt="" />
+                  </button>
+                </div>
+              ))}
+              {files.map((file, index) => (
+                <div
+                  key={`${file.name}-${file.lastModified}-${index}`}
+                  className="admin-attachment-preview"
+                >
+                  <img
+                    src={previewUrls[index]}
+                    alt={`신규 첨부 이미지 ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    disabled={isSubmitting || isDeleting}
+                    aria-label={`신규 첨부 이미지 ${index + 1} 삭제`}
+                    onClick={() => setFiles((current) =>
+                      current.filter((_, fileIndex) => fileIndex !== index)
+                    )}
+                  >
+                    <img src={closeIcon} alt="" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
           <label className="admin-field admin-field-wide">
             <span>게시글 제목 <RequiredMark /></span>
             <input

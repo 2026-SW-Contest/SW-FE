@@ -27,6 +27,7 @@ interface NewFacilityInquiry {
   categoryIds: number[];
   locationIds: number[];
   images: File[];
+  keepFileIds?: number[];
 }
 
 interface FacilityInquiryContextValue {
@@ -114,6 +115,7 @@ export const FacilityInquiryProvider = ({ children }: { children: ReactNode }) =
         categoryId: inquiry.categoryIds[0],
         locationId: inquiry.locationIds[0],
         images: inquiry.images,
+        keepFileIds: inquiry.keepFileIds,
       });
       const item = await getFacilityRequest(id);
 

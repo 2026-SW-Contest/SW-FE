@@ -304,8 +304,8 @@ const AdminApp = () => {
       itemName: input.title.trim(),
       description: input.description.trim(),
       foundDate: input.foundDate,
-      keepFileIds: editingLostItem.attachments.map((attachment) => attachment.fileId),
-    });
+      keepFileIds: input.keepFileIds,
+    }, input.files);
 
     if (input.status !== toAdminLostStatus(editingLostItem.publicStatus)) {
       await updateStoredItemStatus(storedItemId, toStoredItemStatus(input.status));

@@ -4,6 +4,7 @@ import resolvedStatusIcon from "../assets/icons/status/resolved.svg";
 import waitingStatusIcon from "../assets/icons/status/waiting.svg";
 import {
   FacilityAdminResponse,
+  FacilityAttachment,
   FacilityItem,
   FacilityStatus,
 } from "../types/facility";
@@ -41,6 +42,7 @@ export interface FacilityRequestResponse {
     | string
     | {
         fileId?: number;
+        originalFilename?: string;
         attachmentUrl?: string;
         fileUrl?: string;
         imageUrl?: string;
@@ -63,6 +65,7 @@ export interface CreateFacilityRequest {
   categoryId: number;
   locationId: number;
   images: File[];
+  keepFileIds?: number[];
 }
 
 const normalizeStatus = (status?: string): FacilityStatus => {
@@ -104,6 +107,21 @@ const formatDate = (value?: string) => {
 
 export const mapFacilityItem = (item: FacilityRequestResponse): FacilityItem => {
   const status = normalizeStatus(item.requestStatus ?? item.status);
+  const attachments = item.attachments
+    ?.flatMap((attachment): FacilityAttachment[] => {
+      if (typeof attachment === "string" || !attachment.fileId) return [];
+
+      return [{
+        fileId: attachment.fileId,
+        originalFilename: attachment.originalFilename ?? "",
+        fileUrl:
+          attachment.attachmentUrl ??
+          attachment.fileUrl ??
+          attachment.imageUrl ??
+          attachment.url ??
+          getPublicFileUrl(attachment.fileId),
+      }];
+    });
   const attachmentUrls = item.attachments
     ?.map((attachment) => {
       if (typeof attachment === "string") return attachment;
@@ -140,6 +158,7 @@ export const mapFacilityItem = (item: FacilityRequestResponse): FacilityItem => 
     id: item.facilityRequestId ?? item.id ?? 0,
     image: images?.[0] ?? emptyImage,
     images,
+    attachments,
     title: item.title,
     description,
     detailDescription: description,
@@ -276,6 +295,9 @@ const createFacilityRequestFormData = (request: CreateFacilityRequest) => {
           description: request.description,
           categoryId: request.categoryId,
           locationId: request.locationId,
+          ...(request.keepFileIds !== undefined
+            ? { keepFileIds: request.keepFileIds }
+            : {}),
         }),
       ],
       { type: "application/json" },

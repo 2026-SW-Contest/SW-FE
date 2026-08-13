@@ -14,6 +14,7 @@ import { getFacilityCategories, getLocations } from "../../api/reference";
 import { getFacilityRequest } from "../../api/facility";
 import { FilterOption } from "../../constants/filterOptions";
 import { useFacilityInquiries } from "../../context/FacilityInquiryContext";
+import { FacilityAttachment } from "../../types/facility";
 import { getUserErrorMessage } from "../../utils/userErrorMessage";
 
 import "./FacilityWrite.css";
@@ -29,7 +30,9 @@ const FacilityWrite = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingAttachments, setExistingAttachments] = useState<
+    FacilityAttachment[]
+  >([]);
   const [isInitializing, setIsInitializing] = useState(isEditMode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState<FilterOption[]>([]);
@@ -91,7 +94,7 @@ const FacilityWrite = () => {
         setLocations(item.locationId ? [String(item.locationId)] : []);
         setTitle(item.title);
         setContent(item.detailDescription ?? item.description);
-        setExistingImages(item.images ?? []);
+        setExistingAttachments(item.attachments ?? []);
       })
       .catch((error) => {
         if (!active) return;
@@ -119,7 +122,7 @@ const FacilityWrite = () => {
   };
 
   const handleUploadClick = () => {
-    if (existingImages.length + images.length >= 5) return;
+    if (existingAttachments.length + images.length >= 5) return;
 
     fileInputRef.current?.click();
   };
@@ -133,7 +136,7 @@ const FacilityWrite = () => {
 
     if (selectedFiles.length === 0) return;
 
-    const remainCount = 5 - existingImages.length - images.length;
+    const remainCount = 5 - existingAttachments.length - images.length;
 
     const filesToAdd = selectedFiles.slice(0, remainCount);
 
@@ -177,9 +180,9 @@ const FacilityWrite = () => {
     [imagePreviewUrls],
   );
 
-  const handleRemoveExistingImage = (indexToRemove: number) => {
-    setExistingImages((current) =>
-      current.filter((_, index) => index !== indexToRemove),
+  const handleRemoveExistingImage = (fileId: number) => {
+    setExistingAttachments((current) =>
+      current.filter((attachment) => attachment.fileId !== fileId),
     );
   };
 
@@ -203,6 +206,9 @@ const FacilityWrite = () => {
         categoryIds: categories.map(Number),
         locationIds: locations.map(Number),
         images,
+        keepFileIds: isEditMode
+          ? existingAttachments.map((attachment) => attachment.fileId)
+          : undefined,
       };
 
       if (isEditMode) {
@@ -212,9 +218,9 @@ const FacilityWrite = () => {
       }
 
       if (isEditMode) {
-        // 상세 → 수정으로 진입했으므로 새 상세 이력을 쌓지 않고
-        // 기존 상세 이력으로 돌아간다.
-        navigate(-1);
+        navigate(`/facility/${facilityRequestId}`, {
+          replace: true,
+        });
       } else {
         navigate("/facility", {
           replace: true,
@@ -393,7 +399,7 @@ const FacilityWrite = () => {
                 type="button"
                 className="facility-write-upload"
                 onClick={handleUploadClick}
-                disabled={existingImages.length + images.length >= 5}
+                disabled={existingAttachments.length + images.length >= 5}
               >
                 <img
                   src={plusIcon}
@@ -402,7 +408,7 @@ const FacilityWrite = () => {
                 />
 
                 <span className="caption05 facility-write-upload-count">
-                  ({existingImages.length + images.length}/5)
+                  ({existingAttachments.length + images.length}/5)
                 </span>
 
               </button>
@@ -416,13 +422,13 @@ const FacilityWrite = () => {
                 onChange={handleImageChange}
               />
 
-              {existingImages.map((image, index) => (
+              {existingAttachments.map((attachment, index) => (
                 <div
-                  key={`${image}-${index}`}
+                  key={attachment.fileId}
                   className="facility-write-preview"
                 >
                   <img
-                    src={image}
+                    src={attachment.fileUrl}
                     alt={`기존 첨부 이미지 ${index + 1}`}
                     className="facility-write-preview-image"
                   />
@@ -430,7 +436,7 @@ const FacilityWrite = () => {
                     type="button"
                     className="facility-write-preview-remove"
                     aria-label={`기존 첨부 이미지 ${index + 1} 삭제`}
-                    onClick={() => handleRemoveExistingImage(index)}
+                    onClick={() => handleRemoveExistingImage(attachment.fileId)}
                   >
                     <img src={closeIcon} alt="" />
                   </button>

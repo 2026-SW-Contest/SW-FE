@@ -6,11 +6,18 @@ export interface FacilityAdminResponse {
   createdAt: string;
 }
 
+export interface FacilityAttachment {
+  fileId: number;
+  originalFilename: string;
+  fileUrl: string;
+}
+
 export interface FacilityItem {
   id: number;
 
   image: string;
   images?: string[];
+  attachments?: FacilityAttachment[];
 
   title: string;
   description: string;
