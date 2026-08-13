@@ -1,10 +1,11 @@
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "./Layout.css";
 
 import AppBar from "./AppBar";
 import BottomNavigation from "./BottomNavigation";
+import DesktopNavigation from "./DesktopNavigation";
 
 type NavigationKey =
   | "home"
@@ -73,11 +74,21 @@ const Layout = ({
   onNotificationClick,
 }: LayoutProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
-    <div className="app">
+    <div className={`app ${showBottomNavigation ? "app-primary" : ""}`}>
+      {showBottomNavigation && (
+        <DesktopNavigation
+          current={current}
+          notificationCount={notificationCount}
+          onNotificationClick={onNotificationClick}
+        />
+      )}
+
       {showAppBar && (
-        <AppBar
+        <div className={`layout-app-bar layout-app-bar-${appBarVariant}`}>
+          <AppBar
           variant={appBarVariant}
           title={appBarTitle}
           rightIcon={rightIcon}
@@ -91,12 +102,15 @@ const Layout = ({
           onSearchFocus={onSearchFocus}
           searchAutoFocus={searchAutoFocus}
           onNotificationClick={onNotificationClick}
-        />
+          />
+        </div>
       )}
 
       <main
+        key={`${location.pathname}${location.search}`}
         className={`
           content
+          content-route-enter
           ${scrollable ? "content-scrollable" : "content-fixed"}
           ${showBottomNavigation ? "" : "content-no-bottom-nav"}
         `}

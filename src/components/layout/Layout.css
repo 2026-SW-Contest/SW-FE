@@ -1,8 +1,10 @@
 .app {
   position: relative;
 
-  width: 402px;
-  height: 874px;
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  height: 100dvh;
 
   margin: 0 auto;
 
@@ -12,7 +14,27 @@
   overflow: hidden;
 
   background: var(--white);
-  position:relative;
+}
+
+@media (min-width: 900px) {
+  .app {
+    width: calc(100% - 48px);
+    max-width: 800px;
+    border-right: 1px solid var(--gray-100);
+    border-left: 1px solid var(--gray-100);
+  }
+
+  .app-primary .layout-app-bar-main {
+    display: none;
+  }
+
+  .app-primary .content {
+    padding-bottom: 0;
+  }
+
+  .app-primary > .bottom-nav {
+    display: none;
+  }
 }
 
 .content {
@@ -39,7 +61,7 @@
 }
 
 .content-scrollable::-webkit-scrollbar-thumb {
-  background: #bdbdbd;
+  background: var(--gray-300);
   border-radius: 999px;
 }
 
@@ -53,4 +75,20 @@
 
 .content-no-bottom-nav{
     padding-bottom:0;
+}
+
+.content-route-enter {
+  animation: content-route-enter var(--motion-normal) var(--ease-standard);
+}
+
+@keyframes content-route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

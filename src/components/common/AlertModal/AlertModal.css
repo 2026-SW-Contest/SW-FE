@@ -1,5 +1,5 @@
 .alert-modal-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
 
   display: flex;
@@ -11,6 +11,8 @@
   background: var(--black-65);
 
   z-index: 10000;
+
+  animation: alert-backdrop-enter var(--motion-normal) var(--ease-standard);
 }
 
 .alert-modal {
@@ -24,6 +26,25 @@
 
   border-radius: 12px;
   background: var(--white);
+
+  animation: alert-modal-enter var(--motion-normal) var(--ease-emphasized);
+}
+
+@keyframes alert-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes alert-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .alert-modal-message {
@@ -66,4 +87,26 @@
 
   background: var(--blue-400);
   color: var(--white);
+}
+
+@media (min-width: 900px) {
+  .alert-modal-backdrop {
+    padding: 32px;
+  }
+
+  .alert-modal {
+    width: 360px;
+    padding: 28px 24px 20px;
+    gap: 24px;
+    border-radius: 16px;
+  }
+
+  .alert-modal-actions {
+    gap: 10px;
+  }
+
+  .alert-modal-cancel,
+  .alert-modal-confirm {
+    height: 44px;
+  }
 }

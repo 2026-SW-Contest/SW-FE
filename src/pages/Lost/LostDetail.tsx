@@ -8,7 +8,6 @@ import Layout from "../../components/layout/Layout";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
 import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
 import { useAuth } from "../../context/AuthContext";
-import { isAdminUser, redirectToAdminApp } from "../../utils/authRole";
 import { createItemClaim, getStoredItem } from "../../api/lost";
 import { LostItem } from "../../types/lost";
 import { useLostItems } from "../../context/LostItemContext";
@@ -66,11 +65,6 @@ const LostDetail = () => {
   );
 
   const handleOwnerRequestOpen = () => {
-    if (isAdminUser(user)) {
-      redirectToAdminApp();
-      return;
-    }
-
     if (!isAuthenticated) {
       setIsLoginModalOpen(true);
       return;
