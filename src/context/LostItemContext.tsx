@@ -9,8 +9,8 @@ import {
 } from "react";
 
 import { getStoredItems } from "../api/lost";
-import { lostListData } from "../mock/lost";
 import { LostItem } from "../types/lost";
+import { getUserErrorMessage } from "../utils/userErrorMessage";
 
 interface LostItemContextValue {
   lostItems: LostItem[];
@@ -33,12 +33,8 @@ export const LostItemProvider = ({ children }: { children: ReactNode }) => {
       const response = await getStoredItems({ size: 50 });
       setLostItems(response.content);
     } catch (requestError) {
-      setLostItems(lostListData);
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "분실물 목록을 불러오지 못했습니다.",
-      );
+      setLostItems([]);
+      setError(getUserErrorMessage(requestError, "분실물 목록을 불러오지 못했습니다."));
     } finally {
       setIsLoading(false);
     }

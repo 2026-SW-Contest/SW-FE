@@ -5,9 +5,9 @@ import AlertModal from "../../components/common/AlertModal/AlertModal";
 import Layout from "../../components/layout/Layout";
 import NotificationBellButton from "../../components/common/NotificationBellButton/NotificationBellButton";
 
-import { mockUser } from "../../mock/user";
 import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
 import { useAuth } from "../../context/AuthContext";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 
 import "./MyPage.css";
 
@@ -43,11 +43,7 @@ const MyPage = () => {
       setIsWithdrawModalOpen(false);
       navigate("/", { replace: true });
     } catch (error) {
-      setWithdrawError(
-        error instanceof Error
-          ? error.message
-          : "회원 탈퇴 처리에 실패했습니다.",
-      );
+      setWithdrawError(getUserErrorMessage(error, "회원 탈퇴 처리에 실패했습니다."));
     } finally {
       setIsWithdrawing(false);
     }
@@ -70,7 +66,7 @@ const MyPage = () => {
             />
 
             <span className="body03 mypage-profile-name">
-              {user?.name ?? mockUser.name}님
+              {user?.name ?? "회원"}님
             </span>
           </div>
 

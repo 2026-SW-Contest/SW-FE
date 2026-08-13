@@ -26,12 +26,13 @@ export const TOAST_MESSAGE = {
   LOST_CREATED: "분실물이 등록되었습니다.",
   LOST_UPDATED: "분실물이 수정되었습니다.",
   LOST_DELETED: "분실물이 삭제되었습니다.",
+  OWNER_REQUESTED: "소유자 확인 요청이 신청되었습니다.",
 
   /* ---------- 시설 · 기자재 ---------- */
 
-  FACILITY_CREATED: "신고가 등록되었습니다.",
-  FACILITY_UPDATED: "신고가 수정되었습니다.",
-  FACILITY_DELETED: "신고가 삭제되었습니다.",
+  FACILITY_CREATED: "수리·개선 문의가 등록되었습니다.",
+  FACILITY_UPDATED: "수리·개선 문의가 수정되었습니다.",
+  FACILITY_DELETED: "수리·개선 문의가 삭제되었습니다.",
 
   /* ---------- 공통 ---------- */
 

@@ -4,7 +4,7 @@ import Layout from "../../components/layout/Layout";
 import PrimaryButton from "../../components/ui/PrimaryButton/PrimaryButton";
 import pencilIcon from "../../assets/icons/actions/pencil.svg";
 import profileIcon from "../../assets/icons/account/profile.svg";
-import { mockUser } from "../../mock/user";
+import { useAuth } from "../../context/AuthContext";
 
 import "./AccountSettings.css";
 
@@ -61,6 +61,7 @@ const ReadonlyField = ({
 const EditProfilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const state = location.state as EditProfileLocationState | null;
   const passwordChanged = state?.passwordChanged === true;
 
@@ -91,13 +92,13 @@ const EditProfilePage = () => {
           <div className="account-settings-student-field">
             <ReadonlyField
               label="학생 정보"
-              value={`${mockUser.name} / ${mockUser.studentId}`}
+              value={[user?.name, user?.studentNumber].filter(Boolean).join(" / ")}
             />
           </div>
 
           <ReadonlyField
             label="학교 이메일"
-            value={mockUser.email}
+            value={user?.email ?? ""}
           />
 
           <ReadonlyField

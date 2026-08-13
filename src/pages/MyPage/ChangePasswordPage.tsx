@@ -12,6 +12,7 @@ import { ALERT_MESSAGE } from "../../constants/alertMessage";
 import { TOAST_MESSAGE } from "../../constants/toastMessage";
 import { ApiError } from "../../api/client";
 import { useAuth } from "../../context/AuthContext";
+import { getUserErrorMessage } from "../../utils/userErrorMessage";
 
 import "./AccountSettings.css";
 
@@ -153,7 +154,7 @@ const ChangePasswordPage = () => {
         } else if (error.code === "PASSWORD_REUSE_NOT_ALLOWED") {
           setNewPasswordError("현재 비밀번호와 다른 비밀번호를 입력해주세요.");
         } else {
-          setRequestError(error.message);
+          setRequestError(getUserErrorMessage(error, TOAST_MESSAGE.PASSWORD_CHANGE_FAILED));
         }
       } else {
         setRequestError(TOAST_MESSAGE.PASSWORD_CHANGE_FAILED);

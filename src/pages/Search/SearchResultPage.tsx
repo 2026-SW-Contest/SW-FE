@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import FilterBottomSheet from "../../components/common/FilterBottomSheet/FilterBottomSheet";
 import Layout from "../../components/layout/Layout";
@@ -12,7 +12,6 @@ import filterActiveIcon from "../../assets/icons/actions/filter-active.svg";
 import filterIcon from "../../assets/icons/actions/filter.svg";
 import smallBellIcon from "../../assets/icons/notifications/bell-small.svg";
 
-import { facilityListData, lostListData } from "../../mock";
 import { searchFacilityRequests, searchLostItems } from "../../api/search";
 import { FacilityItem } from "../../types/facility";
 import { LostItem } from "../../types/lost";
@@ -42,6 +41,7 @@ interface ActiveFilterChip {
 
 const SearchResultPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const keyword = new URLSearchParams(location.search).get("q") ?? "";
 
   const [searchValue, setSearchValue] = useState(keyword);
@@ -68,39 +68,27 @@ const SearchResultPage = () => {
     }
 
     let active = true;
-    const timer = window.setTimeout(() => {
-      setIsLoading(true);
-      void Promise.all([
-        searchLostItems(searchValue.trim()),
-        searchFacilityRequests(searchValue.trim()),
-      ])
-        .then(([nextLostItems, nextFacilityItems]) => {
-          if (!active) return;
-          setLostItems(nextLostItems);
-          setFacilityItems(nextFacilityItems);
-        })
-        .catch(() => {
-          if (!active) return;
-          // 서버 장애 시 검색 화면 자체가 막히지 않도록 기존 목업만 폴백한다.
-          setLostItems(
-            lostListData.filter((item) =>
-              item.title.toLowerCase().includes(normalizedSearchValue),
-            ),
-          );
-          setFacilityItems(
-            facilityListData.filter((item) =>
-              item.title.toLowerCase().includes(normalizedSearchValue),
-            ),
-          );
-        })
-        .finally(() => {
-          if (active) setIsLoading(false);
-        });
-    }, 250);
+    setIsLoading(true);
+    void Promise.all([
+      searchLostItems(searchValue.trim()),
+      searchFacilityRequests(searchValue.trim()),
+    ])
+      .then(([nextLostItems, nextFacilityItems]) => {
+        if (!active) return;
+        setLostItems(nextLostItems);
+        setFacilityItems(nextFacilityItems);
+      })
+      .catch(() => {
+        if (!active) return;
+        setLostItems([]);
+        setFacilityItems([]);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
 
     return () => {
       active = false;
-      window.clearTimeout(timer);
     };
   }, [normalizedSearchValue, searchValue]);
 
@@ -204,13 +192,21 @@ const SearchResultPage = () => {
     });
   };
 
+  const openSearchInput = () => {
+    const query = searchValue.trim();
+    navigate(query ? `/search?q=${encodeURIComponent(query)}` : "/search", {
+      replace: true,
+    });
+  };
+
   return (
     <Layout
       current="search"
       appBarVariant="search"
       searchValue={searchValue}
       onSearchChange={setSearchValue}
-      onClearSearch={() => setSearchValue("")}
+      onSearchFocus={openSearchInput}
+      onClearSearch={() => navigate("/search", { replace: true })}
     >
       <div className="search-result-page">
         <div className="search-result-tab">

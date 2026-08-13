@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 import closeIcon from "../../assets/icons/actions/close.svg";
 import searchIcon from "../../assets/icons/actions/search.svg";
-import { getSearchSuggestions, SearchSuggestions } from "../../api/search";
+import {
+  getSearchSuggestions,
+  searchFacilityRequests,
+  searchLostItems,
+  SearchSuggestions,
+} from "../../api/search";
 import {
   addRecentSearch,
   deleteAllRecentSearches,
@@ -23,8 +28,11 @@ const EMPTY_SUGGESTIONS: SearchSuggestions = {
 
 const SearchPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isAuthenticated } = useAuth();
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(
+    () => searchParams.get("q") ?? "",
+  );
   const [suggestions, setSuggestions] = useState(EMPTY_SUGGESTIONS);
   const [recentSearches, setRecentSearches] = useState<RecentSearchItem[]>([]);
   const [deletingRecentSearchIds, setDeletingRecentSearchIds] = useState<Set<number>>(
@@ -61,19 +69,16 @@ const SearchPage = () => {
     }
 
     let active = true;
-    const timer = window.setTimeout(() => {
-      void getSearchSuggestions(keyword)
-        .then((response) => {
-          if (active) setSuggestions(response);
-        })
-        .catch(() => {
-          if (active) setSuggestions(EMPTY_SUGGESTIONS);
-        });
-    }, 250);
+    void getSearchSuggestions(keyword)
+      .then((response) => {
+        if (active) setSuggestions(response);
+      })
+      .catch(() => {
+        if (active) setSuggestions(EMPTY_SUGGESTIONS);
+      });
 
     return () => {
       active = false;
-      window.clearTimeout(timer);
     };
   }, [keyword]);
 
@@ -84,7 +89,43 @@ const SearchPage = () => {
     if (isAuthenticated) {
       void addRecentSearch(query).then(setRecentSearches).catch(() => undefined);
     }
-    navigate(`/search/result?q=${encodeURIComponent(query)}`);
+    navigate(`/search/result?q=${encodeURIComponent(query)}`, {
+      replace: true,
+    });
+  };
+
+  const openSuggestion = async (
+    value: string,
+    type: "lost" | "facility",
+  ) => {
+    const query = value.trim();
+    if (!query) return;
+
+    try {
+      const items =
+        type === "facility"
+          ? await searchFacilityRequests(query)
+          : await searchLostItems(query);
+      const normalizedQuery = query.toLocaleLowerCase();
+      const target =
+        items.find(
+          (item) => item.title.trim().toLocaleLowerCase() === normalizedQuery,
+        ) ?? items[0];
+
+      if (target?.id) {
+        if (isAuthenticated) {
+          void addRecentSearch(query)
+            .then(setRecentSearches)
+            .catch(() => undefined);
+        }
+        navigate(type === "facility" ? `/facility/${target.id}` : `/lost/${target.id}`);
+        return;
+      }
+    } catch {
+      // 검색 결과 조회에 실패하면 기존 통합 검색 화면으로 이동한다.
+    }
+
+    submitSearch(query);
   };
 
   const handleDeleteRecentSearch = async (recentSearchId: number) => {
@@ -133,7 +174,7 @@ const SearchPage = () => {
             key={`${type}-${item}`}
             type="button"
             className="search-item"
-            onClick={() => submitSearch(item)}
+            onClick={() => void openSuggestion(item, type)}
           >
             <img src={searchIcon} alt="" className="search-item-icon" />
             <span className="body06 search-item-title">{item}</span>
@@ -155,6 +196,7 @@ const SearchPage = () => {
       onSearchChange={setSearchValue}
       onSearchSubmit={() => submitSearch()}
       onClearSearch={() => setSearchValue("")}
+      searchAutoFocus
     >
       <div className="search-page">
         {!keyword ? (

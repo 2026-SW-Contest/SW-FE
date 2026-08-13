@@ -22,7 +22,7 @@ export class ApiError extends Error {
     super(
       body?.fieldErrors?.[0]?.message ||
         body?.message ||
-        `요청 처리에 실패했습니다. (${status})`,
+        "요청을 처리하지 못했습니다.",
     );
     this.name = "ApiError";
     this.status = status;

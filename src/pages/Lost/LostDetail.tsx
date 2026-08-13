@@ -3,7 +3,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import AlertModal from "../../components/common/AlertModal/AlertModal";
 import DetailImageCarousel from "../../components/common/DetailImageCarousel/DetailImageCarousel";
+import Toast from "../../components/common/Toast/Toast";
 import Layout from "../../components/layout/Layout";
+import { TOAST_MESSAGE } from "../../constants/toastMessage";
 import { useRecoveryRequests } from "../../context/RecoveryRequestContext";
 import { useAuth } from "../../context/AuthContext";
 import { isAdminUser, redirectToAdminApp } from "../../utils/authRole";
@@ -24,6 +26,7 @@ const LostDetail = () => {
   const { isAuthenticated, user } = useAuth();
   const [isOwnerRequestOpen, setIsOwnerRequestOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
   const listItem = lostItems.find((current) => current.id === Number(id));
   const [item, setItem] = useState<LostItem | undefined>(listItem);
   const [isLoading, setIsLoading] = useState(true);
@@ -249,7 +252,14 @@ const LostDetail = () => {
           await createItemClaim(item.id, inquiry, images);
           requestRecovery(item);
           closeOwnerRequest();
+          setShowSuccessToast(true);
         }}
+      />
+
+      <Toast
+        visible={showSuccessToast}
+        message={TOAST_MESSAGE.OWNER_REQUESTED}
+        onClose={() => setShowSuccessToast(false)}
       />
 
       <AlertModal
