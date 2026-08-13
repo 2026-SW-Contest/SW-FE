@@ -233,3 +233,8 @@ export const updateAdminFacilityRequest = (
       body: request,
     },
   );
+
+export const deleteAdminFacilityRequest = (facilityRequestId: number) =>
+  apiRequest<void>(`/api/facility-requests/${facilityRequestId}`, {
+    method: "DELETE",
+  });

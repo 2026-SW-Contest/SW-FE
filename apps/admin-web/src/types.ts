@@ -6,6 +6,14 @@ export type AdminSection =
   | "facility"
   | "account";
 
+export interface AdminAccount {
+  userId: number;
+  email: string;
+  name?: string;
+  studentNumber?: string;
+  roles: string[];
+}
+
 export interface AdminLostItem {
   id: number;
   title: string;
