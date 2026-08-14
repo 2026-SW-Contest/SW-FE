@@ -5,15 +5,15 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://3.19.74.97/api/:path*"
+      "destination": "https://d1i0qdr3ir0xof.cloudfront.net/api/:path*"
     },
     {
       "source": "/admin-api/:path*",
-      "destination": "http://3.19.74.97/api/:path*"
+      "destination": "https://d1i0qdr3ir0xof.cloudfront.net/api/:path*"
     },
     {
       "source": "/actuator/:path*",
-      "destination": "http://3.19.74.97/actuator/:path*"
+      "destination": "https://d1i0qdr3ir0xof.cloudfront.net/actuator/:path*"
     },
     {
       "source": "/admin",

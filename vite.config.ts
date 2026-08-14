@@ -81,7 +81,8 @@ const apiProxy = (target: string, localSessionCookie: string) => {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "");
-  const proxyTarget = env.VITE_API_PROXY_TARGET || "http://3.19.74.97";
+  const proxyTarget =
+    env.VITE_API_PROXY_TARGET || "https://d1i0qdr3ir0xof.cloudfront.net";
 
   return {
     // 학생 앱과 관리자 앱이 같은 node_modules를 사용하더라도

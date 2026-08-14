@@ -79,7 +79,8 @@ const apiProxy = (target: string) => ({
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "../../", "");
-  const proxyTarget = env.VITE_API_PROXY_TARGET || "http://3.19.74.97";
+  const proxyTarget =
+    env.VITE_API_PROXY_TARGET || "https://d1i0qdr3ir0xof.cloudfront.net";
   const isVercelBuild = mode === "vercel";
 
   return {
